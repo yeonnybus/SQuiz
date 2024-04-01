@@ -16,8 +16,8 @@ public class FruitBasket {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User userId;
+    @JoinColumn(name = "memberId", nullable = false)
+    private Member memberId;
 
     @Column
     private String basketName;

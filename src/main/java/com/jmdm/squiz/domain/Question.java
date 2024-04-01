@@ -16,8 +16,8 @@ public class Question {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User userId;
+    @JoinColumn(name = "memberId", nullable = false)
+    private Member memberId;
 
     @ManyToOne
     @JoinColumn(name = "problemId", nullable = false)

@@ -16,8 +16,8 @@ public class Problem {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private User userId;
+    @JoinColumn(name = "memberId", nullable = false)
+    private Member memberId;
 
     @OneToMany(mappedBy = "problemId")
     private List<ProblemCreationList> pdfList = new ArrayList<>();
