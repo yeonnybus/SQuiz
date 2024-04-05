@@ -1,43 +1,36 @@
 package com.jmdm.squiz.domain;
 
+import com.jmdm.squiz.dto.MemberDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Entity
+@Setter
+@Getter
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memberId")
     private Long id;
 
+
     @Column
-    private String userName;
+    private String password;
 
     @Column(unique = true)
-    private String loginId;
+    private String username;
 
     @Column
-    private String loginPw;
+    private String role;
 
-    @Column(unique = true)
-    private String email;
+    public static Member toMember(MemberDTO memberDTO, BCryptPasswordEncoder bCryptPasswordEncoder){
+        Member member = new Member();
+        member.setPassword(bCryptPasswordEncoder.encode(memberDTO.getPassword()));
+        member.setUsername(memberDTO.getUsername());
+        member.setRole("ROLE_ADMIN");
+        return member;
 
-    @Column
-    private LocalDateTime createDate;
-
-//    @PrePersist
-//    protected void onCreate() {
-//        createDate = LocalDateTime.now();
-//    }
-
-    // 생성자 추가
-//    public Member(String userName, String loginId, String loginPw, String email) {
-//        this.userName = userName;
-//        this.loginId = loginId;
-//        this.loginPw = loginPw;
-//        this.email = email;
-//    }
+    }
 }
