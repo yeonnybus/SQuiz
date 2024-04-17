@@ -11,20 +11,25 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @Controller
-@ResponseBody
 public class HomeController {
     // 기본 페이지 요청 메서드
     @GetMapping("/")
-    public String mainP() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
-        GrantedAuthority auth = iter.next();
-        String role = auth.getAuthority();
-
-        return "Home Controller" + username + role; // => templates 폴더의 index.html을 찾아감
+    public String homeP() {
+        return "index";
     }
+
+// 로그인 후 stateless 한 세션이 만들어져서 이름과 role을 땡겨 올 수 있음
+//    @ResponseBody
+//    public String mainP() {
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//        Iterator<? extends GrantedAuthority> iter = authorities.iterator();
+//        GrantedAuthority auth = iter.next();
+//        String role = auth.getAuthority();
+//
+//        return "Home Controller" + username + role; // => templates 폴더의 index.html을 찾아감
+//    }
 }

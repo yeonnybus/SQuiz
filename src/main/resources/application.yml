@@ -1,6 +1,23 @@
 server:
-  port: 8081
+  port: 8080
+
 spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: suacho0724@gmail.com
+    password: ngzh wuno ruac gfhx
+    properties:
+      mail:
+        debug: true
+        smtp.auth: true
+        smtp.timeout: 50000
+        smtp.starttls.enable: true
+  data:
+    redis:
+      mail:
+        host: localhost
+        port: 6379
   jwt:
     secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
   application:
@@ -19,3 +36,12 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: none
+
+springdoc:
+  swagger-ui:
+    path: /api-details
+    groups-order: desc
+    tags-sorter: alpha
+    operations-sorter: method
+  paths-to-match:
+    - /api/**

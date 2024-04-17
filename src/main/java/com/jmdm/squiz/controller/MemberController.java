@@ -1,6 +1,7 @@
 package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.MemberDTO;
+import com.jmdm.squiz.service.CertificationGenerator;
 import com.jmdm.squiz.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -13,14 +14,28 @@ public class MemberController {
     private final MemberService memberService;
     // 회원가입 페이지 출력 요청
 
-    @GetMapping("/member/save")
+//    @GetMapping("/email")
+//    public String showEmailForm() {
+//        return "email";
+//    }
+//
+//    @PostMapping("/sendCode")
+//    public String sendVerifyingCode() {
+//    }
+
+    @GetMapping("/join")
     public String saveForm() {
-        return "save";
+        return "join";
     }
 
-    @PostMapping("/member/save")
+    @PostMapping("/join")
     public String save(@ModelAttribute MemberDTO memberDTO) {
         memberService.save(memberDTO);
+        return "login";
+    }
+
+    @GetMapping("/login")
+    public String login() {
         return "login";
     }
 
