@@ -21,7 +21,11 @@ public class MailSendService {
     public EmailCertificationResponse sendEmailForCertification(String email)
             throws NoSuchAlgorithmException, MessagingException {
         String certificationNumber = generator.createCertificationGenerator();
-        String content = String.format("%s/api/v1/email/verify?certificationNumber=%s&email=%s   링크를 3분 이내에 클릭해주세요.", DOMAIN_NAME, certificationNumber, email);
+        String content = "인증코드" +
+                "<br><br>" +
+                "인증 번호는 <h3>" + certificationNumber + "</h3>입니다." +
+                "<br><br>" +
+                "인증번호를 3분 안에 입력해주세요"; //이메일 내용 삽입
         redisService.setData(email, certificationNumber);
         sendMail(email, content);
         return new EmailCertificationResponse(email, certificationNumber);
@@ -29,10 +33,10 @@ public class MailSendService {
 
     private void sendMail(String email, String content) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
         helper.setTo(email);
-        helper.setSubject("mail title");
-        helper.setText(content);
+        helper.setSubject("Squiz : 인증 코드 전송");
+        helper.setText(content, true);
         mailSender.send(mimeMessage);
     }
 
