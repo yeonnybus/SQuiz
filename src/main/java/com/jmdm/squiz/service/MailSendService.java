@@ -15,14 +15,14 @@ import java.security.NoSuchAlgorithmException;
 @RequiredArgsConstructor
 public class MailSendService {
     private final JavaMailSender mailSender;
-    private final CertificationNumberDao certificationNumberDao;
+    private final RedisService redisService;
     private final CertificationGenerator generator;
     private static final String DOMAIN_NAME = "http://localhost:8080";
     public EmailCertificationResponse sendEmailForCertification(String email)
             throws NoSuchAlgorithmException, MessagingException {
         String certificationNumber = generator.createCertificationGenerator();
         String content = String.format("%s/api/v1/email/verify?certificationNumber=%s&email=%s   링크를 3분 이내에 클릭해주세요.", DOMAIN_NAME, certificationNumber, email);
-        certificationNumberDao.setData(email, certificationNumber);
+        redisService.setData(email, certificationNumber);
         sendMail(email, content);
         return new EmailCertificationResponse(email, certificationNumber);
     }

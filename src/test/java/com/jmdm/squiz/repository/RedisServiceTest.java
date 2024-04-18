@@ -1,22 +1,14 @@
 package com.jmdm.squiz.repository;
 
-import com.jmdm.squiz.service.CertificationNumberDao;
-import org.junit.jupiter.api.Tag;
+import com.jmdm.squiz.service.RedisService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 @SpringBootTest
-class CertificationNumberDaoTest {
+class RedisServiceTest {
     @Autowired
-    private CertificationNumberDao certificationNumberDao;
+    private RedisService redisService;
 
 
     @Test
@@ -27,7 +19,7 @@ class CertificationNumberDaoTest {
 //
 //        // When
 //        certificationNumberDao.setData(key, value);
-        String retrievedValue = certificationNumberDao.getData("suacho0724@gmail.com");
+        String retrievedValue = redisService.getData("suacho0724@gmail.com");
 
         // Then
         System.out.println("retrievedValue = " + retrievedValue);
@@ -42,7 +34,7 @@ class CertificationNumberDaoTest {
 //        when(valueOperations.get(anyString())).thenReturn("someValue");
 //
 //        // When
-//        CertificationNumberDao dao = new CertificationNumberDao(redisTemplate);
+//        RedisService dao = new RedisService(redisTemplate);
 //        boolean result = dao.hasKey(email);
 //
 //        // Then
@@ -58,7 +50,7 @@ class CertificationNumberDaoTest {
 //        when(valueOperations.get(anyString())).thenReturn(null);
 //
 //        // When
-//        CertificationNumberDao dao = new CertificationNumberDao(redisTemplate);
+//        RedisService dao = new RedisService(redisTemplate);
 //        boolean result = dao.hasKey(email);
 //
 //        // Then
