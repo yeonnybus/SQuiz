@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import styled from "styled-components";
+import axios from "axios";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -69,10 +70,11 @@ const Register2: React.FC = () => {
     // 인증코드 요청 로직 구현
   };
 
-  const verifyCode = () => {
-    alert("회원가입이 완료되었습니둥");
-    // 인증 로직 구현
-  };
+  async function handleLoadNext() {
+    const res = await axios.post(
+      "http://10.0.0.61:8080/login?username=admin&password=1234"
+    );
+  }
 
   return (
     <CenteredContainer>
@@ -155,7 +157,7 @@ const Register2: React.FC = () => {
             borderRadius: "16px",
             ":hover": { background: "#ffc450", color: "black" },
           }}
-          onClick={verifyCode}
+          onClick={handleLoadNext}
         >
           회원가입
         </Button>
