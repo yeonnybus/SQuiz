@@ -19,11 +19,11 @@ public class ApiResponse <T>{
         this.header = header;
     }
 
-    public static <T> ApiResponse<T> OK(SuccessCode successCode, T data, String msg) {
+    public static <T> ApiResponse<T> ok(SuccessCode successCode, T data, String msg) {
         return new ApiResponse<T>(new ApiHeader(successCode.getCode(), successCode.name()), new ApiBody(data, msg));
     }
 
-    public static <T> ApiResponse<T> OK(SuccessCode successCode) {
+    public static <T> ApiResponse<T> ok(SuccessCode successCode) {
         return new ApiResponse<>(new ApiHeader(successCode.getCode(), successCode.name()), new ApiBody(null, null));
     }
 

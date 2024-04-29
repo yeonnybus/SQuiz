@@ -31,17 +31,13 @@ public class MailController {
     public ResponseEntity<ApiResponse<EmailCertificationResponse>> sendCertificationNumber(@Validated @RequestBody EmailCertificationRequest request)
             throws MessagingException, NoSuchAlgorithmException {
         EmailCertificationResponse response = mailSendService.sendEmailForCertification(request.getEmail());
-        return ResponseEntity.ok(ApiResponse.OK(SuccessCode.SUCCESS, response, "인증할 메일과 인증 코드"));
+        return ResponseEntity.ok(ApiResponse.ok(SuccessCode.SUCCESS, response, "인증할 메일과 인증 코드"));
     }
 
     @PostMapping("/verify")
     @Operation(summary = "인증코드 확인", description = "인증코드가 올바른지 확인하는 API")
-    public ResponseEntity<ApiResponse<Void>> verifyCertificationNumber(
-            @RequestParam(name = "email") String email,
-            @RequestParam(name = "certificationNumber") String certificationNumber
-    ) {
-        mailVerifyservice.verifyEmail(email, certificationNumber);
-
-        return ResponseEntity.ok(ApiResponse.OK(SuccessCode.SUCCESS));
+    public ResponseEntity<ApiResponse<Void>> verifyCertificationNumber(@RequestBody EmailCertificationResponse request) {
+        mailVerifyservice.verifyEmail(request.getEmail(), request.getCertificationNumber());
+        return ResponseEntity.ok(ApiResponse.ok(SuccessCode.SUCCESS));
     }
 }

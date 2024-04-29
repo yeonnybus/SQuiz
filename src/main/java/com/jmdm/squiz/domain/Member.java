@@ -15,21 +15,31 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
+    private String memberEmail;
 
     @Column
-    private String password;
+    private String memberName;
 
     @Column(unique = true)
-    private String username;
+    private String memberId;
+
+    @Column
+    private String memberPw;
 
     @Column
     private String role;
 
+
+
+
     public static Member toMember(MemberDTO memberDTO, BCryptPasswordEncoder bCryptPasswordEncoder){
         Member member = new Member();
-        member.setPassword(bCryptPasswordEncoder.encode(memberDTO.getPassword()));
-        member.setUsername(memberDTO.getUsername());
-        member.setRole("ROLE_ADMIN");
+        member.setMemberEmail(memberDTO.getMemberEmail());
+        member.setMemberName(memberDTO.getMemberName());
+        member.setMemberId(memberDTO.getMemberId());
+        member.setMemberPw(bCryptPasswordEncoder.encode(memberDTO.getMemberPw()));
+        member.setRole(memberDTO.getRole());
         return member;
 
     }

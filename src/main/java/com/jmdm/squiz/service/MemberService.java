@@ -2,6 +2,8 @@ package com.jmdm.squiz.service;
 
 import com.jmdm.squiz.domain.Member;
 import com.jmdm.squiz.dto.MemberDTO;
+import com.jmdm.squiz.exception.ErrorCode;
+import com.jmdm.squiz.exception.model.DuplicateIdException;
 import com.jmdm.squiz.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,21 +18,22 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
-
-    public void save(MemberDTO memberDTO) {
-        // 1. dto -> entity
-        // 2. repository의 save 메서드 호출
-//        Boolean isExist = memberRepository.existsByMemberEmail(memberDTO.getMemberEmail());
-//        if (isExist) {
-//            return;
-//        }
-        Member member = Member.toMember(memberDTO, bCryptPasswordEncoder);
-        memberRepository.save(member);
-        // repository의 save 메서드 호출 (조건. entity 객체를 넘겨줘야 함)
-
-
+    public void checkDuplication(String memberId) {
+        if (isDuplicate(memberId)) {
+            throw new DuplicateIdException(ErrorCode.ID_ERROR, ErrorCode.ID_ERROR.getMessage());
+        }
     }
+
+    private boolean isDuplicate(String memberId) {
+        return memberRepository.existsByMemberId(memberId);
+    }
+
+    public Member joinMember(MemberDTO request) {
+        Member response = Member.toMember(request, bCryptPasswordEncoder);
+        memberRepository.save(response);
+        return response;
+    }
+
 
 //    public MemberDTO login(MemberDTO memberDTO) {
 //        /*

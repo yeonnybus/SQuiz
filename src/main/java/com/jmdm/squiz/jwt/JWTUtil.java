@@ -38,8 +38,8 @@ public class JWTUtil {
     public String createJwt(String username, String role, Long expiredMs) {
 
         return Jwts.builder()
-                .claim("username", username)
-                .claim("role", role)
+                .claim("username", username) // 추후 memberId로 수정
+                .claim("role", role) // 추후 authority로 수정
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

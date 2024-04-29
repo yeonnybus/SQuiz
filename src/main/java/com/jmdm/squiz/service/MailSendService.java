@@ -31,6 +31,8 @@ public class MailSendService {
         return new EmailCertificationResponse(email, certificationNumber);
     }
 
+
+
     private void sendMail(String email, String content) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");

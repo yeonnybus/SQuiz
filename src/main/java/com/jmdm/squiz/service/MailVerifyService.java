@@ -15,7 +15,7 @@ public class MailVerifyService {
         if (!isVerify(email, certificationNumber)) {
             throw new WrongCertificationNumException(ErrorCode.CERTIFICATION_NUM_ERROR, ErrorCode.CERTIFICATION_NUM_ERROR.getMessage());
         }
-        redisService.deleteData(email);
+        redisService.deleteData(email); // 인증이 완료되면 회원가입 될 때까지 영구 저장
     }
 
     private boolean isVerify(String email, String certificationNumber) {

@@ -1,19 +1,17 @@
 package com.jmdm.squiz.dto;
 
 import com.jmdm.squiz.domain.Member;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
     private final Member member;
-
-    public CustomUserDetails(Member member) {
-        this.member = member;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -30,13 +28,13 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return member.getMemberPw();
     }
 
     @Override
     public String getUsername() {
-        return member.getUsername();
-    }
+        return member.getMemberId();
+    } // 필터에서 Username은 Id임
 
     @Override
     public boolean isAccountNonExpired() {

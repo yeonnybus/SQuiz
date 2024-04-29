@@ -25,26 +25,4 @@ public class RedisService {
     public void deleteData(String key){//지정된 키(key)에 해당하는 데이터를 Redis에서 삭제하는 메서드
         redisTemplate.delete(key);
     }
-
-//    public void saveCertificationNumber(String email, String certificationNumber) {
-//        redisTemplate.opsForValue()
-//                .set(email, certificationNumber,
-//                        Duration.ofSeconds(EMAIL_VERIFICATION_LIMIT_IN_SECONDS));
-//    }
-//
-//    public String getCertificationNumber(String email) {
-//        return redisTemplate.opsForValue().get(email);
-//    }
-//
-//    public void removeCertificationNumber(String email) {
-//        redisTemplate.delete(email);
-//    }
-//
-//    public Boolean hasKey(String email) {
-//        System.out.println("email = " + email);
-//        Boolean keyExists = redisTemplate.hasKey(email);
-//        System.out.println("keyExists = " + keyExists);
-//        System.out.println(redisTemplate.opsForValue().get(email));
-//        return keyExists != null && keyExists;
-//    }
 }
