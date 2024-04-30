@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import java.util.Collections;
 
@@ -47,26 +49,27 @@ public class SecurityConfig {
     }
 
     @Bean
+    ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors((cors) -> cors
-                        .configurationSource(new CorsConfigurationSource() {
-                            @Override
-                            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                                CorsConfiguration configuration = new CorsConfiguration();
-                                configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-                                configuration.setAllowedMethods(Collections.singletonList("*"));
-                                configuration.setAllowCredentials(true);
-                                configuration.setAllowedHeaders(Collections.singletonList("*"));
-                                configuration.setMaxAge(3600L);
+                .cors((corsCustomizer -> corsCustomizer.configurationSource(request -> {
 
-                                configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                    CorsConfiguration configuration = new CorsConfiguration();
 
-                                return configuration;
+                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                    configuration.setAllowedMethods(Collections.singletonList("*"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setAllowedHeaders(Collections.singletonList("*"));
+                    configuration.setMaxAge(3600L);
 
-                            }
-                        }));
+                    configuration.setExposedHeaders(Collections.singletonList("Authorization"));
 
+                    return configuration;
+                })));
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
@@ -82,8 +85,10 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/h2-console/**", "/swagger-ui/**", "/api/**").permitAll()
+                        .requestMatchers("/h2-console/**", "/swagger-ui/**", "/api/**", "/", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN") // ADMIN이라는 권한을 갖고 있는 사용자만 접근 가능
+                        .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()
                         .anyRequest().authenticated()); // 로그인한 사용자만 접근할 수 있도록 하는 코드
         http
                 .headers((headers) -> headers

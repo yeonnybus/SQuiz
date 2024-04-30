@@ -1,5 +1,6 @@
 server:
   port: 8080
+  forward-headers-strategy: FRAMEWORK
 
 spring:
   mail:
@@ -38,6 +39,7 @@ spring:
       ddl-auto: create-drop
 
 springdoc:
+  show-login-endpoint: true
   swagger-ui:
     path: /api-details
     groups-order: desc

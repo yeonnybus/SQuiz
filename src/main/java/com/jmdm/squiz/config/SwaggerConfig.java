@@ -7,10 +7,15 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
 
 
 @Configuration
+@EnableWebMvc
 public class SwaggerConfig {
+
+
     @Bean
     public OpenAPI openAPI() {
         String jwt = "JWT";
@@ -22,16 +27,16 @@ public class SwaggerConfig {
                 .bearerFormat("JWT")
         );
         return new OpenAPI()
-                .components(new Components())
+                .components(components) // 수정된 부분: 생성한 Components 객체를 사용
                 .info(apiInfo())
-                .addSecurityItem(securityRequirement)
-                .components(components);
+                .addSecurityItem(securityRequirement);
     }
 
     private Info apiInfo() {
         return new Info()
-                .title("SQuiz API")
-                .description("API about SQuiz webservice")
-                .version("1.0.0");
+                .title("Squiz API") // API의 제목
+                .description("Squiz API 문서") // API에 대한 설명
+                .version("1.0.0"); // API의 버전
     }
+
 }
