@@ -31,8 +31,6 @@ public class Member {
     private String role;
 
 
-
-
     public static Member toMember(MemberDTO memberDTO, BCryptPasswordEncoder bCryptPasswordEncoder){
         Member member = new Member();
         member.setMemberEmail(memberDTO.getMemberEmail());

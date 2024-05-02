@@ -27,17 +27,16 @@ public class MailSendService {
                 "<br><br>" +
                 "인증번호를 3분 안에 입력해주세요"; //이메일 내용 삽입
         redisService.setData(email, certificationNumber);
-        sendMail(email, content);
+        sendMail(email, content, "Squiz : 인증 코드 전송");
         return new EmailCertificationResponse(email, certificationNumber);
     }
 
 
-
-    private void sendMail(String email, String content) throws MessagingException {
+    public void sendMail(String email, String content, String subject) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "utf-8");
         helper.setTo(email);
-        helper.setSubject("Squiz : 인증 코드 전송");
+        helper.setSubject(subject);
         helper.setText(content, true);
         mailSender.send(mimeMessage);
     }

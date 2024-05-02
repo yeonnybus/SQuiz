@@ -21,7 +21,7 @@ import java.security.NoSuchAlgorithmException;
 @RestController //@Controller + @ResponseBody
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/email")
-@Tag(name = "Mail Authentication", description = "Mail Authentication API")
+@Tag(name = "이메일 인증 API", description = "이메일 인증 코드를 전송하고, 인증코드를 검증하는 API입니다.")
 public class MailController {
     private final MailSendService mailSendService;
     private final MailVerifyService mailVerifyservice;
