@@ -1,0 +1,639 @@
+
+<0>
+MODERN OPERATING SYSTEMS
+Third Edition
+ANDREW S. TANENBAUM
+Chapter 4
+File Systems
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<1>
+Essential requirements for long -term 
+information storage:
+•It must be possible to store a very large amount 
+of information.
+•The information must survive the termination of 
+the process using it.
+•Multiple processes must be able to access the 
+information concurrently.File Systems (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<2>
+Think of a disk as a linear sequence of fixed -size 
+blocks and supporting reading and writing of 
+blocks.  Questions that quickly arise:
+•How do you find information?
+•How do you keep one user from reading another’s data?
+•How do you know which blocks are free?File Systems (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<3>
+File & File System
+•File
+–Basic unit for storing information in storage device 
+–Array of bytes
+–Treated as a single entity by users
+–Has unique path name
+–Access control
+•File System
+–Set of system software that provides services to users and 
+applications in the use of files
+<4>
+Figure 4 -1. Some typical file extensions.File Naming
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<5>
+Figure 4 -2. Three kinds of files. (a) Byte sequence. 
+(b) Record sequence. (c) Tree.File Structure
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<6>
+Figure 4 -3. (a) An executable file. (b) An archive.File Types
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<7>
+Figure 4 -4a. Some possible file attributes.File Attributes
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<8>
+File Access Semantic
+•Access Semantic
+–Sequential Access
+•Read/Write from front of a File
+•Read/Write proceeds read/write position in a File
+–Direct (Random) Access : Method 1
+•id = open(file)
+•pread(id, &buf, from, rwbytes)
+–Direct (Random) Access : Method 2
+•id = open(file)
+•lseek(id, SEET_SET, from)
+•read(id, &buf, rwbytes)
+<9>
+File Sharing Semantic
+•Is it possible for multiple processes to open a file?
+–Open for READ ?
+–Open for WRITE ?
+•When does written file affect to other Processes ?
+–UNIX : Immediately
+–Andrew File System : After the file is closed
+<10>
+The most common system calls relating to files:File Operations
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639•Append
+•Seek
+•Get Attributes
+•Set Attributes
+•Rename•Create
+•Delete
+•Open 
+•Close
+•Read
+•Write
+<11>
+Figure 4 -5. A simple program to copy a file.Example Program Using File System Calls (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+. . .
+<12>
+Figure 4 -5. A simple program to copy a file.Example Program Using File System Calls (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<13>
+Directory (Folder)
+•Special filethat contains information about files
+–Attributes
+–Location
+–Ownership
+•Provides mapping between file names and the files 
+themselves
+<14>
+Figure 4 -6. A single -level directory system containing four files.Hierarchical Directory Systems (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<15>
+Figure 4 -7. A hierarchical directory system.Hierarchical Directory Systems (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<16>
+Figure 4 -8. A UNIX directory tree.Path Names
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<17>
+File Name and Path Name
+•Absolute Path
+–Path from Root Directory
+–Ex) C: \Document \Homework.hwp
+•Relative Path
+–Path form Current Working Directory
+–Ex) .. \Work \Test.c     . \Homework.hwp
+
+<18>
+System calls for managing directories:Directory Operations
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639•Readdir
+•Rename
+•Link
+•Unlink•Create
+•Delete
+•Opendir 
+•Closedir
+<19>
+Figure 4 -9. A possible file system layout.File System Layout
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<20>
+File allocation methods
+•Contiguous allocation
+–Single contiguous set of blocks is allocated to a file at file creation time
+–External fragmentation can occur in case of dynamic creation & deletion of 
+files
+•Chained allocation: non -contiguous allocation
+–Each block contains a pointer to the next block in chain
+–No external fragmentation
+•Adequate for dynamic creation & deletion of files
+•Indexed allocation: non -contiguous allocation
+–Index block has data block list for a file
+–No external fragmentation
+•Adequate for dynamic creation & deletion of files
+<21>
+Allocated block management -Contiguous 
+allocation
+
+<22>
+Figure 4 -10. (a) Contiguous allocation of disk space for 7 files. 
+(b) The state of the disk after files D and F have been removed.Contiguous Allocation
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<23>
+Allocated block management –Linked List 
+(Chained) allocation
+
+<24>
+Figure 4 -11. Storing a file as a linked list of disk blocks.Linked List Allocation
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<25>
+Figure 4 -12. Linked list allocation using a file allocation table 
+in main memory.Linked List Allocation Using a Table in Memory
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<26>
+Table In Memory Example –FAT (File Allocation Table)
+
+<27>
+Allocated block management -Indexed allocation
+
+<28>
+Design of UNIX File System
+
+<29>
+Figure 4 -13. An example i -node.I-nodes
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<30>
+UNIX Block Addressing
+
+<31>
+Figure 4 -14. (a) A simple directory containing fixed -size entries 
+with the disk addresses and attributes in the directory entry. 
+(b) A directory in which each entry just refers to an i -node. Implementing Directories (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<32>
+Figure 4 -15. Two ways of handling long file names in a directory. 
+(a) In -line. (b) In a heap.Implementing Directories (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<33>
+Directory Entry of FAT File System
+
+<34>
+Figure 4 -16. File system containing a shared file.Shared Files (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<35>
+Figure 4 -17. (a) Situation prior to linking. (b) After the link is 
+created. (c) After the original owner removes the file.Shared Files (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<36>
+Shared Files –Symbolic Link
+•Symbolic Link File
+–Special File Type –Link File
+–Called Symbolic Link File or 바로가기 파일
+–Symbolic Link File has a pathname pointing a file within the same system or 
+another system inthe internet
+–If OS reads a Link file, then it again reads the file referred by the pathname.
+<37>
+Log-Structured File System (1)
+•Log-structured  file system designed in Berkeley for UNIX to 
+reduce disk seek times for the write operations
+•In UNIX most of the write operations are small writes
+•LFS considers the entire disk as a log and by buffering the 
+writes in the memory, writes them in a single segment at the 
+end of log periodically. 
+•Each segment may contain i -nodes, directory entry blocks 
+and data blocks
+•The problem is i -nodes are scattered all over the log instead 
+of being in the fixed disk position
+<38>
+Log-Structured File System (2)
+Writing Point
+New
+File
+Datai-node,
+화일위치
+정보,
+변경된
+상위
+directoryCleaning Point
+Super
+Block
+Segment
+<39>
+LFS –File Modification
+Log on Diskold copy
+of blockold copy
+of inode
+new copy
+of blocknew copy
+of inodeInode map
+Physical Memory
+Cached copy of block
+Cached copy of inode
+<40>
+Comparison between LFS and FFS
+Source : “Design and Implementation of aLFS” by Rosenblum, etc
+<41>
+LFS: Cleaning (Garbage Collection)
+•Opening a file consists of using map to locate the i -node for 
+that file
+•LFS has a book keeping program named cleaner that moves 
+around the log and remove old segments
+Live blocks copied overObsolete blocks
+End of log after garbage collection
+End of log before garbage collectionSegment being cleaned
+<42>
+Operations required to remove a file in UNIX:
+•Remove the file from its directory.
+•Release the i -node to the pool of free i -nodes.
+•Return all the disk blocks to the pool of free disk blocks.Journaling File Systems
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<43>
+Journaling
+•Journaling
+–Logging before modifying file system structure
+–Fast recovery from failure
+–Example of Journaling File System
+•NTFS
+•Linux Ext3 FS
+•Reiser FS
+
+<44>
+Figure 4 -18. Position of the virtual file system.Virtual File Systems (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<45>
+Figure 4 -19. A simplified view of the data structures and code 
+used by the VFS and concrete file system to do a read.Virtual File Systems (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<46>
+Linux VFS
+47Virtual File System
+minix nfs ext2 dosfs…. mmfs procfs
+buffer cache
+File System
+device driverUser mode
+System modeprocess 1 process 2 process n ….
+<47>
+Linux VFS
+48lseek()
+read()
+write()
+readdir()
+poll()
+ioctl()
+mmap()
+open()
+flush()
+release()
+fsync()
+fasync()
+….. struct file_operations
+/* include/linux/fs.h */
+ext2_file_lseek, 
+generic_file_read,
+ext2_file_write
+NULL, NULL,
+ext2_file_ioctl
+generic_file_mma
+p
+NULL, …….ext2 FS
+/* fs/ext2/file.c */
+NULL, 
+nfs_file_read,
+nfs_file_write
+NULL, NULL, 
+NULL,
+nfs_file_mmap
+NULL, …….NFS
+/* fs/nfs/file.c */pipe_lseek, 
+pipe_read,
+pipe_write
+NULL, pipe_poll, 
+pipe_ioctl,
+NULL,
+pipe_rdwr_open,  ...PIPE file
+/* fs/pipe.c */
+NULL, 
+NULL,
+NULL,
+NULL, NULL, 
+NULL,
+NULL
+blkdev_open, 
+…….blkdev file
+/* fs/device.c */NULL, 
+NULL,
+NULL,
+NULL, NULL, 
+NULL,
+NULL
+chrdev_open, 
+…….chrdev file
+/* fs/device.c */
+sock_lseek
+sock_read
+sock_write
+NULL 
+sock_poll
+sock_ioctl
+NULL  
+sock_no_open
+….Socket
+/* net/socket.c */
+<48>
+Linux VFS
+49filp_open()/* fs/open.c */sys_open()/* fs/open.c */
+open_namei()/*  fs/namei.c */-get_unused_fd()
+-fd_install(fd, f)
+-struct file initialize
+-f->f_op ->open()      System call layer
+VFS layer
+Specific File layer
+pipe_rdwr_open()
+blkdev_open()
+chrdev_open()nfs_file_open()sock_no_open()iget(), bread()
+<49>
+Determining Block Size
+•Large block size
+–Waste space in case of small files
+–Good for performance
+–Small entries in FAT or block address list in i -node
+•Small block size
+–Good for space utilization
+–Bad for performance
+–Requires large number of entries in FAT or i -node
+<50>
+Figure 4 -20. Percentage of files smaller than a given size 
+(in bytes).Disk Space Management Block Size (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<51>
+Figure 4 -21. The solid curve (left -hand scale) gives the data rate 
+of a disk. The dashed curve (right -hand scale) gives the disk 
+space efficiency. All files are 4 KB.Disk Space Management Block Size (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<52>
+Free space management
+•Bit map (bit vector)
+–A vector containing one bit for each block on disk
+•Ex) 0110011100011111110000100001111000
+–Small, easy to find (contiguous) free blocks
+•Linked List
+–Free blocks are chained by using a pointer
+–Allocation & free overhead are big
+•Grouping (Indexing)
+–Index block contains free blocks list
+–Index blocks are chained
+<53>
+Free space management –Bit map
+
+<54>
+Overhead of Bit map
+•Bitmap requires extra space
+–For example
+•Block size = 212bytes
+•Disk size = 230bytes (1 giga bytes)
+•N = 230/212= 218bits (or 32 Kbytes)
+•Advantage : easy to get contiguous blocks
+<55>
+Free space management –Linked list
+Free Block List Head
+NULL
+<56>
+Free space management –Linked List with 
+Grouping
+Index Block List Head
+NULL
+<57>
+Figure 4 -22. (a) Storing the free list on a linked list. (b) A bitmap.Free Space Management –Bitmap & 
+Linked List with Grouping
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<58>
+Figure 4 -23. (a) An almost -full block of pointers to free disk blocks 
+in memory and three blocks of pointers on disk. (b) Result of 
+freeing a three -block file. (c) An alternative strategy for 
+handling the three free blocks. The shaded entries represent 
+pointers to free disk blocks.Optimization of Linked List Scheme
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<59>
+Figure 4 -24. Quotas are kept track of on a per -user basis 
+in a quota table.Disk Quotas
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<60>
+Backups to tape are generally made to handle 
+one of two potential problems:
+•Recover from disaster.
+•Recover from stupidity.File System Backups (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639Backup Types
+•Physical Dump
+•Logical Dump
+•Complete Dump
+•Incremental Dump
+<61>
+Figure 4 -25. A file system to be dumped. Squares are directories, 
+circles are files. Shaded items have been modified since last 
+dump. Each directory and file is labeled by its i -node number.File System Backups (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<62>
+Figure 4 -26. Bitmaps used by the logical dumping algorithm.File System Backups (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<63>
+Backup –Other considerations
+•Recovery from Backup
+–Recover from last complete dump
+–Apply all incremental dumps that were made after the last complete dump
+• Problems of logical dump
+–File links
+–Hole in Unix files
+–Special files such as pipe and device files (seen in /dev)
+<64>
+File system consistency
+•Why consistency problems
+–File & directory modification accompanies multiple block updates
+–File system will be in inconsistent state if system crashes after some of those 
+blocks are updated and the others are not.
+•Utilities for recovering file system consitency
+–UNIX: fsck
+–Windows: scandisk
+•Fast recovery of consistency
+–Many modern file systems use journaling scheme that enables instant 
+consistency recovery
+<65>
+Figure 4 -27. File system states. (a) Consistent. (b) Missing block. 
+(c) Duplicate block in free list. (d) Duplicate data block.File System Consistency
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+Block Number Block Number
+Block Number Block Number
+<66>
+Increasing file system performance
+•Caching: buffer cache or block cache or disk cache
+–Replacement Policy: LRU, Second Chance, FIFO or others
+–Meta -data should be written immediately for maintaining consistency
+–Write -through (in MS -DOS) or Write -back (Unix)
+–Unix update process calls sync system call periodically (Ex. 30sec)
+•Read -ahead
+–Schedule read of n+1thblock right after read nthblock
+–Only good for sequential file reads
+–Solution: Keeping access pattern of file by using a bit for that file. By setting 
+that bit in each sequential access and resetting in each random access (i.e., 
+seek is done) system can guess if the file is in sequential or random access
+mode.  
+•Reducing disk arm movement
+•Disk defragmentation
+–Windows: defrag
+<67>
+Figure 4 -28. The buffer cache data structures.Caching (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<68>
+•Some blocks, such as i -node blocks, are rarely 
+referenced two times within a short interval.
+•Consider a modified LRU scheme, taking two 
+factors into account:
+•Is the block likely to be needed again soon?
+•Is the block essential to the consistency of the file system?Caching (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<69>
+Reducing Disk Arm Motion (1)
+
+<70>
+Figure 4 -29. (a) I -nodes placed at the start of the disk. 
+(b) Disk divided into cylinder groups, each with its own blocks 
+and i -nodes.Reducing Disk Arm Motion (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<71>
+Figure 4 -30. The ISO 9660 directory entry.The ISO 9660 File System
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<72>
+Rock Ridge extension fields:
+•PX -POSIX attributes.
+•PN -Major and minor device numbers.
+•SL -Symbolic link.
+•NM -Alternative name.
+•CL -Child location.
+•PL -Parent location.
+•RE -Relocation.
+•TF -Time stamps.Rock Ridge Extensions
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<73>
+Joliet extension fields:
+•Long file names.
+•Unicode character set.
+•Directory nesting deeper than eight levels.
+•Directory names with extensionsJoliet Extensions
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<74>
+File Access Control
+•Access Control Matrix
+
+<75>
+File Access Control
+•Access Control List
+
+<76>
+File Access Control
+•Capability List
+
+<77>
+File System Layout
+
+<78>
+MS-DOS FAT File System
+
+<79>
+Figure 4 -31. The MS -DOS directory entry.The MS -DOS File System (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<80>
+Figure 4 -32. Maximum partition size for different block sizes. The 
+empty boxes represent forbidden combinations.The MS -DOS File System (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<81>
+The UNIX V7 File System (1)
+
+<82>
+Figure 4 -33. A UNIX V7 directory entry.The UNIX V7 File System (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<83>
+Figure 4 -34. A UNIX i -node.The UNIX V7 File System (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<84>
+Figure 4 -35. The steps in looking up /usr/ast/mbox .The UNIX V7 File System (4)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<85>
+UNIX Access Control
+•Access Control
+–Owner, Group, Others
+–Every file has access -control bits in its i -node
+–Ex) File F : 111 100 100 (rwx rwx rwx)
+–Owner : read, write, execute
+–Group : read
+–Others : read
+•When is Access Control enforced ?
+–when open a file, not at every read/write request
+<86>
+Design of FFS (Fast File System) (1)
+•Optimized for Disk Physical Structure
+•Enhanced reliability & performance
+•Cylinder Group
+
+<87>
+Design of FFS (Fast File System) (2)
+
+<88>
+Linux Ext 2, 3, 4 File Systems
+•Ext-2 File System
+–Divides a partition into cylinder groups, No Journaling
+•Ext-3 File System
+–Reduce recovery time of fsckprogram with journaling scheme
+•Ext-4 File System
+–Improve performance, reliability, and capacity
+–Extent based allocation
+Directory Entry•User & Group ID
+•File Type & Size
+•Permissions
+•Atime, Ctime, Mtime
+•No of Hard Links
+•12 Direct Pointers to data blocks or 
+Extents
+•1 Pointer to single indirect data
+•1 Pointer to double indirect data
+•1 pointer to triple indirect dataInode

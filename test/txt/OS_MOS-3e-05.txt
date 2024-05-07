@@ -1,0 +1,496 @@
+
+<0>
+MODERN OPERATING SYSTEMS
+Third Edition
+ANDREW S. TANENBAUM
+Chapter 5
+Input/Output
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<1>
+I/O Devices & Data Rate
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+Some typical device, network, and bus data rates.
+<2>
+•Block Device
+• Read/Write Unit: Block
+• Each block has an address
+• Typical Operation: Read/Write Nthblock, Seek
+• Ex: Hard Drive, CD -ROM, USB
+•Character Device
+• Read/Write Unit: Char
+• Each char has no address
+• Ex: Mouse, Printer, ModemBlock Device & Character Device
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<3>
+•I/O Devices have 
+• Mechanical component
+• Electronic component
+•The electronic component: device controller
+• May be able to handle multiple devices
+•Controller’s tasks
+• Convert bit stream to block of bytes
+• Perform error correction as necessary
+• Decode command register to low level signal
+• Send an interrupt to CPU
+• Manage buffers within itDevice Controllers
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<4>
+•Separate I/O and memory space
+•Memory -mapped I/O
+•Hybrid.Memory -Mapped I/O
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<5>
+•A single -bus architecture
+•A dual -bus memory architecture.Memory Bus Architecture 
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<6>
+Operation of a DMA transfer.Direct Memory Access (DMA)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<7>
+•Bus transfer mode
+• Word -at-a-time mode
+•DMA uses Cycling Stealing
+• Burst Mode
+•Data transfer method of DMA
+• Fly-by-mode
+• Two bus requests to transfer data from device controller to memory or vice 
+versaDMA (Direct Memory Access)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<8>
+How an interrupt happens. The connections between the devices 
+and the interrupt controller actually use interrupt lines on the 
+bus rather than dedicated wires.Interrupts Revisited
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<9>
+Properties of a precise interrupt
+1.PC (Program Counter) is saved in a known 
+place.
+2.All instructions before the one pointed to by 
+the PC have fully executed.
+3.No instruction beyond the one pointed to by 
+the PC has been executed.
+4.Execution state of the instruction pointed to 
+by the PC is known.Precise and Imprecise Interrupts (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<10>
+•(a) A precise interrupt
+•(b) An imprecise interruptPrecise and Imprecise Interrupts (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<11>
+Goal of I/O Software (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639•Device Independency
+• Program can access any I/O devices with the same way
+• Ex) HDD, CD -ROM, or USB stick
+• Ex) Sort < input > output
+•Uniform Naming
+• Name of a file or device is a string or an integer
+• Mount a file system of a device to root file system
+•Error Handling
+• Handle errors as close to the hardware as possible
+<12>
+•Synchronous vs asynchronous
+• Blocked transfer vs. interrupt -driven
+•Buffering
+• Single Buffering
+• Double Buffering
+•Sharable vs. dedicated devices
+• Disks are sharable
+• Tape drivers would not beGoal of I/O Software (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<13>
+Steps in printing a string.Programmed I/O (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<14>
+Writing a string to the printer using programmed I/O.Programmed I/O (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<15>
+Writing a string to the printer using interrupt -driven I/O.
+•Code executed at the time the print system call is made.
+•Interrupt service procedure for the printer.Interrupt -Driven I/O
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<16>
+Printing a string using DMA.
+•Code executed when the print system call is made.
+•Interrupt service procedure.I/O Using DMA
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<17>
+Figure 5 -11. Layers of the I/O software system.I/O Software Layers
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<18>
+•Interrupt handlers are best hidden
+• Have driver starting an I/O operation block until interrupt notifies of 
+completion
+•Interrupt procedure does its task
+• Then unblock driver that started it
+•Steps must be performed in software after interrupt 
+completed
+• Save regs not already saved by interrupt hardware
+• Set up context for interrupt service procedureInterrupt Handlers (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<19>
+Interrupt Handlers (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-60066391.Save registers not already been saved by 
+interrupt hardware.
+2.Set up a context for the interrupt service 
+procedure.
+3.Set up a stack for the interrupt service 
+procedure.
+4.Acknowledge the interrupt controller. If there is 
+no centralized interrupt controller, reenable 
+interrupts.
+5.Copy the registers from where they were 
+saved to the process table.
+<20>
+Interrupt Handlers (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-60066396.Run the interrupt service procedure.
+7.Choose which process to run next.
+8.Set up the MMU context for the process to run 
+next.
+9.Load the new process’ registers, including its 
+PSW.
+10.Start running the new process.
+<21>
+•Logical positioning of device drivers is shown. 
+•Communications between drivers and device controllers 
+goes over the bus.Device Drivers
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<22>
+Functions of the device -independent I/O software.Device -Independent I/O Software
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<23>
+(a)Without a standard driver interface. 
+(b)With a standard driver interface.Uniform Interfacing for Device Drivers
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<24>
+(a)Unbuffered input.
+(b)Buffering in user space. 
+(c)Buffering in the kernel followed by copying to user space.
+(d)Double buffering in the kernel.Buffering (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<25>
+Networking may involve many copies of a packet.Buffering (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<26>
+Layers of the I/O system and the main functions of each layer.User -Space I/O Software
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<27>
+Magnetic Disks Overview
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<28>
+Figure 5 -18. Disk parameters for the original IBM PC 360 -KB 
+floppy disk and a Western Digital WD 18300 hard disk.Magnetic Disks (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<29>
+Figure 5 -19. (a) Physical geometry of a disk with two zones. 
+(b) A possible virtual geometry for this disk.Magnetic Disks (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<30>
+•RAID levels 0 through 2 
+•Backup and parity drives are shown shaded.RAID (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<31>
+•RAID levels 2 through 5.
+•Backup and parity drives are shown shaded.RAID (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<32>
+Recording structure of a compact disc or CD -ROM.CD-ROMs (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<33>
+Logical data layout on a CD -ROM.CD-ROMs (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<34>
+•Cross section of a CD -R disk and laser.
+• A silver CD -ROM has similar structure
+• without dye layer
+• with pitted aluminum layer instead of gold layerCD-Recordables (1) 
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<35>
+DVD (1)
+DVD Improvements on CDs
+1.Smaller pits 
+(0.4 microns versus 0.8 microns for CDs).
+2.A tighter spiral 
+(0.74 microns between tracks versus 1.6 
+microns for CDs).
+3.A red laser 
+(at 0.65 microns versus 0.78 microns for CDs).
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<36>
+DVD (2)
+DVD Formats
+1.Single -sided, single -layer (4.7 GB).
+2.Single -sided, dual -layer (8.5 GB).
+3.Double -sided, single -layer (9.4 GB).
+4.Double -sided, dual -layer (17 GB).
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<37>
+Figure 5 -24. A double -sided, dual -layer DVD disk.DVD (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<38>
+A disk sector.Disk Formatting (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<39>
+An illustration of cylinder skew.Disk Formatting (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<40>
+(a)No interleaving.
+(b)Single interleaving.
+(c)Double interleaving.Disk Formatting (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<41>
+Disk Arm Scheduling Algorithms (1)
+•Read/write time factors
+1.Seek time
+2.Rotational delay
+3.Actual data transfer time .
+•Seek time dominates
+•Error checking is done by controllers
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<42>
+Disk Arm Scheduling Algorithms (2)
+•First-in, first -out (FIFO)
+–Process request sequentially
+–Fair to all processes
+–Approaches random scheduling in performance if there 
+are many processes
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+Request order : 55 58 39 18 90 160 150 38 184
+<43>
+Disk Arm Scheduling Algorithms (3)
+•Shortest Service Time First
+–Select the disk I/O request that requires the least 
+movement of the disk arm from its current position
+–Always choose the minimum Seek time
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+Request order : 55 58 39 18 90 160 150 38 184
+<44>
+Disk Arm Scheduling Algorithms (4)
+•SCAN or elevator algorithm
+–Arm moves in one direction only, satisfying all 
+outstanding requests until it reaches the last track in that 
+direction
+–Direction is reversed
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+Request order : 55 58 39 18 90 160 150 38 184
+<45>
+Disk Arm Scheduling Algorithms (5)
+•C-SCAN
+–Restricts scanning to one direction only
+–When the last track has been visited in one direction, the 
+arm is returned to the opposite end of the disk and the 
+scan begins again
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+Request order : 55 58 39 18 90 160 150 38 184
+<46>
+Disk Arm Scheduling Algorithms (6)
+•N-step-SCAN
+– Segments the disk request queue into subqueues of length N
+– Subqueues are processed one at a time, using SCAN
+– New requests added to other queue when queue is processed
+•FSCAN
+– Two queues
+– One queue is empty for new requests
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<47>
+Comparison of disk arm scheduling 
+algorithms
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<48>
+(a)A disk track with a bad sector.
+(b)Substituting a spare for the bad sector. 
+(c)Shifting all the sectors to bypass the bad one.Error Handling
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<49>
+Stable Storage (1)
+Operations for stable storage using 
+identical disks:
+1.Stable writes
+2.Stable reads
+3.Crash recovery
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<50>
+Analysis of the influence of crashes on stable writes.Stable Storage (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<51>
+A programmable clock.Clock Hardware
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<52>
+Clock Software (1)
+Typical duties of a clock driver
+1.Maintaining the time of day.
+2.Preventing processes from running longer than 
+they are allowed to.
+3.Accounting for CPU usage.
+4.Handling alarm system call made by user 
+processes.
+5.Providing watchdog timers for parts of the 
+system itself.
+6.Doing profiling, monitoring, statistics gathering.
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<53>
+Three ways to maintain the time of day.Clock Software (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<54>
+Simulating multiple timers with a single clock.Clock Software (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<55>
+Soft Timers
+•Main system timer is used by OS
+•Second clock may be used by applications to 
+generate timer interrupts
+– No problems if interrupt frequency is low
+•Soft timers avoid interrupts
+– Kernel check for soft timer expiration before it exits to user mode
+– How well this works depends on rate of kernel entries
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<56>
+Character Oriented Terminals
+RS-232 Terminal Hareware
+• An RS -232 terminal communicates with computer 1 bit at a time
+• Called a serial line –bits go out in series, 1 bit at a time
+• Windows uses COM1 and COM2 ports, first to serial lines
+• Computer and terminal are completely independent
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<57>
+Keyboard Software (1)
+•Central buffer pool
+•Dedicated buffer for each terminal
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<58>
+Characters that are handled specially in canonical mode.Keyboard Software (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<59>
+The ANSI escape sequences accepted by the terminal driver on output.
+•ESC denotes the ASCII escape character (0x1B)
+•n, m, and sare optional numeric parameters.Keyboard Software (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<60>
+Memory -mapped displays
+•Driver writes directly into display’s video RAMDisplay Hardware (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<61>
+–simple monochrome display
+–character mode
+• Corresponding screen
+–the Xs are attribute bytesDisplay Hardware (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<62>
+•Keyboard driver delivers a number
+–driver converts to characters
+–uses a ASCII table
+•Exceptions, adaptations needed for other languages
+–many OS provide for loadable keymaps or code pagesInput Software
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<63>
+Clients and servers in the M.I.T. X Window System.The X Window System (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<64>
+The X Window System (2)
+Types of messages between client and server:
+1.Drawing commands from the program to the 
+workstation.
+2.Replies by the workstation to program queries.
+3.Keyboard, mouse, and other event 
+announcements.
+4.Error messages.
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<65>
+Figure 5 -38. A skeleton of an X Window application program.Graphical User Interfaces (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+. . .
+<66>
+Figure 5 -38. A skeleton of an X Window application program.Graphical User Interfaces (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639. . .
+
+<67>
+A sample window located at (200, 100) on an XGA display.Graphical User Interfaces (3)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<68>
+A skeleton of a Windows main program.Graphical User Interfaces (4)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+. . .
+<69>
+A skeleton of a Windows main program.Graphical User Interfaces (5)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639. . .
+<70>
+An example rectangle drawn using Rectangle . 
+Each box represents one pixel.Bitmaps (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<71>
+Copying bitmaps using BitBlt .
+(a)Before.
+(b)After.Bitmaps (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<72>
+Some examples of character outlines at different point sizes.True Type Fonts
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+<73>
+The architecture of the thin clients systemThin Clients (1)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<74>
+The THINC protocol display commands.Thin Clients (2)
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<75>
+Power consumption of various parts of a notebook computer.Power Management 
+Hardware Issues
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<76>
+The use of zones for backlighting the display. 
+(a) When window 2 is selected it is not moved. 
+(b) When window 1 is selected, it moves to reduce the  
+number of zones illuminated.Power Management 
+The Display
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639
+
+<77>
+(a)Running at full clock speed
+(b)Cutting voltage by two
+• cuts clock speed by two
+• power consumption by fourPower Management 
+The CPU
+Tanenbaum, Modern Operating Systems 3 e, (c) 2008 Prentice -Hall, Inc. All rights reserved. 0 -13-6006639

@@ -1,0 +1,378 @@
+
+<0>
+Introduction1-1Chapter 1IntroductionComputer Networking: A Top DownApproach A note on the use of these Powerpoint slides:We’re making these slides freely available to all (faculty, students, readers). They’re in PowerPoint form so you see the animations; and can add, modify, and delete slides  (including this one) and slide content to suit your needs. They obviously represent a lotof work on our part. In return for use, we only ask the following:§If you use these slides (e.g., in a class) that you mention their source (after all, we’d like people to use our book!)§If you post any slides on a www site, that you note that they are adapted from (or perhaps identical to) our slides, andnote our copyright of this material.Thanksand enjoy!  JFK/KWRAll material copyright 1996-2016J.F Kurose and K.W. Ross, All Rights Reserved
+7thedition Jim Kurose, Keith RossPearson/Addison WesleyApril 2016
+<1>
+IntroductionChapter 1: introductionour goal:§get “feel”and terminology§more depth, detail laterin course§approach:•use Internet as exampleoverview:§what’s the Internet?§what’s a protocol?§network edge; hosts, access net, physical media§network core: packet/circuit switching, Internet structure§performance: loss, delay, throughput§security§protocol layers, service models§history
+1-2
+<2>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5protocol layers, service models1.6networks under attack: security1.7history1-3
+<3>
+IntroductionWhat’s the Internet: “nuts and bolts”view§billions of connected computing devices: •hosts =end systems•running network apps§communication links•fiber, copper, radio, satellite•transmission rate: bandwidth§packet switches:forward packets (chunks of data)•routersand switcheswiredlinkswirelesslinks
+router
+smartphonePCserverwirelesslaptop
+1-4
+mobile networkglobal ISPregional ISPhome network
+institutionalnetwork
+
+<4>
+Introduction
+“Fun”Internet-connected devices
+IP picture framehttp://www.ceiva.com/Web-enabled toaster +weather forecaster
+Internet phones
+Internet refrigerator
+Slingbox: watch,control cable TV remotely
+1-5
+Tweet-a-watt: monitor energy use
+sensorized,bedmattress
+<5>
+Introduction§Internet: “network of networks”•Interconnected ISPs§protocolscontrol sending, receiving of messages•e.g., TCP, IP, HTTP, Skype,  802.11§Internet  standards•RFC: Request for comments•IETF: Internet Engineering Task ForceWhat’s the Internet: “nuts and bolts”view
+1-6
+mobile networkglobal ISPregional ISPhome network
+institutionalnetwork
+
+<6>
+What’s the Internet: a service view§infrastructure that provides services to applications:•Web, VoIP, email, games, e-commerce, social nets, …§provides programming interface to apps•hooks that allow sending and receiving  app programs to “connect”to Internet•provides service options, analogous to postal service
+Introduction1-7
+mobile networkglobal ISPregional ISPhome network
+institutionalnetwork
+
+<7>
+Introduction
+What’s a protocol?human protocols:§“what’s the time?”§“I have a question”§introductions… specific messages sent… specific actions taken when messages received, or other eventsnetwork protocols:§machines rather than humans§all communication activity in Internet governed by protocolsprotocolsdefine format, orderof messages sent and receivedamong network entities, and actions takenon message transmission, receipt1-8
+<8>
+Introductiona human protocol and a computer network protocol:
+Q:other human protocols? 
+HiHiGot thetime?2:00TCP connectionresponseGethttp://www.awl.com/kurose-ross<file>timeTCP connectionrequest
+What’s a protocol?
+1-9
+<9>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2 network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5protocol layers, service models1.6networks under attack: security1.7history1-10
+<10>
+IntroductionA closer look at network structure:§network edge:•hosts: clients and servers•servers often in data centers§access networks, physical media:wired, wireless communication links§network core: •interconnected routers•network of networks
+1-11
+mobile networkglobal ISPregional ISPhome network
+institutionalnetwork
+
+<11>
+IntroductionAccess networks and physical mediaQ: How to connect end systems to edge router?§residential access nets§institutional access networks (school, company)§mobile access networkskeep in mind: §bandwidth (bits per second) of access network?§shared or dedicated?
+1-12
+
+<12>
+ISP
+Introduction
+Access network: digital subscriber line (DSL)central officetelephonenetworkDSLAMvoice, data transmittedat different frequencies overdedicated line to central office§use existingtelephone line to central office DSLAM•data over DSL phone line goes to Internet•voice over DSL phone line goes to telephone net§< 2.5 Mbps upstream transmission rate (typically < 1 Mbps)§< 24 Mbps downstream transmission rate (typically < 10 Mbps)DSLmodemsplitterDSL access multiplexer
+1-13
+<13>
+IntroductionAccess network: cable networkcablemodemsplitter
+…cable headend
+ChannelsVIDEOVIDEOVIDEOVIDEOVIDEOVIDEODATADATACONTROL123456789frequency division multiplexing:different channels transmittedin different frequency bands
+1-14
+<14>
+ISP
+Introductiondata, TV transmitted at different frequencies over shared cable distribution networkcablemodemsplitter
+…cable headendCMTScable modemtermination system§HFC: hybrid fiber coax•asymmetric: up to 30Mbps downstream transmission rate, 2 Mbps upstream transmission rate§network of cable, fiber attaches homes to ISP router•homes share access networkto cable headend •unlike DSL, which has dedicated access to central officeAccess network: cable network
+1-15
+<15>
+IntroductionAccess network: home network
+to/from headend or central office
+cable or DSL modemrouter, firewall, NATwired Ethernet (1 Gbps)wireless access point (54 Mbps)wirelessdevices
+often combined in single box
+1-16
+
+<16>
+IntroductionEnterprise access networks (Ethernet)
+§typically used in companies, universities, etc.§10 Mbps, 100Mbps, 1Gbps, 10Gbps transmission rates§today, end systems typically connect into Ethernet switch
+Ethernet switchinstitutional mail,web serversinstitutional routerinstitutional link to ISP (Internet)
+1-17
+
+<17>
+IntroductionWireless access networks§shared wirelessaccess network connects end system to router•via base station aka “access point”
+wireless LANs:§within building (100 ft.)§802.11b/g/n (WiFi): 11, 54, 450 Mbps transmission ratewide-area wireless access§provided by telco (cellular) operator, 10’s km§between 1 and 10 Mbps §3G, 4G: LTE
+to Internetto Internet1-18
+
+<18>
+Host: sends packetsof datahost sending function:§takes application message§breaks into smaller chunks, known as packets, of length Lbits§transmits packet into access network at transmission rate R•link transmission rate, aka link capacity, aka link bandwidth
+R: link transmission ratehost
+12two packets, Lbits each
+packettransmissiondelaytime needed totransmit L-bitpacket into linkL(bits)R(bits/sec)==1-19Introduction
+<19>
+Introduction
+Physical media§bit:propagates betweentransmitter/receiver pairs§physical link:what lies between transmitter & receiver§guided media: •signals propagate in solid media: copper, fiber, coax§unguided media:•signals propagate freely, e.g., radiotwisted pair (TP)§two insulated copper wires•Category 5: 100 Mbps, 1 Gbps Ethernet•Category 6: 10Gbps
+1-20
+<20>
+Introduction
+Physical media: coax, fibercoaxial cable:§two concentric copper conductors§bidirectional§broadband:•multiple channels on cable•HFC
+fiber optic cable:§glass fiber carrying light pulses, each pulse a bit§high-speed operation:•high-speed point-to-point transmission (e.g., 10’s-100’s Gbps transmission rate)§low error rate: •repeaters spaced far apart •immune to electromagnetic noise
+1-21
+<21>
+Introduction
+Physical media: radio§signal carried in electromagnetic spectrum§no physical “wire”§bidirectional§propagation environment effects:•reflection •obstruction by objects•interferenceradio link types:§terrestrial  microwave•e.g. up to 45 Mbps channels§LAN(e.g., WiFi)•54 Mbps§wide-area(e.g., cellular)•4G cellular: ~ 10 Mbps§satellite•Kbps to 45Mbps channel (or multiple smaller channels)•270 msec end-end delay•geosynchronous versus low altitude1-22
+<22>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5protocol layers, service models1.6networks under attack: security1.7history1-23
+<23>
+Introduction§mesh of interconnected routers§packet-switching: hosts break application-layer messages into packets•forward packetsfrom one router to the next, across links on path from source to destination•each packet transmitted at full link capacityThe network core
+1-24
+
+<24>
+Introduction
+Packet-switching: store-and-forward§takes L/Rseconds to transmit (push out) L-bit packet into link at Rbps§store and forward:entire packet must  arrive at router before it can be transmitted on next linkone-hop numerical example:§L= 7.5 Mbits§R= 1.5 Mbps§one-hop transmission delay = 5 secmore on delay shortly …1-25source
+Rbps
+destination123Lbitsper packetRbps§end-end delay = 2L/R(assuming zero propagation delay)
+<25>
+IntroductionPacket Switching: queueing delay, lossABCR= 100 Mb/sR= 1.5 Mb/sDEqueue of packetswaiting for output link
+1-26queuing and loss: §if arrival rate (in bits) to link exceeds transmission rate of link for a period of time:•packets will queue, wait to be transmitted on link •packets can be dropped (lost) if memory (buffer) fills up
+
+<26>
+Two key network-core functionsforwarding:move packets from router’s input to appropriate router output
+Introduction1-27
+routing:determines source-destination route taken by packets§routing algorithmsrouting algorithmlocal forwarding tableheader valueoutput link010001010111100132211230111destination address in arrivingpacket’s header
+
+<27>
+IntroductionAlternative core: circuit switchingend-end resources allocated to, reserved for “call”between source & dest:§in diagram, each link has four circuits. •call gets 2ndcircuit in top link and 1stcircuit in right link.§dedicated resources: no sharing•circuit-like (guaranteed) performance§circuit segment idle if not used by call (no sharing)§commonly used in traditional telephone networks
+1-28
+
+<28>
+Introduction
+Circuit switching: FDM versusTDMFDMfrequencytimeTDMfrequencytime4 usersExample:
+1-29
+<29>
+Introduction
+Packet switching versus circuit switchingexample:§1 Mb/s link§each user: •100 kb/s when “active”•active 10% of time§circuit-switching:•10 users§packet switching:•with 35 users, probability > 10 active at same time is less than .0004 *packet switching allows more users to use network!Nusers1 Mbps linkQ:how did we get value 0.0004?Q:what happens if > 35 users ?…..
+1-30* Check out the online interactive exercises for more examples: http://gaia.cs.umass.edu/kurose_ross/interactive/
+<30>
+Introduction§great for bursty data•resource sharing•simpler, no call setup§excessive congestion possible:packet delay and loss•protocols needed for reliable data transfer, congestion control§Q:How to provide circuit-like behavior?•bandwidth guarantees needed for audio/video apps•still an unsolved problem (chapter 7)is packet switching a “slam dunk winner?”
+Q:human analogies of reserved resources (circuit switching) versus on-demand allocation (packet-switching)?
+Packet switching versus circuit switching
+1-31
+<31>
+Internet structure: network of networks
+§End systems connect to Internet via access ISPs (Internet Service Providers)•residential, company and university ISPs§Access ISPs in turn must be interconnected. •so that any two hosts can send packets to each other§Resulting network of networks is very complex•evolution was driven by economicsand national policies§Let’s take a stepwise approach to describe current Internet structure
+Introduction1-32
+<32>
+Internet structure: network of networksQuestion: given millionsof access ISPs, how to connect them together?
+accessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnetaccessnetaccessnet
+accessnetaccessnetaccessnet
+accessnetaccessnetaccessnet………………
+Introduction1-33
+<33>
+Internet structure: network of networksOption: connect each access ISP to every other access ISP? 
+accessnetaccessnet……………………connecting each access ISP to each other directly doesn’t scale: O(N2) connections.
+Introduction1-34accessnetaccessnetaccessnet
+accessnetaccessnetaccessnet…accessnet
+accessnetaccessnetaccessnet…accessnet
+accessnetaccessnetaccessnet…
+<34>
+Internet structure: network of networks
+accessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnetaccessnetaccessnet
+accessnetaccessnetaccessnet
+accessnetaccessnetaccessnet………………Option: connect each access ISP to one global transit ISP? Customerand provider ISPs have economic agreement.
+Introduction1-35globalISP
+
+<35>
+ISP C
+ISP B
+ISP A
+Internet structure: network of networks
+accessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnet………………But if one global ISP is viable business, there will be competitors ….
+Introduction1-36
+accessnet
+<36>
+ISP C
+ISP B
+ISP A
+Internet structure: network of networks
+accessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnet………………
+Introduction1-37
+accessnetBut if one global ISP is viable business, there will be competitors ….  which must be interconnectedIXPpeering linkInternet exchange point 
+IXP
+<37>
+ISP C
+ISP B
+ISP A
+Internet structure: network of networks
+accessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnet………………
+Introduction1-38
+accessnetIXPIXPaccessnetaccessnetaccessnet
+regional net… and regional networks may arise to connect access nets to ISPs 
+<38>
+ISP C
+ISP B
+ISP A
+Internet structure: network of networks
+accessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnet
+accessnetaccessnetaccessnetaccessnetaccessnet………………
+Introduction1-39
+accessnetIXPIXPaccessnetaccessnetaccessnet
+regional netContent provider network… and content provider networks  (e.g., Google, Microsoft,   Akamai) may run their own network, to bring services, content close to end users
+<39>
+IntroductionInternet structure: network of networks
+§at center: small # of well-connected large networks•“tier-1”commercial ISPs(e.g., Level 3, Sprint, AT&T, NTT), national & international coverage•content provider network (e.g., Google): private network that connects it data centers to Internet, often bypassing tier-1, regional ISPs
+1-40IXPIXPIXPTier 1 ISPTier 1 ISPGoogleRegional ISPRegional ISPaccessISPaccessISPaccessISPaccessISPaccessISPaccessISPaccessISPaccessISP
+<40>
+Introduction
+Tier-1 ISP: e.g., Sprint
+1-41…to/from customerspeeringto/from backbone…………POP: point-of-presence
+
+<41>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5protocol layers, service models1.6networks under attack: security1.7history1-42
+<42>
+AB
+Introduction
+How do loss and delay occur?packets queuein router buffers§packet arrival rate to link (temporarily) exceeds output link capacity§packets queue, wait for turnpacket being transmitted (delay)
+packets queueing(delay)free (available) buffers: arriving packets dropped (loss) if no free buffers1-43
+<43>
+Introduction
+Four sources of packet delay
+dproc: nodal processing§check bit errors§determine output link§typically < msecdqueue: queueing delay§time waiting at output link for transmission §depends on congestion level of router1-44
+propagationnodalprocessingqueueingdnodal= dproc+ dqueue+ dtrans+  dpropAB
+transmission
+
+<44>
+Introductiondtrans: transmission delay:§L: packet length (bits) §R: link bandwidth (bps)§dtrans= L/Rdprop: propagation delay:§d: length of physical link§s: propagation speed (~2x108m/sec)§dprop= d/s
+Four sources of packet delay
+1-45* Check out the Java applet for an interactive animation on trans vs. prop delaydtrans and dpropvery different* Check out the online interactive exercises for more examples: http://gaia.cs.umass.edu/kurose_ross/interactive/
+propagationnodalprocessingqueueingdnodal= dproc+ dqueue+ dtrans+  dpropAB
+transmission
+
+<45>
+Introduction
+Caravan analogy§cars “propagate”at 100 km/hr§toll booth takes 12 sec to service car (bit transmission time)§car ~ bit; caravan ~ packet§Q:How long until caravan is lined up before 2nd toll booth?§time to “push”entire caravan through toll booth onto highway = 12*10 = 120 sec§time for last car to propagate from 1st to 2nd toll both: 100km/(100km/hr)= 1 hr§A:62 minutestoll boothtoll boothten-car caravan100 km100 km
+1-46
+<46>
+Introduction
+Caravan analogy (more)§suppose cars now “propagate”at 1000 km/hr§and suppose toll booth now takes one min to service a car§Q:Will cars arrive to 2nd booth before all cars serviced at first booth?•A: Yes!after 7 min, first car arrives at second booth; three cars still at first boothtoll boothtoll boothten-car caravan100 km100 km
+1-47
+<47>
+Introduction
+§R:link bandwidth (bps)§L:packet length (bits)§a: average packet arrival ratetraffic intensity = La/R§La/R~ 0: avg. queueing delay small§La/R -> 1: avg. queueing delay large§La/R > 1: more “work”arriving than can be serviced, average delay infinite!
+average  queueing delay
+La/R ~ 0La/R -> 11-48* Check online interactive animation on queuing and loss
+Queueing delay (revisited)
+<48>
+Introduction
+“Real”Internet delays and routes§what do “real”Internet delay & loss look like? §tracerouteprogram: provides delay measurement from source to router along end-end Internet path towards destination.  For all i:•sends three packets that will reach router ion path towards destination•router iwill return packets to sender•sender times interval between transmission and reply.3 probes3 probes3 probes
+1-49
+
+<49>
+Introduction“Real”Internet delays, routes1  cs-gw (128.119.240.254)  1 ms  1 ms  2 ms2  border1-rt-fa5-1-0.gw.umass.edu (128.119.3.145)  1 ms  1 ms  2 ms3  cht-vbns.gw.umass.edu (128.119.3.130)  6 ms 5 ms 5 ms4  jn1-at1-0-0-19.wor.vbns.net (204.147.132.129)  16 ms 11 ms 13 ms 5  jn1-so7-0-0-0.wae.vbns.net (204.147.136.136)  21 ms 18 ms 18 ms 6  abilene-vbns.abilene.ucaid.edu (198.32.11.9)  22 ms  18 ms  22 ms7  nycm-wash.abilene.ucaid.edu (198.32.8.46)  22 ms  22 ms  22 ms8  62.40.103.253 (62.40.103.253)  104 ms 109 ms 106 ms9  de2-1.de1.de.geant.net (62.40.96.129)  109 ms 102 ms 104 ms10  de.fr1.fr.geant.net (62.40.96.50)  113 ms 121 ms 114 ms11  renater-gw.fr1.fr.geant.net (62.40.103.54)  112 ms  114 ms  112 ms12  nio-n2.cssi.renater.fr (193.51.206.13)  111 ms  114 ms  116 ms13  nice.cssi.renater.fr (195.220.98.102)  123 ms  125 ms  124 ms14  r3t2-nice.cssi.renater.fr (195.220.98.110)  126 ms  126 ms  124 ms15  eurecom-valbonne.r3t2.ft.net (193.48.50.54)  135 ms  128 ms  133 ms16  194.214.211.25 (194.214.211.25)  126 ms  128 ms  126 ms17  * * *18  * * *19  fantasia.eurecom.fr (193.55.113.142)  132 ms  128 ms  136mstraceroute:gaia.cs.umass.edu to www.eurecom.fr3 delay measurements from gaia.cs.umass.edu to cs-gw.cs.umass.edu 
+* means no response (probe lost, router not replying)trans-oceaniclink
+1-50* Do some traceroutes from exotic countries at www.traceroute.org
+<50>
+IntroductionPacket loss§queue (aka buffer) preceding link in buffer has finite capacity§packet arriving to full queue dropped (aka lost)§lost packet may be retransmitted by previous node, by source end system, or not at allABpacket being transmittedpacket arriving tofull buffer is lostbuffer (waiting area)
+1-51* Check out the Java applet for an interactive animation on queuing and loss
+<51>
+Introduction
+Throughput§throughput:rate (bits/time unit) at which bits transferred between sender/receiver•instantaneous:rate at given point in time•average:rate over longer period of timeserver, withfile of F bits to send to clientlink capacityRsbits/seclink capacityRcbits/secserver sends bits (fluid) into pipepipe that can carryfluid at rateRsbits/sec)pipe that can carryfluid at rateRcbits/sec)
+1-52
+<52>
+Introduction
+Throughput (more)§Rs< RcWhat is average end-end throughput?Rsbits/secRcbits/sec§Rs> RcWhat is average end-end throughput?link on end-end path that constrains  end-end throughputbottleneck link
+Rsbits/secRcbits/sec
+1-53
+<53>
+IntroductionThroughput: Internet scenario
+10 connections (fairly) share backbone bottleneck link Rbits/secRsRsRsRcRcRcR§per-connection end-end throughput: min(Rc,Rs,R/10)§in practice: Rcor Rsis often bottleneck
+1-54* Check out the online interactive exercises for more examples: http://gaia.cs.umass.edu/kurose_ross/interactive/
+<54>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5 protocol layers, service models1.6networks under attack: security1.7history1-55
+<55>
+Introduction
+Protocol “layers”Networks are complex,with many “pieces”:§hosts§routers§links of various media§applications§protocols§hardware, softwareQuestion:is there any hope of organizingstructure of network?…. or at least our discussion of networks?
+1-56
+<56>
+Introduction
+Organization of air travel
+§a series of stepsticket (purchase)baggage (check)gates (load)runway takeoffairplane routingticket (complain)baggage (claim)gates (unload)runway landingairplane routingairplane routing
+1-57
+<57>
+Introduction
+ticket (purchase)baggage (check)gates (load)runway (takeoff)airplane routingdepartureairportarrivalairportintermediate air-trafficcontrol centersairplane routingairplane routingticket (complain)baggage (claimgates (unload)runway (land)airplane routing
+ticketbaggagegatetakeoff/landingairplane routingLayering of airline functionality
+layers:each layer implements a service§via its own internal-layer actions§relying on services provided by layer below1-58
+<58>
+Introduction
+Why layering?dealing with complex systems:§explicit structure allows identification, relationship of complex system’s pieces•layered reference modelfor discussion§modularization eases maintenance, updating of system•change of implementation of layer’s service transparent to rest of system•e.g., change in gate procedure doesn’t affect rest of system§layering considered harmful?1-59
+<59>
+Introduction
+Internet protocol stack§application:supporting network applications•FTP, SMTP, HTTP§transport:process-process data transfer•TCP, UDP§network:routing of datagrams from source to destination•IP, routing protocols§link:data transfer between neighboring  network elements•Ethernet, 802.111 (WiFi), PPP§physical:bits “on the wire”applicationtransportnetworklinkphysical
+1-60
+<60>
+IntroductionISO/OSI reference model§presentation:allow applications to interpret meaning of data, e.g., encryption, compression, machine-specific conventions§session:synchronization, checkpointing, recovery of data exchange§Internet stack “missing”these layers!•these services, if needed,must be implemented in application•needed?applicationpresentationsessiontransportnetworklinkphysical
+1-61
+<61>
+Introduction
+sourceapplicationtransportnetworklinkphysicalHtHnMsegmentHtdatagram
+destinationapplicationtransportnetworklinkphysicalHtHnHlMHtHnMHtMMnetworklinkphysicallinkphysical
+HtHnHlMHtHnMHtHnMHtHnHlM
+routerswitchEncapsulationmessageMHtMHnframe
+1-62
+<62>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5protocol layers, service models1.6 networks under attack: security1.7history1-63
+<63>
+Introduction
+Network security§field of network security:•how bad guys can attack computer networks•how we can defend networks against attacks•how to design architectures that are immune to attacks§Internet not originally designed with (much) security in mind•original vision:“a group of mutually trusting users attached to a transparent network”J•Internet protocol designers playing “catch-up”•security considerations in all layers!
+1-64
+<64>
+Introduction
+Bad guys: put malware into hosts via Internet§malware can get in host from:•virus: self-replicating infection by receiving/executing  object (e.g., e-mail attachment)•worm: self-replicating infection by passively receiving object that gets itself executed§spyware malwarecan record keystrokes, web sites visited, upload info to collection site§infected host can be enrolled in  botnet,used for spam. DDoS attacks1-65
+<65>
+Introduction
+targetDenial of Service (DoS):attackers make resources (server, bandwidth) unavailable to legitimate traffic by overwhelming resource with bogus traffic1.select target2.break into hosts around the network (see botnet)3.send packets to target from compromised hostsBad guys: attack server, network infrastructure
+1-66
+<66>
+Introduction
+Bad guys can sniff packetspacket “sniffing”:§broadcast media (shared Ethernet, wireless)§promiscuous network interface reads/records all packets (e.g., including passwords!) passing byABCsrc:B dest:A     payload§wireshark software used for end-of-chapter labs is a (free) packet-sniffer
+1-67
+
+<67>
+Introduction
+Bad guys can use fake addressesIP spoofing:send packet with false source addressABCsrc:Bdest:A     payload
+1-68… lots more on security (throughout, Chapter 8)
+
+<68>
+Introduction
+Chapter 1: roadmap1.1 what isthe Internet?1.2network edge§end systems, access networks, links1.3 network core§packet switching, circuit switching, network structure1.4 delay, loss, throughput in networks1.5protocol layers, service models1.6networks under attack: security1.7 history1-69
+<69>
+Introduction
+Internet history§1961:Kleinrock -queueing theory shows effectiveness of packet-switching§1964:Baran -packet-switching in military nets§1967:ARPAnet conceived by Advanced Research Projects Agency§1969:first ARPAnet node operational§1972:•ARPAnet public demo•NCP (Network Control Protocol) first host-host protocol •first e-mail program•ARPAnet has 15 nodes1961-1972: Early packet-switching principles
+1-70
+<70>
+Introduction§1970:ALOHAnet satellite network in Hawaii§1974:Cerf and Kahn -architecture for interconnecting networks§1976:Ethernet at Xerox PARC§late70’s:proprietary architectures: DECnet, SNA, XNA§late 70’s:switching fixed length packets (ATM precursor)§1979:ARPAnet has 200 nodesCerf and Kahn’s internetworking principles:•minimalism, autonomy -no internal changes required to interconnect networks•best effort service model•stateless routers•decentralized controldefine today’s Internet architecture1972-1980: Internetworking, new and proprietary netsInternet history
+1-71
+<71>
+Introduction§1983:deployment of TCP/IP§1982:smtp e-mail protocol defined §1983:DNS defined for name-to-IP-address translation§1985:ftp protocol defined§1988:TCP congestion control§new national networks: CSnet, BITnet, NSFnet, Minitel§100,000 hosts connected to confederation of networks1980-1990: new protocols, a proliferation of networksInternet history
+1-72
+<72>
+Introduction§early 1990’s:ARPAnet decommissioned§1991:NSF lifts restrictions on commercial use of NSFnet (decommissioned, 1995)§early 1990s:Web•hypertext [Bush 1945, Nelson 1960’s]•HTML, HTTP: Berners-Lee•1994: Mosaic, later Netscape•late 1990’s: commercializationof the Weblate 1990’s –2000’s:§more killer apps: instant messaging, P2P file sharing§network security to forefront§est. 50 million host, 100 million+ users§backbone links running at Gbps1990, 2000’s: commercialization, the Web, new appsInternet history
+1-73
+<73>
+Introduction2005-present§~5B devices attached to Internet (2016)•smartphones and tablets§aggressive deployment of broadband access§increasing ubiquity of high-speed wireless access§emergence of online social networks: •Facebook: ~ one billion users§service providers (Google, Microsoft) create their own networks•bypass  Internet, providing “instantaneous”access to search, video content, email, etc.§e-commerce, universities, enterprises running their services in “cloud”(e.g., Amazon EC2)Internet history
+1-74
+<74>
+Introduction
+Introduction: summarycovered a “ton”of material!§Internet overview§what’s a protocol?§network edge, core, access network•packet-switching versus circuit-switching•Internet structure§performance: loss, delay, throughput§layering, service models§security§historyyou now have:§context, overview, “feel”of networking§more depth, detail to follow!
+1-75
+<75>
+Introduction1-76Chapter 1Additional Slides
+<76>
+Transport(TCP/UDP)Network(IP)Link(Ethernet)Physical
+application(www browser, email client)applicationOS
+packetcapture(pcap)
+packetanalyzer
+copy of all Ethernet frames sent/received
