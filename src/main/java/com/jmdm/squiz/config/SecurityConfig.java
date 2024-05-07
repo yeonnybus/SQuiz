@@ -85,7 +85,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/h2-console/**", "/swagger-ui/**", "/api/**", "/", "/v3/api-docs/**", "10.0.83.237:3000/api/**", "/login/**").permitAll()
+                        .requestMatchers("/h2-console/**", "/swagger-ui/**", "/api/**", "/", "/v3/api-docs/**", "10.0.83.237:3000/api/**", "/login/**", "/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN") // ADMIN이라는 권한을 갖고 있는 사용자만 접근 가능
                         .requestMatchers(HttpMethod.GET, "/api/post/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts").permitAll()

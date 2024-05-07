@@ -4,7 +4,7 @@ import com.jmdm.squiz.dto.EmailCertificationRequest;
 import com.jmdm.squiz.dto.EmailCertificationResponse;
 import com.jmdm.squiz.service.MailSendService;
 import com.jmdm.squiz.service.MailVerifyService;
-import com.jmdm.squiz.utils.ApiResponse;
+import com.jmdm.squiz.utils.ApiResponseEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,7 +42,7 @@ class MailControllerTest {
         request.setEmail("suacho0724@gmail.com");
 
         // Call the controller method
-        ResponseEntity<ApiResponse<EmailCertificationResponse>> result = mailController.sendCertificationNumber(request);
+        ResponseEntity<ApiResponseEntity<EmailCertificationResponse>> result = mailController.sendCertificationNumber(request);
 
         // Verify that the response is as expected
         assert result.getStatusCode().equals(HttpStatus.OK);

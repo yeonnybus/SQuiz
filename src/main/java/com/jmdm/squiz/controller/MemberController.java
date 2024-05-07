@@ -2,26 +2,18 @@ package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.domain.Member;
 import com.jmdm.squiz.dto.EmailCertificationRequest;
-import com.jmdm.squiz.dto.EmailCertificationResponse;
 import com.jmdm.squiz.dto.MemberDTO;
 import com.jmdm.squiz.exception.SuccessCode;
-import com.jmdm.squiz.service.CertificationGenerator;
-import com.jmdm.squiz.service.MailSendService;
-import com.jmdm.squiz.service.MailVerifyService;
 import com.jmdm.squiz.service.MemberService;
-import com.jmdm.squiz.utils.ApiResponse;
+import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -34,34 +26,34 @@ public class MemberController {
     @Tag(name = "회원가입 API", description = "아이디가 중복을 체크하고 회원가입을 하는 API입니다.")
     @GetMapping("/check-id-duplication")
     @Operation(summary = "아이디 중복 체크", description = "parameter로 아이디를 받아서 중복 체크하는 API")
-    public ResponseEntity<ApiResponse<Void>> checkIdDuplication(
+    public ResponseEntity<ApiResponseEntity<Void>> checkIdDuplication(
             @RequestParam(name = "memberId") String memberId
     ) {
         memberService.checkDuplication(memberId);
-        return ResponseEntity.ok(ApiResponse.ok(SuccessCode.SUCCESS));
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS));
     }
 
     @Tag(name = "회원가입 API", description = "아이디가 중복을 체크하고 회원가입을 하는 API입니다.")
     @PostMapping("/join")
     @Operation(summary = "회원가입", description = "json으로 사용자 정보를 받아 회원가입을 진행하는 API")
-    public ResponseEntity<ApiResponse<Member>> joinMember(@Valid @RequestBody MemberDTO request) {
+    public ResponseEntity<ApiResponseEntity<Member>> joinMember(@Valid @RequestBody MemberDTO request) {
         Member response = memberService.joinMember(request);
-        return ResponseEntity.ok(ApiResponse.ok(SuccessCode.SUCCESS, response, "db에 저장된 값"));
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "db에 저장된 값"));
     }
     @Tag(name = "ID/PW찾기 API", description = "ID/PW 찾는 API입니다.")
     @PostMapping("/find-id")
     @Operation(summary = "ID 찾기", description = "이메일 인증 후 이메일을 body로 받아서 아이디를 반환하는 API")
-    public ResponseEntity<ApiResponse<Map<String, String>>> findId(@Valid @RequestBody EmailCertificationRequest request) {
+    public ResponseEntity<ApiResponseEntity<Map<String, String>>> findId(@Valid @RequestBody EmailCertificationRequest request) {
         Map<String, String> response = memberService.findMemberId(request.getEmail());
-        return ResponseEntity.ok(ApiResponse.ok(SuccessCode.SUCCESS, response, "요청한 아이디"));
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "요청한 아이디"));
     }
     @Tag(name = "ID/PW찾기 API", description = "ID/PW 찾는 API입니다.")
     @PostMapping("/find-pw")
     @Operation(summary = "PW 찾기", description = "이메일 인증 후에 아이디를 입력 받으면 새로운 비밀번호를 생성하는 API입니다.")
-    public ResponseEntity<ApiResponse<Map<String, String>>> findPW(@Valid @RequestBody EmailCertificationRequest request)
+    public ResponseEntity<ApiResponseEntity<Map<String, String>>> findPW(@Valid @RequestBody EmailCertificationRequest request)
             throws MessagingException {
         Map<String, String> response = memberService.createNewPw(request.getEmail());
-        return ResponseEntity.ok(ApiResponse.ok(SuccessCode.SUCCESS, response, "새로운 비밀번호 생성 완료"));
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "새로운 비밀번호 생성 완료"));
     }
 
 

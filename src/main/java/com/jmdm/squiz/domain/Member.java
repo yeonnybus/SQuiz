@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Setter
 @Getter
+@ToString
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
