@@ -3,6 +3,8 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import styled from "styled-components";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
+import { registerMember } from "../api/axios";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -44,37 +46,71 @@ const InlineContainer = styled.div`
 `;
 
 const Register2: React.FC = () => {
-  const [name, setName] = useState<string>("");
-  const [userId, setUserId] = useState<string>("");
-  const [userPw, setUserPw] = useState<string>("");
-  const [userPw2, setUserPw2] = useState<string>("");
+  const [memberName, setMemberName] = useState<string>("");
+  const [memberId, setMemberId] = useState<string>("");
+  const [memberPw, setMemberPw] = useState<string>("");
+  const [memberPw2, setMemberPw2] = useState<string>("");
+  const location = useLocation();
+  //const memberEmail = location.state.value;
+  const [role, setRole] = useState("1");
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+  // 사용가 입력한 이름을 memberName state에 저장
+  const handlememberNameChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setMemberName(event.target.value);
   };
+
+  // 사용가 입력한 Id를 memberId state에 저장
   const handleIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserId(event.target.value);
+    setMemberId(event.target.value);
   };
 
+  // 사용가 입력한 password를 memberPw state에 저장
   const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserPw(event.target.value);
+    setMemberPw(event.target.value);
   };
+
+  // 사용자가 입력한 pw 확인을 memberPw2 state에 저장
   const handlePassword2Change = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setUserPw2(event.target.value);
+    setMemberPw2(event.target.value);
   };
 
-  const requestIdCheck = () => {
-    alert("사용 가능한 아이디입니다.");
-    // 인증코드 요청 로직 구현
-  };
+  // id 중복체크 api 통신
+  async function handleIdCheck() {
+    try {
+      // axios.get을 사용하여 서버에 요청을 보냄
 
-  async function handleLoadNext() {
-    const res = await axios.post(
-      "http://10.0.0.61:8080/login?username=admin&password=1234"
-    );
+      const response = await axios.get(
+        `http://10.0.68.25:8080/api/v1/member/check-id-duplication?memberId=${memberId}`
+      );
+
+      // 서버의 응답 처리
+      // 응답 구조 및 처리 방법은 API의 구현에 따라 다를 수 있음
+      alert("사용 가능한 ID입니다 ㅊㅋㅊㅋ");
+    } catch (error) {
+      // 에러 처리
+      if (axios.isAxiosError(error)) {
+        //console.log("ID 중복 검사 중 에러 발생:", error.response?.status);
+        alert("중복된 ID 입니당!!!!!!");
+      }
+    }
   }
+  /*
+  const handleRegister = async () => {
+    try {
+      await registerMember(memberEmail, memberName, memberId, memberPw, role);
+      alert("회원가입 성공.");
+      // 회원가입 성공 후 필요한 로직 추가 (예: 로그인 페이지로 리다이렉트)
+    } catch (error) {
+      alert("회원가입 실패.");
+    }
+  };
+*/
+
+  const handleRegister = async () => {};
 
   return (
     <CenteredContainer>
@@ -84,19 +120,19 @@ const Register2: React.FC = () => {
           <div>이름</div>
           <TextField
             variant="outlined"
-            value={name}
+            value={memberName}
             InputProps={{
               style: {
                 borderRadius: "16px",
               },
             }}
-            onChange={handleNameChange}
+            onChange={handlememberNameChange}
           />
           <div>아이디</div>
           <InlineContainer>
             <TextField
               variant="outlined"
-              value={userId}
+              value={memberId}
               color="secondary"
               sx={{ width: "95ch" }}
               InputProps={{
@@ -117,7 +153,7 @@ const Register2: React.FC = () => {
                 ":hover": { background: "#ffc450", color: "black" },
                 width: "30ch",
               }}
-              onClick={requestIdCheck}
+              onClick={handleIdCheck}
             >
               중복 확인
             </Button>
@@ -125,8 +161,9 @@ const Register2: React.FC = () => {
 
           <div>비밀번호</div>
           <TextField
+            type="password"
             variant="outlined"
-            value={userPw}
+            value={memberPw}
             InputProps={{
               style: {
                 borderRadius: "16px",
@@ -134,10 +171,12 @@ const Register2: React.FC = () => {
             }}
             onChange={handlePasswordChange}
           />
+
           <div>비밀번호확인</div>
           <TextField
+            type="password"
             variant="outlined"
-            value={userPw2}
+            value={memberPw2}
             InputProps={{
               style: {
                 borderRadius: "16px",
@@ -157,7 +196,7 @@ const Register2: React.FC = () => {
             borderRadius: "16px",
             ":hover": { background: "#ffc450", color: "black" },
           }}
-          onClick={handleLoadNext}
+          onClick={handleRegister}
         >
           회원가입
         </Button>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { login } from "../api/axios";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -28,10 +29,20 @@ const LoginPage: React.FC = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
 
-  const handleLogin = () => {
-    console.log("로그인 로직 처리", username, password);
-    // 로그인 로직 처리
+  // 로그인 함수
+  const handleLogin = async () => {
+    try {
+      const token = await login(username, password);
+      console.log("Login successful. JWT Token:", token);
+      // JWT 토큰을 로컬 스토리지에 저장
+      localStorage.setItem("authToken", token);
+      // 로그인 성공 후 로직 (예: 메인 페이지로 리다이렉트)
+    } catch (error) {
+      setLoginError("Login failed. Please try again.");
+      alert("Login failed.");
+    }
   };
 
   return (
@@ -61,6 +72,7 @@ const LoginPage: React.FC = () => {
           }}
           onChange={(e) => setPassword(e.target.value)}
         />
+        {loginError && <p>{loginError}</p>}
         <Button
           variant="contained"
           size="large"

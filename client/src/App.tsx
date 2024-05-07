@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Register2 from "./pages/Register2";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
+import FindId from "./pages/FindId";
 
 function App() {
   return (
@@ -11,8 +12,9 @@ function App() {
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/register2" element={<Register2 />} />
-        <Route path="/aa" element={<MainPage />} />
-        <Route path="/loginpage" element={<LoginPage />} />
+        <Route path="/main" element={<MainPage />} />
+        <Route path="/find-id" element={<FindId />} />
+        <Route path="/" element={<LoginPage />} />
       </Routes>
     </div>
   );

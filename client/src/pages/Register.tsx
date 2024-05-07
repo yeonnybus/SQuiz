@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import styled from "styled-components";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { sendEmailCertification, verifyEmailCertification } from "../api/axios";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -14,7 +16,7 @@ const CenteredContainer = styled.div`
     #f8df9d,
     #f7f0ba,
     #e2f3b4
-  ); // 여기에 그라데이션 적용
+  ); // 여기에 그라데이션 적용z
   font-family: "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -46,30 +48,44 @@ const InlineContainer = styled.div`
 const Register: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
+  const navigate = useNavigate();
 
+  // 사용가 입력한 이메일을 email state에 저장
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
+
+  // 사용자가 입력한 인증코드를 verficationCode state에 저장
   const handleVerificationCodeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setVerificationCode(event.target.value);
   };
 
-  const requestVerificationCode = () => {
-    alert("인증코드 요청");
-    // 인증코드 요청 로직 구현
+  // 인증코드 요청 onclick 동작 함수
+  const requestVerificationCode = async () => {
+    try {
+      await sendEmailCertification(email);
+      alert("이메일 인증 요청을 성공적으로 보냈습니다.");
+    } catch (error) {
+      alert("이메일 인증 요청에 실패했습니다.");
+    }
   };
 
-  //   const verifyCode = () => {
-  //     alert("인증하기");
-  //     // 인증 로직 구현
-  //   };
+  //다음 페이지로 넘어가기. 인증번호가 맞으면 넘어갈 수 있도록 해야함!
 
-  const navigate = useNavigate();
-  const goToRegi2 = () => {
-    navigate("/register2");
+  const handleVerifyEmail = async () => {
+    try {
+      await verifyEmailCertification(email, verificationCode);
+      alert("Email verification successful.");
+      navigate("/register2", { state: { email: email } }); // 인증 성공 후 /register2 페이지로 이동
+    } catch (error) {
+      alert("Failed to verify email.");
+    }
   };
+
+  // 인증하기 버튼
+  // 인증 후 리스폰스에 따라 다음페이지로 넘어가도록 구현해야함
 
   return (
     <CenteredContainer>
@@ -129,7 +145,7 @@ const Register: React.FC = () => {
             borderRadius: "16px",
             ":hover": { background: "#ffc450", color: "black" },
           }}
-          onClick={goToRegi2}
+          onClick={handleVerifyEmail}
         >
           인증하기
         </Button>
