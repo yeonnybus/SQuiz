@@ -1,8 +1,10 @@
 package com.jmdm.squiz.service;
 
 import com.jmdm.squiz.domain.Pdf;
+import com.jmdm.squiz.dto.PdfDTO;
 import com.jmdm.squiz.repository.PdfRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,16 +35,26 @@ public class PdfUploadService {
         return uuid + "." + ext;
     }
 
-    public void uploadPdf(String memberId, MultipartFile pdf) throws IOException {
+    private int getPageCount(MultipartFile pdf) throws IOException {
+        PDDocument document = PDDocument.load(pdf.getInputStream());
+        int pageCount = document.getNumberOfPages();
+        document.close();
+        return pageCount;
+    }
+
+    public PdfDTO uploadPdf(String memberId, MultipartFile pdf) throws IOException {
         if (pdf.isEmpty()) {
-            return;
+            return null;
         }
         String uploadFileName = pdf.getOriginalFilename();
         String storedFileName = createStoredFileName(uploadFileName);
         String storedPath = getFullPath(storedFileName);
+        int totalPageCount = getPageCount(pdf);
         pdf.transferTo(new File(storedPath));
-        Pdf storedPdf = Pdf.setPdf(memberId, uploadFileName, storedFileName,storedPath);
+        Pdf storedPdf = Pdf.setPdf(memberId, uploadFileName, storedFileName,storedPath, totalPageCount);
+        PdfDTO pdfDTO = PdfDTO.setPdfDTO(storedFileName, uploadFileName, totalPageCount);
         pdfRepository.save(storedPdf);
+        return pdfDTO;
         // 업로드 파일명, 서버 저장 명 선언 및 초기화
         //application.yml에 file 저장 dir 선언 후 그 경로로
     }

@@ -24,12 +24,17 @@ public class Pdf {
     @Column
     private String pdfMetaData;
 
-    public static Pdf setPdf(String uploadMemberId, String uploadFileName, String storedFileName, String pdfMetaData) {
+    @Column
+    private int totalPageCount;
+
+    public static Pdf setPdf(String uploadMemberId, String uploadFileName, String storedFileName,
+                             String pdfMetaData, int totalPageCount) {
         Pdf pdf = new Pdf();
         pdf.setUploadMemberId(uploadMemberId);
         pdf.setUploadFileName(uploadFileName);
         pdf.setStoredFileName(storedFileName);
         pdf.setPdfMetaData(pdfMetaData);
+        pdf.setTotalPageCount(totalPageCount);
         return pdf;
     }
 

@@ -33,13 +33,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             JsonNode jsonNode = objectMapper.readTree(request.getReader());
 
             String username = jsonNode.get("username").asText();
-            System.out.println("username = " + username);
-
             String password = jsonNode.get("password").asText();
-            System.out.println("password = " + password);
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
-            System.out.println("인증 전");
             return authenticationManager.authenticate(authToken);
         } catch (IOException e) {
             throw new AuthenticationServiceException("Error reading request body", e);
@@ -61,7 +57,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(username, role, 60*60*10L);
+        String token = jwtUtil.createJwt(username, role, 60*60*1000L);
 
         response.addHeader("Authorization", "Bearer " + token);
 

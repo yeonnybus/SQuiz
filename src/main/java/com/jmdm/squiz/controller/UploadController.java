@@ -1,6 +1,7 @@
 package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.CustomUserDetails;
+import com.jmdm.squiz.dto.PdfDTO;
 import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.service.PdfUploadService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
@@ -24,21 +25,12 @@ public class UploadController {
 
     @PostMapping(name = "/upload-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "pdf 업로드 API",
-                description = "multipart/form-data로 pdf 파일을 입력 받아 업로드하는 API입니다.")
-    public ResponseEntity<ApiResponseEntity<Void>> uploadPdf(@RequestPart(name = "file", required = false) MultipartFile file)
-    throws IOException {
-        pdfUploadService.uploadPdf("sua", file);
-        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS));
-    }
-// 파일 디렉토리 서버로 바꾸고 아래처럼 CustomUserDetails로 받아와야댐~ 또한 엔티티끼리 의존성도 연결해야댐
-    @PostMapping("/upload-pdf2")
-    @Operation(summary = "pdf 업로드 API2",
-            description = "multipart/form-data로 pdf 파일을 입력 받아 업로드하는 API입니다.")
-    public ResponseEntity<ApiResponseEntity<Void>> uploadPdf(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestPart("file" )MultipartFile file)
+            description = "multipart/form-data로 pdf 파일을 입력 받아 업로드하는 API입니다. jwt 토큰 헤더에 보내야합니다~")
+    public ResponseEntity<ApiResponseEntity<PdfDTO>> uploadPdf(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestPart(name = "file", required = false ) MultipartFile file)
             throws IOException {
         String memberId = userDetails.getUsername();
-        pdfUploadService.uploadPdf(memberId, file);
-        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS));
+        PdfDTO pdfDTO = pdfUploadService.uploadPdf(memberId, file);
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, pdfDTO, "업로드한 pdf 관련 정보입니다."));
     }
 
 }
