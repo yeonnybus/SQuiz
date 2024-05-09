@@ -5,6 +5,7 @@ import Register2 from "./pages/Register2";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import FindId from "./pages/FindId";
+import FindPw from "./pages/FindPw";
 
 function App() {
   return (
@@ -13,7 +14,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/register2" element={<Register2 />} />
         <Route path="/main" element={<MainPage />} />
-        <Route path="/find-id" element={<FindId />} />
+        <Route path="/findid" element={<FindId />} />
+        <Route path="/findpw" element={<FindPw />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </div>

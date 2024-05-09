@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button, TextField, Box } from "@mui/material";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/axios";
@@ -39,6 +39,7 @@ const LoginPage: React.FC = () => {
       // JWT 토큰을 로컬 스토리지에 저장
       localStorage.setItem("authToken", token);
       // 로그인 성공 후 로직 (예: 메인 페이지로 리다이렉트)
+      navigate("main"); // 인증 성공 후 /register2 페이지로 이동
     } catch (error) {
       setLoginError("Login failed. Please try again.");
       alert("Login failed.");
@@ -96,16 +97,35 @@ const LoginPage: React.FC = () => {
         >
           회원가입
         </Button>
-        <Button
+        <Box
           sx={{
-            m: 1,
-            color: "gray",
-            ":hover": { color: "#ffc450" },
+            display: "flex", // 이 줄을 추가하여 flexbox를 활성화합니다.
+            justifyContent: "center", // 버튼들을 가운데 정렬합니다. 필요에 따라 'flex-start', 'flex-end', 'space-between' 등으로 변경 가능합니다.
+            alignItems: "center", // 버튼들을 세로 방향으로 중앙에 위치시킵니다.
+            m: 1, // 마진을 추가합니다. 필요에 따라 조정하세요.
           }}
-          onClick={() => navigate("/find-id")}
         >
-          ID 찾기
-        </Button>
+          <Button
+            sx={{
+              m: 1,
+              color: "gray",
+              ":hover": { color: "#ffc450" },
+            }}
+            onClick={() => navigate("/findid")}
+          >
+            ID 찾기
+          </Button>
+          <Button
+            sx={{
+              m: 1,
+              color: "gray",
+              ":hover": { color: "#ffc450" },
+            }}
+            onClick={() => navigate("/findpw")}
+          >
+            비밀번호 찾기
+          </Button>
+        </Box>
       </FormContainer>
     </CenteredContainer>
   );

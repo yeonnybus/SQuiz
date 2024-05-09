@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import { Button } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
+import { uploadPdfFile } from "../api/axios";
 
 const DropzoneArea = styled.div<{ isDragActive?: boolean }>`
   border: 2px dashed #eeeeee;
@@ -26,28 +27,14 @@ const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
 
   const handleSubmit = useCallback(async () => {
     if (selectedFiles.length === 0) return;
-    const formData = new FormData();
-    selectedFiles.forEach((file) => {
-      formData.append("files", file);
-    });
 
     try {
-      const response = await fetch("YOUR_API_ENDPOINT", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-      if (response.ok) {
-        console.log("File uploaded successfully");
-      } else {
-        console.error("Upload failed");
-      }
+      const data = await uploadPdfFile(token, selectedFiles);
+      console.log("File uploaded successfully", data);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Upload failed", error);
     }
-  }, [selectedFiles, token]); // 이 의존성 배열에 token과 selectedFiles 추가
+  }, [selectedFiles, token]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {

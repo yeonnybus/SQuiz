@@ -45,14 +45,16 @@ const InlineContainer = styled.div`
   display: flex;
 `;
 
+// role 물어보기, email 안넘어와서 에러뜨는 것, 임시 hndReg 만듦
+
 const Register2: React.FC = () => {
   const [memberName, setMemberName] = useState<string>("");
   const [memberId, setMemberId] = useState<string>("");
   const [memberPw, setMemberPw] = useState<string>("");
   const [memberPw2, setMemberPw2] = useState<string>("");
   const location = useLocation();
-  //const memberEmail = location.state.value;
-  const [role, setRole] = useState("1");
+  const [memberEmail, setMemberEmail] = useState<string>(location.state.email);
+  const [role, setRole] = useState("ADMIN");
 
   // 사용가 입력한 이름을 memberName state에 저장
   const handlememberNameChange = (
@@ -84,7 +86,7 @@ const Register2: React.FC = () => {
       // axios.get을 사용하여 서버에 요청을 보냄
 
       const response = await axios.get(
-        `http://10.0.68.25:8080/api/v1/member/check-id-duplication?memberId=${memberId}`
+        `http://10.0.8.99:8080/api/v1/member/check-id-duplication?memberId=${memberId}`
       );
 
       // 서버의 응답 처리
@@ -98,7 +100,7 @@ const Register2: React.FC = () => {
       }
     }
   }
-  /*
+
   const handleRegister = async () => {
     try {
       await registerMember(memberEmail, memberName, memberId, memberPw, role);
@@ -108,9 +110,8 @@ const Register2: React.FC = () => {
       alert("회원가입 실패.");
     }
   };
-*/
 
-  const handleRegister = async () => {};
+  //const handleRegister = async () => {};
 
   return (
     <CenteredContainer>

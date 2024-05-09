@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {
   sendEmailCertification,
-  verifyIdSearchEmailCertification,
+  verifyPwSearchEmailCertification,
 } from "../api/axios";
 
 const CenteredContainer = styled.div`
@@ -48,10 +48,10 @@ const InlineContainer = styled.div`
   display: flex;
 `;
 
-function FindId() {
+function FindPw() {
   const [email, setEmail] = useState<string>("");
   const [verificationCode, setVerificationCode] = useState<string>("");
-  const [userId, setUserId] = useState<string | null>("test"); // userId 상태 추가
+  const [userPw, setUserPw] = useState<string | null>("test"); // userId 상태 추가
   const navigate = useNavigate();
 
   // 사용가 입력한 이메일을 email state에 저장
@@ -80,11 +80,11 @@ function FindId() {
 
   const handleVerifyEmail = async () => {
     try {
-      const id = await verifyIdSearchEmailCertification(
+      const pw = await verifyPwSearchEmailCertification(
         email,
         verificationCode
       );
-      setUserId(id); // 인증 성공 시 userId 상태 업데이트
+      setUserPw(pw); // 인증 성공 시 userId 상태 업데이트
       alert("Email verification successful.");
       //navigate("/find-id2", { state: { userId: userId } });
     } catch (error) {
@@ -98,8 +98,8 @@ function FindId() {
   return (
     <CenteredContainer>
       <FormContainer>
-        <h1>ID 찾기</h1>
-        {!userId ? ( // userId가 없는 경우 입력 필드 표시
+        <h1>비밀번호 찾기</h1>
+        {!userPw ? ( // userId가 없는 경우 입력 필드 표시
           <VerificationInputContainer>
             <div>이메일</div>
             <InlineContainer>
@@ -144,9 +144,9 @@ function FindId() {
             />
           </VerificationInputContainer>
         ) : (
-          <div>당신의 ID는 {userId} 입니다.</div> // userId가 있는 경우 ID 표시
+          <div>당신의 비밀번호는 {userPw} 입니다.</div> // userId가 있는 경우 ID 표시
         )}
-        {!userId && ( // userId가 없는 경우만 ID 찾기 버튼 표시
+        {!userPw && ( // userId가 없는 경우만 ID 찾기 버튼 표시
           <Button
             variant="contained"
             color="primary"
@@ -160,10 +160,10 @@ function FindId() {
             }}
             onClick={handleVerifyEmail}
           >
-            ID 찾기
+            비밀번호 찾기
           </Button>
         )}
-        {userId && ( // userId가 있는 경우 로그인 및 비밀번호 찾기 버튼 표시
+        {userPw && ( // userId가 있는 경우 로그인 및 비밀번호 찾기 버튼 표시
           <>
             <Button
               variant="contained"
@@ -180,21 +180,6 @@ function FindId() {
             >
               로그인 하러 가기
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{
-                m: 1,
-                color: "white",
-                background: "gray",
-                borderRadius: "16px",
-                ":hover": { background: "#ffc450", color: "black" },
-              }}
-              onClick={() => navigate("/find-password")}
-            >
-              비밀번호 찾기로 가기
-            </Button>
           </>
         )}
       </FormContainer>
@@ -202,4 +187,4 @@ function FindId() {
   );
 }
 
-export default FindId;
+export default FindPw;
