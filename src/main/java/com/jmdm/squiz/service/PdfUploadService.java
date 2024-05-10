@@ -1,7 +1,9 @@
 package com.jmdm.squiz.service;
 
+import com.jmdm.squiz.domain.Member;
 import com.jmdm.squiz.domain.Pdf;
-import com.jmdm.squiz.dto.PdfDTO;
+import com.jmdm.squiz.dto.PdfUploadResponse;
+import com.jmdm.squiz.repository.MemberRepository;
 import com.jmdm.squiz.repository.PdfRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PdfUploadService {
     private final PdfRepository pdfRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${file.dir}")
     private String fileDir;
@@ -42,19 +45,33 @@ public class PdfUploadService {
         return pageCount;
     }
 
-    public PdfDTO uploadPdf(String memberId, MultipartFile pdf) throws IOException {
+    public PdfUploadResponse uploadPdf(String memberId, MultipartFile pdf) throws IOException {
         if (pdf.isEmpty()) {
-            return null;
+            return null; // 파일 에러 띄우기
         }
         String uploadFileName = pdf.getOriginalFilename();
         String storedFileName = createStoredFileName(uploadFileName);
         String storedPath = getFullPath(storedFileName);
         int totalPageCount = getPageCount(pdf);
         pdf.transferTo(new File(storedPath));
-        Pdf storedPdf = Pdf.setPdf(memberId, uploadFileName, storedFileName,storedPath, totalPageCount);
-        PdfDTO pdfDTO = PdfDTO.setPdfDTO(storedFileName, uploadFileName, totalPageCount);
+        Member member = memberRepository.findByMemberId(memberId);
+
+        Pdf storedPdf = Pdf.builder()
+                .member(member)
+                .uploadFileName(uploadFileName)
+                .storedFileName(storedFileName)
+                .pdfMetaData(storedPath)
+                .totalPageCount(totalPageCount)
+                .build();
         pdfRepository.save(storedPdf);
-        return pdfDTO;
+        Pdf savedPdf = pdfRepository.findByStoredFileName(storedFileName);
+        Long pdfId = savedPdf.getId();
+        PdfUploadResponse pdfUploadResponse = PdfUploadResponse.builder()
+                .pdfId(pdfId)
+                .uploadFileName(uploadFileName)
+                .totalPageCount(totalPageCount)
+                .build();
+        return pdfUploadResponse;
         // 업로드 파일명, 서버 저장 명 선언 및 초기화
         //application.yml에 file 저장 dir 선언 후 그 경로로
     }

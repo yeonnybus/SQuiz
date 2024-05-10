@@ -1,19 +1,24 @@
 package com.jmdm.squiz.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Entity
-@Setter
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 public class Pdf {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String uploadMemberId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Column
     private String uploadFileName;
@@ -27,15 +32,16 @@ public class Pdf {
     @Column
     private int totalPageCount;
 
-    public static Pdf setPdf(String uploadMemberId, String uploadFileName, String storedFileName,
-                             String pdfMetaData, int totalPageCount) {
-        Pdf pdf = new Pdf();
-        pdf.setUploadMemberId(uploadMemberId);
-        pdf.setUploadFileName(uploadFileName);
-        pdf.setStoredFileName(storedFileName);
-        pdf.setPdfMetaData(pdfMetaData);
-        pdf.setTotalPageCount(totalPageCount);
-        return pdf;
-    }
+    @OneToMany(mappedBy = "pdf", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Quiz> quizes = new ArrayList<>();
 
+    @Builder
+    public Pdf(Long id, Member member, String uploadFileName, String storedFileName, String pdfMetaData, int totalPageCount) {
+        this.id = id;
+        this.member = member;
+        this.uploadFileName = uploadFileName;
+        this.storedFileName = storedFileName;
+        this.pdfMetaData = pdfMetaData;
+        this.totalPageCount = totalPageCount;
+    }
 }

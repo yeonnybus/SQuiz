@@ -1,7 +1,7 @@
 package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.CustomUserDetails;
-import com.jmdm.squiz.dto.PdfDTO;
+import com.jmdm.squiz.dto.PdfUploadResponse;
 import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.service.PdfUploadService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
@@ -23,14 +23,13 @@ import java.io.IOException;
 public class UploadController {
     private final PdfUploadService pdfUploadService;
 
-    @PostMapping(name = "/upload-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/upload-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "pdf 업로드 API",
             description = "multipart/form-data로 pdf 파일을 입력 받아 업로드하는 API입니다. jwt 토큰 헤더에 보내야합니다~")
-    public ResponseEntity<ApiResponseEntity<PdfDTO>> uploadPdf(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestPart(name = "file", required = false ) MultipartFile file)
+    public ResponseEntity<ApiResponseEntity<PdfUploadResponse>> uploadPdf(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestPart(name = "file", required = false ) MultipartFile file)
             throws IOException {
-        String memberId = userDetails.getUsername();
-        PdfDTO pdfDTO = pdfUploadService.uploadPdf(memberId, file);
-        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, pdfDTO, "업로드한 pdf 관련 정보입니다."));
+        PdfUploadResponse pdfUploadResponse = pdfUploadService.uploadPdf(userDetails.getUsername(), file);
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, pdfUploadResponse, "업로드한 pdf 관련 정보입니다."));
     }
 
 }
