@@ -24,7 +24,7 @@ import java.security.NoSuchAlgorithmException;
 @Tag(name = "이메일 인증 API", description = "이메일 인증 코드를 전송하고, 인증코드를 검증하는 API입니다.")
 public class MailController {
     private final MailSendService mailSendService;
-    private final MailVerifyService mailVerifyservice;
+    private final MailVerifyService mailVerifyService;
 
     @PostMapping("/send-certification")
     @Operation(summary = "인증 코드를 전송", description = "사용자의 이메일로 인증코드를 전송하는 API")
@@ -37,7 +37,7 @@ public class MailController {
     @PostMapping("/verify")
     @Operation(summary = "인증코드 확인", description = "인증코드가 올바른지 확인하는 API")
     public ResponseEntity<ApiResponseEntity<Void>> verifyCertificationNumber(@RequestBody EmailCertificationResponse request) {
-        mailVerifyservice.verifyEmail(request.getEmail(), request.getCertificationNumber());
+        mailVerifyService.verifyEmail(request.getEmail(), request.getCertificationNumber());
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS));
     }
 }
