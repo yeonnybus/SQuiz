@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import FindId from "./pages/FindId";
 import FindPw from "./pages/FindPw";
+import MakeQuiz from "./pages/MakeQuiz";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/main" element={<MainPage />} />
         <Route path="/findid" element={<FindId />} />
         <Route path="/findpw" element={<FindPw />} />
+        <Route path="/makequiz" element={<MakeQuiz />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </div>
