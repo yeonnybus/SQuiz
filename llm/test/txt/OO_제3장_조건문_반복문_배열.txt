@@ -1,213 +1,745 @@
 
 <0>
-3장조건문, 반복문, 배열파워자바(개정3판)
-
+/ 그 , 「 &/ 융 5/( 7593 
+3 장 조 건 문 , 반 복 문 , 배 열 
 <1>
-3장의목표
-
+써 3 장 의 목 표 ~ | 
+조 건 에 따 라 서 로 다 른 문 장 을 실 행 하 는 코 드 를 만 들 수 있 나 요 ? 
+조 건 에 따 라 서 반 복 하 는 코 드 를 만 들 수 있 나 요 ? 
+자 바 에 서 배 열 을 생 성 하 고 배 열 안 에 값 을 저 장 할 수 있 나 요 ? 
+자 바 에 서 2 차 원 배 열 을 생 성 하 고 사 용 할 수 있 나 요 ? 
+ArrayListE 생 성 하 고 값 을 저 장 할 수 있 나 요 ? . 6 을 를 00 
+600 
 <2>
-if-else 문l조건에따라서서로다른처리를하고싶을때사용하는구조가if-else 문이다.
-
+[ 기 |:| 
+if-else ™ 
+* 소 건 에 따 라 서 서 로 다 른 처 리 를 하 고 싶 을 때 사 용 하 는 구 소 가 * 
+else 문 이 다 . 
+2 만 원 이 상 인 가 ? 
+배 송 비 = 0 배 송 비 =3000 
+그 림 3.1 조 건 문 을 순 서 도 로 그 린 것 이 다 . 
 <3>
-if-else 문의구조
-
+거 if-else 문 의 구 
+60 
+Syntax: if-else 문 
+참 이 나 거 짓 으 로 
+계 산 되 는 조 건 식 if (price > 20000) .. 조 건 식 이 참 이면 실 행 되 는 문장 shipping_cost = @; 
+ee 조 건 식 이 거 짓 이 면 실 행 되 는 문장 히 56 절 은 생 략 될 shipping_cost = 3000; 1241 — 
 <4>
-예제: 짝수와홀수구별하기
-
+써 예 제. 짝 수 와 홀 수 구 별 하 기 
+키 보 드 에 서 입 력 받 은 정 수 가 홀 수 인 지 짝 수 인 지 를 말 해 주 는 프 로 그 램 을 작 성 하 여 보 자 . 홀 수 와 짝 수 는 어 떻 게 구 
+별 할 수 있 는 가 ? 홀 수 는 2 로 나 누 었 을 때 나 머 지 가 1 이 다 . 짝 수 는 2 로 나 누 었 을 때 나 머 지 가 0 이 다 . 따 라 서 나 머 
+지 연 산 자 % 를 이 용 하 여 구 별 할 수 있 다 . 
+정 수 를 입 력 하 시 오 : 2 - 
+입 력 된 정 수 는 짝 수 입 니 다 .
 <5>
-예제: 짝수와홀수구별하기
-
+써 예 제. 짝 수 와 홀 수 구 별 하 기 
+01  import java.util.Scanner; 
+83  public class EvenOdd { 
+o4 public static void main(String[] args) { 
+05 106 number; 
+06 
+07 Scanner 56 = new Scanner(System.in); 
+08 5\75680.00*.?『 ㄷ 10(" 정 수 를 입 력 하 시 오 : "); 
+09 number = sc.nextInt(); 
+10 I numberg 22 나 누 어 서 삐뺀헬\°|다〕 
+11 if (number % 2 == 0) {<——— 
+12 System.out.println("YE 정 수 는 짝 수 입 니 다 ."); 
+13 } 6156 { 
+14 5)75660.00《.?『 ㄷ 10 ㄴ ㄷ 10(" 입 력 된 정 수 는 홀 수 입 니 다 ."); 
+15 } 
+16 }
 <6>
-다중if-else 문
-
+다 중 if-else 문 
+Nested. java 
+01  import java.util.Scanner; 
+02 
+03  public class Nested { 
+ou public static void main(String[] args) { 
+05 
+06 Scanner sc = new Scanner(System.in); 
+07 System.out.print("H4E 입 력 하 시 오 : "); 
+08 int number = sc.nextInt(); 
+09 if(number > 0 ) 
+10 system.out.println("g4elict. "); 
+11 6156 if (number ==0 ) 
+12 System.out.printIn("0QLICt."); 
+13 else 
+14 System.out.println("S$LCt. " ) ; 
+15 } 
+_ 빼 
+정 수 를 입 력 하 시 오 : 10 
+양 수 입 니 다 . 
 <7>
-예제: 학점결정
-
+종종 우 리 는 조 건 에 따 라 서 다 중 으 로 분 기 되 는 결 정 을 내 려 야 하 는 경 우 가 있 다 . 학 생 들 의 성 적 을 받 아 서 학 점 을 
+출 력 하 는 프 로 그 램 을 작 성 하 여 실 행 하 여 보 자 . 성 적 이 90 점 이 상 이면 ^ 학 점 , 80 점 이 상 이 고 90 점 미 만 이면 8 학 
+점 , 70 점 이 상 이 고 80 점 미 만 이면 < 학 점 과 같 이 결 정 하 는 것 이 다 . 
+성 적 을 입 력 하 시 오 : 92 
+학 점 ㅅ
 <8>
-예제: 학점결정
-
+import java.util.Scanner; 
+public class Grading { 
+public static void main(String[] args) { 
+int score; 
+Scanner sc = new Scanner(System.in); 
+System.out.print("HMS 입 력 하 시 오 : "); 
+score = sc.nextInt(); 문장 @ 에 서 ㅠ ( 01306 >= 80 && grade < 90) 
+i = 이 라 고 할 필 요 가 없 음 에 유 의 하 라 . 0.306 가 90 
+래리 . 삐. “2 보 다 크 거 나 같 은 경 우 에 는 앞 의 문장 0) 에 서 이 미 System.out.println("8F A"); 걸 렸 기 때 문 이 다 . 
+6156 if (score >= 80) // @ ㅜ 
+System.out.println("8% 8" ) ; 
+6156 if (score >= 70) 
+System.out.println("& c"); 
+else if (score >= 60) 
+System.out.println("&F D"); 
+else 
+System.out.println("8 F");
 <9>
-예제: 가위, 바위, 보게임
-
+/ 예 제 , 가 위 , 바 위 , 보 게 임 
+가 위 , 바 위 , 보 게 임 을 작 성 하 여 보 자 . 텍 스 트 버 전 은 여 기 서 작 성 하 고 그 래 픽 버 전 은 8 징 에 서 작 성 해 보 자 . 사 용 자 
+가 가 위 , 바 위 , 보 중 에 서 하 니 를 선 택 하 면 이 것 을 컴 퓨 터 가 생 성 한 난 수 값과 비 교 한 다 . 누 가 이 겼 는 지 를 화 면에 
+출 력 한 다 . 
+가 위 (0),』 바 위 (1), 보 (2): 1 
+인 간 : 1 컴 퓨 터 : 0 _ 인 간 승 리
 <10>
-예제: 가위, 바위, 보게임
-
+잖예제 가 위 , 바 위 , 보 게 임 01 import java.util.*; 
+public class RockPaperScissor { 
+final int SCISSOR = 
+final int ROCK = 1; 
+final int PAPER = 2 
+public static void main(String[] args) { 
+Scanner sc = new Scanner(System.in); 
+System.out.print("72{(0), 바 위 (1), E(2): "); 
+int user = sc.nextInt(); 
+int computer = (int) (Math.random() * 3); 
+if( user == computer ) 
+System.out.println("QZtat 컴 퓨 터 가 비 겼 음 ")』 
+else if (user == (computer + 1) % 3) 
+// 0 은 1 한 테 지 고 12 2 한 테 , 2는 0 한 테 진 다 . 
+System.out.println("2Zt: " + user + " 컴 퓨 터 : " + computer + 
+" 인 간 승 리 ")』 
+else 
+System.out.println("QZk: " + user + " 컴 퓨 터 : " + computer + 
+" 、 컴 퓨 터 승 리 ");
 <11>
-중간점검
-
+써 중 간 점 검 _{ _______________________________________________________________ 
+. 자 바 에 서 참 과 거 짓 은 무 엇 으 로 표 시 되 는 가 ? 
+. 조 건 에 따 라 서 실 행 되 어 야 하 는 문 장 이 두 개 이 상 이면 어 떻 게 하 여 야 하 는 가 ? 
+. 실 수 와 실 수 를 비 교 할 때 주 의 해 야 할 점 은 무 엇 인 가 ? 
+. 수 식 (!046) 의 값 은 ? 
+. 다음 코 드 는 어 떤 오 류 를 가 지 고 있 는 가 ? 
+if (x=1) { System.out.println("x= 1 입 니 다 ."); } 
+6. 속 도 가 60km/h 이 상 이 고 100km/h 이 하 이면 “ 정 상 속 도 ” 라 고 출 력 하 는 코 드 를 작 성 해 보 자 . 
+7. x2ty 중 에 서 큰 값 을 072× 에 저 장 하 고 작 은 값 을 ㅁ 10 에 저 장 하 는 코 드 를 작 성 해 보 자 . 
+네 
+스 
+삐 
+ㅁ 
+으
 <12>
-switch문
-
+. ㅁ 
+switch ㅜ 
+Syntax: switch 문 
+5\1* 아 ( 제 어 식 ) 
+{ 
+case cl: <-/{ 제 어 식 의 값 이 <1 이 면 실 행 된 다 . 〕 
+문 장 1; 
+break; 
+case c2: ‘—/| 제 어 식 의 값 이 <2 이 면 실 행 된 다 . ] 
+문 장 2 
+break; 
+default: jgilﬁb‘eﬂol 없 으 면 실 행 된 다 . ㅣ 
 <13>
-예제: 학점결정
-
+사 용 자 가 자 신 의 성 적 을 입 력 하 면 성 적 을 학 점 으 로 변 환 하 여 출 력 해 주 는 프 로 그 램 을 작 성 하 여 보 자 . 이 것 은 앞 에 
+서 if-else 문 장 으 로 도 작 성 한 바 QCt if-else 문 장 을 사 용 하 는 방 법 과 비 교 하 여 보 자 . 
+성 적 을 입 력 하 시 오 : 92 
+학 점 : A
 <14>
-예제: 학점결정
-
+써 예 제. 학 점 결 정 _ 01 100016 java.util.*; _ 
+02 
+83  public class Score2Grade { 
+0 public 563610 void main(String[] args) { 
+05 int score, number; 
+06 char grade; 
+07 
+08 Scanner 50 = new Scanner(System.in); 
+09 System.out.print("AXS 입 력 하 시 오 : "); 
+10 score = sc.nextInt(); [ﬁﬁiIOEHEFﬂiMi-‘A-é Oﬁli‘ﬂﬂq‘} 
+11 number = score / 10; « 
+12 switch (number) { 
+13 case 10: 
+14 case 9: grade = 'A’; break; 
+15 case 8: grade = 'B’; break; 
+16 case 7: grade = 'C’; break; 
+17 case 6: grade = 'D'; break; 
+18 default: grade = 'F'; break; 
+19 } 
+20 System.out.print("8/&: " + grade); 
+21 }
 <15>
-switch 문에문자열사용lJava 7부터는switch 문의제어식으로String 객체를사용할수있다.
-
+션 9 문에 문 자 열 사 용 2600 . 2 > 2ｌ>>2*>~ｌＬ/ ㅜ > == ㅠ = 
+ㅎ Java 7 부 더 는 switch 문 의 제 어 식 으 로 String 객 제 를 사 용 할 수 있 다 . 
+0. String 5 = "yes"; 
+02  switch(s) { 
+03 case "yes": ... 
+04 break; 
+05 case "no": ... 
+06 break; 
+… 뽑
 <16>
-예제: 
 
 <17>
-예제: 
-
+써 예 제. 
+StringSwitch. java 
+삐  import java.util.Scanner; 
+02 
+03  public class StringSwitch { 
+04 public 563610 void main(String[] args) { 
+05 Scanner 50 = new Scanner(System.in); 
+06 System.out.print("LX} 종 류 를 입 력 하 시 오 : "); 
+07 String 00061 = sc.next(); 
+08 int price=0; 
+09 switch (model) { 
+10 case " 콤 비 네 이 션 " : 
+11 case " 슈 퍼 슈 프 림 " : price = 20000; break; 
+12 case "ZE|0|E": price = 15000; break; 
+13 case " 쉬 림 프 ": price = 25000; break; 
+14 default: price = 0; break; 
+15 } 
+16 System.out.println("L|X} "+model+"2| 71Z4="+price); 
+17 0 
+_ 뽀
 <18>
-향상된switch 문lJava 12부터는“화살표”를사용하는향상된switch 문을사용할수있다. “case->S ”과같은형식을사용한다.
-
+써 향 상 된 > 문 1222 
+ㅎ Java 12 부 터 는 “ 화 살 표 ” 를 사 용 하 는 
+있 다 . “6856->5 ”과 같 은 형 식 을 사 용 한 나 . 
+01 046116 class Test { 
+02 public static void main(String[] args) { 
+03 var day = "SAT"; 
+0 var today = ""; 
+05 switch (day) { 
+06 case "SAT", "SUN" -> today = "FZ"; 
+07 case "MON", "TUS", "WED", "THU", "FRI" -> today = " 주 중 "; 
+08 default -> System.out.println("Error"); 
+09 . _ } 
+10 System.out.println(today); 
+11 } 
+2 )
 <19>
-중간점검
-
+써 중 간 점 검 _{ _______________________________________________________________ 
+1. 다음 중 에 서 switch 문 의 제 어 식 으 로 사 용 할 수 없 는 것 은 ? 
+0) 정 수 10 @ 문 자 '3' @ 문 자 열 "36<" @ 실 수 3.14 
+2. 자 바 에 서 다 중 선 택 구 조 를 만 드는 2 가 지 방 법 을 이 야 기 해 보 자 . 
+3. x=1,y=2, 2=3 일 때 , 다음 코 드 를 수 행 한 후 의 ×, y, 2 의 값 은 얼 마 인 가 ? 
+switch(x) { 
+case 0: z=x+1; break; 
+case 1: y=z+x; break; 
+default: z=z+x; 
+} 
+4. 3 번 코 드 를 -> 을 사 용 하 는 새 로 운 switch 구 문 으 로 작 성 해 보 자 .
 <20>
-for 문
 
 <21>
-for 문
-
+Syntax: for 문 
+초 기 식 } ㅡ | 조 건 식 } ㅡ | 증 김 식 
+for( int i=e; 1<10; i++ ) { 
+printf("Hello World!"); 
+\ 
+반 복 되 는 문 장 , 콘 솔 에 “Hello 
+World!"7 10 번 반 복 된 다 . 
 <22>
-예제: 0부터4까지출력하기
-
+써 예 제. 0 부 터 4 까 지 출 력 하 기 
+다음 프 로 그 램 은 forS 사 용 하 여 0 부 터 4 까 지 의 숫 자 를 화 면에 출 력 한 다 . 
 <23>
-예제: 0부터4까지출력하기
-
+써 예 제. 0 부 터 4 까 지 출 력 하 기 
+ForExamplel 
+public class ForExamplel { 
+public static void main(String[] args) { for 문 안 에 서 제 어 변 수 를 
+선 언 할 수 있 다 . for (int i = @; i < 5; i++) { 
+System.out.println("iQ Zk2: " + i); 익 옹 응 옹 806
 <24>
-예제: 정수의합계산하기
-
+간 단 한 예 로 1 부 터 10 까 지 의 정 수 를 더 하 여 합 을 구 하 는 프 로 그 램 을 살 펴 보 자 . 
+1 부 터 10 까 지 의 정 수 의 합 = 55 
+public class Sum { 
+public static void main(String[] args) { 
+int sum = 0; 
+for (int 고 = 1; 1<= 10; i++) for 문 안 의 초 기 식 에 서 . 제 어 변 수 를 선 언 할 수 있 다 . 
+System.out.printf("18E 10 까 지 의 정 수 의 합 = %d\n", sum); 브비 
+옹 
+용 
+요 
+옹 
+은 
+읍 
 <25>
-예제: 팩토리얼계산하기
-
+잖예제 팩 토 리 얼 계 산 하 기 
+이 번 예 제 에 서는 팩 토 리 얼 값 을 계 산 하 여 보 자 . 팩 토 리 얼 이란 다 음 과 같 이 정 의 된 다 . 
+nl=1X2x3X...Xn 
+정 수 를 입 력 하 시 요 :20 
+20! 은 2432902008176640000 입 니 다 .
 <26>
-예제: 팩토리얼계산하기
-
+써 예 제. 팩 토 리 얼 계 산 하 기 
+Factorial.java 
+01  import java.util.*; 
+02 
+03  public class Factorial { 팩 토 리 얼 의 ZI2 생 각 보 다 아 주 커 질 수 
+ou public static void main(String[] args) { 있 다 . 10009 으 로 선 언 한 다 . 0f7|Af fact 
+의 초 기 값 은 반 드 시 1 이 어 야 한 다 . 0 이 
+8 133322 면 안 된 다 . 왜 냐 하 면 팩 토 리 얼 은 정 수 를 
+06 int 1 전부 곱 해 서 계 산 하 는 것 이 므 로 초 기 값 
+07 이 0 이 면 결 과는 0 이 되 어 버 린 다 . 따 라 
+08 5875660.00《.0 ㄷ 10('" 정 수 를 입 력 하 시 요 : " ) ; 서 배 지 1 보 초 과 시 키 이 자 다 
+09 Scanner scan = new Scanner(System.in); 
+10 n = scan.nextInt(); 
+1 
+12 for (int i = 1; i <= n; i++) 
+13 fact = fact * i; 
+14 
+15 System.out.printf("%d!2 %dRLICt.\n", n, fact); 
+16 
+17 } 
+__ }
 <27>
-예제: 약수계산하기
-
+써 예 제. 약 수 계 산 하 기 
 <28>
-예제: 약수계산하기
-
+{5’ 예 제. 약 수 계 산 하 기 
+Divisor.java 
+©1  import java.util.Scanner; 
+02 
+803  public class Divisor { 
+04 public 563610 void main(String[] args) { 
+05 Scanner scan = new Scanner(System.in); 
+06 5575620.00《.069006( " 양 의 정 수 를 입 력 하 시 오 : "); 
+07 int n = scan.nextInt(); 
+08 
+09 System.out.println(n + " 의 약 수 는 다 음 과 같 습 니 다 ."); 
+10 for (int i = 1; i <= n; ++i) { 
+11 if (n%i==0) 
+12 System.out.print(" " + i); 
+13 } 
+14 } 
+… )
 <29>
-중간점검
 
 <30>
-while 문
 
 <31>
-while 문
-
+Syntax: while 문 
 <32>
-예제: “환영합니다.”를화면에5번출력하는예제
-
+WelcomeLoop.java 
+01  public class Welcomeloop { 
+02 public 563610 void main(String[] args) { 
+03 1061 = 0; 
+04 while (i < 5) { 
+05 System.out.println("&HgH|CH " ) ; 
+06 it++; 
+빼 } 
+08 5\5660.00*《.?『[10610('" 반 복 이 종 료 되 었 습 니 다 . " ) ; 
+_ 
+91 } 
+환 영 합 니 다 ! 
+환 영 합 니 다 ! 
+환 영 합 니 다 ! 
+환 영 합 니 다 ! 
+환 영 합 니 다 ! 
+반 복 이 종 료 되 었 습 니 다 .
 <33>
-예제: -1의값이입력될때까지합계계산하기
-
+예 제 : -1 의 값 이 입 력 될 때 까 지 ㅣ |견| EH Pot7| 60 
+while 문 은 조 건 으 로 반 복 할 때 사 용 된 다 . -1 의 값 이 입 력 될 때 까 지 , 사 용 자 가 입 력 한 정 수 의 합 계 를 계 산 하 여 출 
+력 하 는 프 로 그 램 을 작 성 해 보 자 . 
+정 수 를 입 력 하 시 오 : 10 
+정 수 를 입 력 하 시 오 : 20 
+정 수 를 입 력 하 시 오 : 30 
+정 수 를 입 력 하 시 오 : -1 
+정 수 의 합 은 60 입 니 다 .
 <34>
-예제: -1의값이입력될때까지합계계산하기
-
+666541 java 
+01 
+02 
+03 
+688988 온 
+12 
+13 
+14 
+15 
+16 import java.util.Scanner; 
+public class GetSum { 
+public static void main(String args[]) { 
+Scanner sc = new Scanner(System.in); 
+int sum = 0, value = 0; 
+3146 가 -1 이 아 니 면 
+while (value != -1) { 덧 셈 을 반 복 한 다 . 
+sum = sum + value; 
+System.out.print("E+E 입 력 하 시 오 : "); 
+value = sc.nextInt(); 
+} 
+System.out.println("E$2| 합 은 " + 540+" 입 니 다 .") ; 
 <35>
-do-while문
-
+잖 do-while™ 
+| 
+Syntax: while 문 
 <36>
-예제: 정확한입력받기
-
+사 용 자 로 부 터 월 의 번 호 를 입 력 받 는 프 로 그 램 을 작 성 하 여 보 자 . 사 용 자 가 올 바 른 월 번 호 를 입 력 할 때 까 지 반 복 을 
+계 속 한 다 . 사 용 자 가 올 바 른 월 번 호 를 입 력 해 야 만 다음 문 장 으 로 넘 어 간 다 . 
+올 바 른 월 을 입 력 하 시 오 [1-12]: 13 
+올 바 른 월 을 입 력 하 시 오 [1-12]: 14 
+올 바 른 월 을 입 력 하 시 오 [1-12]: 0 
+올 바 른 월 을 입 력 하 시 오 [1-12]: 
+사 용 자 가 입 력 한 월 은 1 
+보
 <37>
-예제: 정확한입력받기
-
+g88388g¢egs 본 
+으 본 
+~N import java.util.Scanner; 
+public class CheckInput { 
+public static void main(String args[]) { 
+Scanner sc = new Scanner(System.in); 
+int month; 
+do { 
+System.out.print("SHIE 월 을 입 력 하 시 오 [1-12]: "); 
+month = sc.nextInt(); 
+} while (month < 1 || month > 12); 
+5\5660.00《.0? ㄷ 10610(" 사 용 자 가 입 력 한 월 은 " + month); 
 <38>
-중첩반복문l반복문은중첩되어사용될수있다. 즉반복문안에다른반복문이실행될수있다. 이러한형태를중첩반복문(nested loop)이라고한다.
-
+으 
+; i<5; i++) { 
+=0; k<5; k++) { =0 
+반 복 문 장 ; for(int k for(int i 
+I 〔 
 <39>
-예제: 사각형모양출력하기
-
+중 첩 반 복 문 은 실 제 프 로 그 래 밍 에 서 많 이 나 오 는 형 태 로 특 히 사 각 형과 비 슷 한 데 이 터 를 처 리 하 는 데 유 용 하 다 . 다 
+음 예 제 는 * 기 호 를 사 각 형 모 양 으 로 출 력 한 다 . 
 <40>
-예제: 사각형모양출력하기
-
+NestedLoop. java 
+01  import java.util.*; 
+02 
+83  public class NestedLoop { 
+o4 public static void main(String[] args) { 
+05 
+06 for (inty = 05 y < 55 y++) { 
+07 for (int × = 0; × < 10; ×++) 
+08 System.out.print("*"); 
+09 
+10 System.out.println(""); 
+11 } 
+12 
+13 } 위 의 프 로 그 램 을 실 행 하 면 50 개 의 * 가 
+화 면에 8 × 4= 의 정 사 각 형 모 양 으 로 출 
+력 된 다 . * 를 출 력 하 는 문 장 의 외 부 에 는 
+두 개 의 for 루 프 가 중 첩 되 어 있 다 . 외 부 
+의 for 루 프 는 변 수 > 를 0 에 서 4 까 지 증 
+가 시 키 면 서 내 부 의 for 루 프 를 실 행 시킨 
+다 . 내 부 의 for 루 프 는 변 수 × 를 0 에 서 9 
+까 지 증 가 시 키 면 서 60{() 메 소 드 를 호 
+출 한 다 . 내 부 + ㅇ 「 루 프 가 한 번 실 행 될 때 
+마 다 회 면 에 는 한 줄 의 * 가 그 려 진 다 . 내 
+부 for 루 프 가 한 번 씩 종 료 될 때 마 다 줄 
+바 꿈 문 자 가 회 면에 출 력 되 어 다음 줄 로 
+넘 어 가 게 된 다 . 
 <41>
-break문, continue문
-
+드 . 드 
+잖 break 순 , 00106 T™ 
+60 
+01  for(int i=1; i<6; i++) { 
+02 if(i==4) 
+03 break; // 4 이 면 반 복 문 을 벗 어 난 다 . 
+04 System.out.println(i); 
+렐 ' 
+1 운 
+01  for(int i=1; i<6; i++) { 
+02 if(i==4) c) 
+03 continue; // 4 일 때 는 출 력 하 지 않 고 다음 반 복 으 로 넘 어 간 다 . 
+0 System.out.println(i); 
+표 곤 구 5 한
 <42>
-무한루프lwhile 문을사용할때, 종료조건을만들려면상당히까다로운경우가있다->이경우에는while(true)를이용하여무한루프를만들고무한루프안에서break를사용하여서루프를빠져나가는조건을기술하는편이가독성이높고코딩하기쉽다
-
+* while 문 을 사 용 할 때 , 종 료 소 건 을 만 들 려면 상 
+있 다 -> 이 경 우 에 는 while(true)E 이 용 하 여 무 한 루 프 를 
+루프 안 에 서 68 를 사 용 하 여 서 루 프 를 빠 져 나 가 는 소건 
+는 편 이 가 독 성이 높 고 코 딩 하 기 쉽 다 
+FD 
+수 
+00 이 
+부 
+닌 
+HU 
+H0 
+0X 
+H0 
+부 
+while( true ) { 
+while( c!='q" || count > 100 ) { if( c=='q' ) break; 
+부 » if( count > 100 ) break; 
+}
 <43>
-예제: 
-
+사 용 자 가 입 력 한 점 수 들 의 평 균 을 내 는 프 로 그 램 을 작 성 한 다 . 만 약 사 용 자 가 음 수 를 입 력 하 면 663( 에 의 하 여 반 
+복 루 프 가 종 료 되 게 한 다 . 
 <44>
-예제: 
-
+써 예 제. 
+Averager, java 
+0  dimport java.util.*; 
+02 
+03  public class Averager { 
+0 public 563610 void main(String[] args) { 
+05 int total = @, count = 0; 
+06 Scanner sc = new Scanner(System.in); 
+07 
+08 while (true) { 
+09 System.out.print("H4&:E 입 력 하 시 오 : "); 
+10 int grade = sc.nextInt(); 
+1 if (grade < 0) break; 
+12 total += grade; 
+13 count++; 
+14 } 
+15 5575660.00《.010610(" 평 균 은 " + 60631 / count); 
+16 } 
+_ 6
 <45>
-중간점검
-
+써 중 간 점 검 _{ _______________________________________________________________ 
+1. do-while 문 에 서 반복 조 건이 거 짓 이면 몇 번 이 나 반 복 되 는 가 ? 
+2. do-whileS 이 용 하 여 사 용 자 가 <' 를 입 력 할 때 까 지 정 수 의 합 계 를 계 산 하 는 프 로 그 램 을 작 성 해 보 자 . 
+3. 중 첩 반 복 문 을 이 용 하 여 서 구 구 단 을 2 단 부 터 9 단 까 지 출 력 하 여 보 자 . 
+4. for(;) i=i+1; 은 몇 번 이 나 반 복 하 는 가 ? 
+5. 1 부 터 100 사 이 의 정 수 에 서 6 의 배 수 의 합 을 계 산 하 는 프 로 그 램 을 작 성 해 보 자 .
 <46>
-배열l배열(array)은여러개의변수를하나로묶어넣은것이다. 배열을사용하면같은종류의대량의데이터를한번에선언할수있다.
-
+배 열 
+* 배 열 (303\/) 은 여 러 개 의 변 수 를 하 나 로 묶 어 넣 은 것 이 다 . 배 
+용 하 면 같 은 종 류 의 대 량 의 데 이 터 를 한 번 에 선 언 할 수 있 다 . 
+55 ： s3 57 59 
+50 
+54 그 56 58 
+배 열 은 동 일 하 타 입 의 데 이 러 를 여 러 개 배 열 은 변 수 들 을 모 아 놓 은 것 L 저 장 할 수 있 는 저장 장 소 입 니 다 . 
+배 열 은 하 나 의 이 름 을 공 유 한 다 . 
+5[0] 、 5[1] | s[2] . s[3] . 5[4] . 5[5] s[6] . 5[7] . 5[8] . 5[9] 
+int[] s = new int[10];
 <47>
-배열의선언과사용l배열참조변수부터다음과같이선언한다. 정수형배열을만든다면배열참조변수는int[] 타입으로선언하면된다.
-
+스 스 브 
+열 참 소 변 수 부 스 스 느 
+열 참 조 변 수 는 
+배 열 의 자 료 형 터 다 음 과 같 이 선 언 한 다 . 정 수형 배 열 을 ㅁ 
+] 타 임 으 로 선 언 하 면 된 다 . 
+. 1 P 
+' [00890] 
 <48>
-배열의선언과사용l실제배열은new 연산자를사용하여서생성하여야한다. 
-
+써 배 열 의 선 언과 사 용 ~ 
+* 실 세 배 열 은 new 연 산 자 를 사 용 하 여 서 생 성 하 여 야 한 다 . 
+10 개 의 1형 변 수 
+『[0] [1] [ [2] 래 r[8] I r[9] . 
+5 = new int[10]; 
+. 5
 <49>
-반복문과배열l배열의각각의요소는인덱스(index)라는번호로접근할수있다.
-
+배 열 의 각 각 의 요 
+01 . 046116 class ArrayTestl { 
+02 public static void main(String[] args) { 
+03 
+int[] 5 = new int[10]; 크 기 가 10 인 배 열 생 성 
+테 " 인 덱 스 (096×) 라 는 번 호 로 접 근할 수 있 다 . 
+04 
+05 
+06 for (int i = 0; i < s.length; i++) { 
+07 s[i] = i; 
+08 
+09 
+10 
+1 } 반 복 문 을 이 용 하 여 서 배 
+for (int i = 0; 1 < s.length; i++) { 툼불칙뚤후호흘떫 
+System.out.print(s[i] + " "); 로 알 수 있 다 . 
+를 } 
+33 } 
+0. } 
+. 온 항 ' 오 - 운 올. 잇 잘 레 정 -
 <50>
-배열의크기l배열이름이s라면s.length가배열의크기가된다.
-
+써 배 열 의 크 기 
+_{ _______________________________________________________________ 
+ㅎ 배 열 이 름이 8 라 면 5.16091 ㅁ 가 배 열 의 크 기 가 된 다 . 
 <51>
-배열의초기화
-
+ArrayTest3.java 
+01  public class ArrayTest3 { 
+02 public static void main(String[] args) { 
+03 int[] scores = { 10, 20, 30, 40, 50 }; 
+[ for (int i = 0; 1 < scores.length; i++) 
+05 System.out.print(scores[i]+" " ) ; 
+06 . } 
+_ } 
+10 20 30 40 50 각 배 열 은 lengthale 필 드 를 가 지 고 있 다 . length 필 드는 
+배 열 의 크 기를 나 타 낸 다 . 따 라 서 이 것 을 이 용 하 면 배 열 의 크 기 만 큼 반 복 을 시 킬 수 있 다 . 
 <52>
-for-each 루프
-
+int[] list = { 1, 2, 3, 4, 5 } ; 
+빠 배딘 1브 System.out.println(e); 
+} Syntax: for-each 문 
 <53>
-예제: l정수형배열을작성하고for-each 루프로배열에서정수를하나씩꺼내서화면에출력하여보자.
-
+ArrayTest4. java 
+01  pub 
+_ } 
+10 20 30 lic class ArrayTest4 { 
+public static void main(String[] args) { 
+int[] numbers = { 10, 20, 30 }; 
+for (int value : numbers) ㅜ 
+System.out.print(value+" "); ㅅ 르 
+ㄱ 르 
+변 수 \3146 에 는 첫 번 째 요 소 부 터 마 지 막 
+배 열 요 소 까 지 차 례 대 로 대 입 된 다 . ㅇ 1 나 씩 꺼
 <54>
-예제: 문자열배열
-
+써 예 제. 문 자 열 배 열 
+앞 에 서는 정 수 배 열 만 을 살 펴 보 았 는 데 실 수 배 열 이 나 문 자 열 의 배 열 도 얼 마 든 지 생 성 하 여 사 용 할 수 있 다 . 여 기 
+서는 5 가 지 의 피 자 토 핑 의 종 류 를 문 자 열 배 열 에 저 장 하 고 배 열 에 저 장 된 문 자 열 을 꺼 내 서 화 면에 출 력 하 여 보 자 . 
+for-each 루 프 를 사 용 해 보 자 . 
+Pepperoni Mushrooms Onions Sausage Bacon 
+PizzaTopping.java 
+81 . 046116 class PizzaTopping { 
+02 public static void main(String[] args) { 
+03 
+0 String[] toppings = { "Pepperoni”, "Mushrooms", "Onions", "Sausage", 
+05 "836007" }; 
+06 
+07 for (String s: toppings) { 
+08 System.out.print(s + " "); 
+09 ; 
+10 } 
+_ 빼
 <55>
-중간점검
-
+써 중 간 점 검 _{ _______________________________________________________________ 
+1. 10 개 의 부 동 소 수 점 난 수 를 저 장 하 는 tiE faarrays 선 언 하 고 생 성 하 는 코 드 를 작 성 하 라 . 
+2. 배 열 의 크 기 는 어 떻 게 알 수 있 는 가 ? 
+3. 1 번 문 제 의 farrayS for-each 구 문 으 로 방 문 해 서 출 력 하 는 코 드 를 작 성 하 라 . 
+4. 1 번 문 제 의 배 열 *33// 에 저 장 된 값 들 의 합 계 를 계 산 하 여 출 력 하 는 코 드 를 작 성 하 라 .
 <56>
-2차원배열
-
+int, s = new int[3] [5]; 
+1 _ 삐 ( 의 개 수 염 의 개 수ㅣ 
 <57>
-2차원배열과중첩된루프
-2차원배열의초기화
+2 for(int 1=0; 1 <3; i++) 
+for(int j=0; j<5; i++) 
+System.out.println(s[i][j]); 
+int[][] testArray = { 
+{10, 20, 30}, 
+{40, 50, 60}, 
+{70, 80, 90} 
+3 \ 
+2 차 원 배 열 의 초 기 화 
 <58>
-예제: 극장관객수계산
-
+극 장 에 앉 아 있 는 관 객 들 을 2 차 원 배 열 로 나 타 낼 수 있 다 . 관 객 이 있 는 좌 석 은 1 로 , 관 객 이 없 는 좌 석 은 0 으 로 나 
+타 낸 다 . 현 재 극 장 에 앉 아 있 는 관 객 들 의 수 를 세 는 프 로 그 램 을 작 성 해 보 자 . 
+현 재 관 객 수 는 7 명 입 니 다 .
 <59>
-예제: 극장관객수계산
-
+TheaterSeats. java 
+801  public class TheaterSeats { 
+02 public 563610 void main(String[] args) { 
+03 
+04 int [][] 56365 = { {0, 0, 0,1, 1, 0. 0, 0, 0, 0}, 
+05 {0, 0, 1, 1, 0, 0, 0, 0, 0, 0}, 
+06 의 티 티 기 리 ); 
+07 int [ 
+08 for (int i = 0; i < seats.length; i++) 
+09 for (int k = 0; k < seats[i].length; k++) 
+10 count += seats[i][k]; 
+11 
+12 System.out.print("&x 관 객 수 는 "+-+'§2]L|r-I'-")i 
+13 }
 <60>
-래그드배열
-int[][] ragged = new int[MAX_ROWS+1][];for(int r=0; r<=MAX_ROWS; r++)ragged[r] = new int[r+1];IF_
+래 그 드 배 열 
+int[][] ragged = new int[MAX_ROWS+1][]; 
+for(int r=0; r<=MAX_ROWS; r++) 
+ragged[r] = new int[r+l]; 1 
+1 —' I 
+긴 실 s[1](e] 。 5[1][1] 
+" \ 
+5[2][0] 。 [2][1] _ 5[2][2]
 <61>
-래그드배열
-
+래 그 드 배 열 
+100 . 000008 0000 ~ 
+public class RaggedArray { 
+public static void main(String[] args) { 
+int[][] ragged = new int[3][]; 
+ragged[@] = new int[1]; 
+new int[2]; 
+new int[3]; ragged[1] 
+ragged[2] 
+for (int r = 0; r < ragged.length; r++) 
+for (int c = 0; ㅇ < ragged[r].length; c++) 
+ragged[r][c] = c; 860888 옹운 은 은 분 스 
+_
 <62>
-예제: 래그드배열생성
-
+써 예 제. 래 그 드 배 열 생 성 
+다 음 과 같 은 래 그 드 배 열 을 생 성 해 보 자 . 
 <63>
-예제: 래그드배열생성
-
+써 예 제. 래 그 드 배 열 생 성 
+RaggedArray2.java 
+01  import java.util.Arrays; 
+02 
+803  public class RaggedArray2 
+_ { 
+05 public static void main(String[] args) 
+6  { 
+〓 int[][] rarray = new int[3][]; 좋윅긁뚫삐헬돕잼첨눌툰 
+09 Farray[0] = new int[] { 1, 2, 3, 4 }; 
+10 6200698[1] = new int[] { 5, 6, 7 }; 1 차 원 배 열 은 이런 방 법 으 로 
+1 Parray[2] = new int[] { 8, 9 }; 도 출 력 할 수 있 다 . 2 차 원 배 
+12 열 을 이런 방 법 으 로 출 력 하 - 조 값 만 려 
+13 for (int[] row: Farray) { Sier t 
+14 System.out.println(Arrays.toString(row)); 
+15 } 
+16 ) 
+} 
+[1, 2, 3, 4] 
+[5, 6, 7] 
+[8, 9]
 <64>
-중간점검
-
+써 중 간 점 검 _{ _______________________________________________________________ 
+1. 다 음 의 배 열 선 언 중 에 서 잘 못 된 것 을 모 두 고 르 시 오 . 
+@ int[] a = int[10]; @ int[] a = new int[10]; @ int a[] = int[10]; 
+@ int a[] = new int[10]; ®intlla={1,23,4,5}% 
+2. 004616 형 의 데 이 터 를 저 장 하 는 3×4 크 기 의 2 차 원 배 열 을 생 성 하 라 . 
+3. 초 기 값 을 이 용 하 여 다 음 과 같 은 래 그 드 배 열 을 생 성 하 는 코 드 를 작 성 하 라 . 
+0 } 처 12 
+1 } 거32 | 12 | 38 
 <65>
-ArrayListl자바에서는ArrayList라는클래스를제공하는데, 이클래스를사용하면배열의크기를동적으로변경하면서사용할수있다.
-
+쬐 ArrayList 
+60 
+ㅎ XHHHOIA = ArrayList ct= 클 래 스 를 제 공 하 는 데 , 이 클 래 스 를 사 용 하 
+면 배 열 의 크 기를 동 적 으 로 변 경 하 면 서 사 용 할 수 있 다 . 
+Arraylist 
+list 29 
+String String String 
+"Buy bread" “Sell car" 10:30 meeting 
 <66>
-ArrayList
-
+ArrayList0] 저 장 할 자 료 형 
+* ] ArraylList<String> list; 
+list = new ArraylList<>(); 
+list.add("Apple"); 
+list.add("Grape"); 문 자 열 을 저 장 하 는 
+시 037/451 참 조 변 수 선 언 
+ArrayList 44 Syntax: ArrayList 클 래스 
 <67>
-예제: 친구들의리스트
-
+/ 예 제. 친 구 들 의 리 스 트 
+ArraylListTest.java 
+01 10006 java.util.*; 
+02 
+803  public class ArraylistTest { 
+04 public 563610 void main(String args[]) { 
+05 
+06 ArraylList<String> list = new ArraylList<>(); 
+07 115.300(" 철 수 " ) ; 
+08 1156.300('" 영 희 " ) ; 
+09 1156.300(" 순 신 " ) ; 
+10 1156.300(" 자 영 " ) ; 
+11 for (String obj : list) 
+: 0 System.out.print(obj + " "); 
+13 ) 
+) 
 <68>
-MiniProject: 숫자추측게임l이예제는프로그램이가지고있는정수를사용자가알아맞히는게임이다. 사용자가답을제시하면프로그램은자신이저장한정수와비교하여제시된정수가더높은지낮은지만을알려준다정답을추측하여보시오: 10제시한정수가낮습니다.정답을추측하여보시오: 30제시한정수가낮습니다.정답을추측하여보시오: 60제시한정수가높습니다.정답을추측하여보시오: 59축하합니다. 시도횟수=4
-
+셔 Mini Project: 숫 자 추 측 게 임 
+* 이 예 제 는 프 로 그 램이 가 지 고 있 는 정 수 를 사 용 자 가 알 아 맞 히 는 게 
+임 이 다 . 사 용 자 가 답 을 저|시하면 프 로 그 램 은 사 신 이 저 장 한 정 수 와 
+비 교 하 여 제 시 된 정 수 가 더 높 은 지 낮 은 지 만 을 알 려 준 다 
+추 측 하 여 보 시 오 : 10 65 으 브 
+제 시 한 정 수 가 낮 습 니 다 . 으 
+르 
+| 한 
+정 답 을 추 즉 하 여 보 시 오 : 30 
+한 정 수 가 낮 습 니 다 . 
+정 답 을 주 즉 하 여 보 시 오 : 60 
+제 시 한 정 수 가 높 습 니 다 . 
+정 답 을 추 즉 하 여 보 시 오 : 59 
+축 하 합 니 다 . 시 도 횟 수 =4 
 <69>
-Summaryl조건문은조건에따라여러실행경로로분기하는구조로서if-else 문, switch 문이있다.lbreak문은현재의반복을중단하고반복루프를빠져나갈때사용한다.lswitch 문의case 절에는정수, 문자, 문자열이올수있다.l반복문은조건에따라문장을반복하여실행하는구조로서for 문, while 문이있다.ldo-while 문은문장을무조건한번실행한후에조건을검사하여반복한다.l반복문안에다른반복문을둘수있다.l배열은같은자료형의데이터를여러개순차적으로저장하는자료구조이다.l자바에서배열은객체이다.l자바에서배열을생성하려면먼저참조변수부터선언한다. 참조변수는배열객체의주소를저장하는변수이다. 이어서배열을생성하여저장공간을확보한다.l정수3개를저장하는배열은int[] a = new int[4];와같이만든다.l배열의크기는배열객체의length 필드에저장된다.
 
 <70>
-Q & A
