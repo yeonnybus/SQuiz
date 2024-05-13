@@ -5,6 +5,7 @@ import styled from "styled-components";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { registerMember } from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -56,6 +57,8 @@ const Register2: React.FC = () => {
   const [memberEmail, setMemberEmail] = useState<string>(location.state.email);
   const [role, setRole] = useState("ADMIN");
 
+  const navigate = useNavigate();
+
   // 사용가 입력한 이름을 memberName state에 저장
   const handlememberNameChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -106,6 +109,7 @@ const Register2: React.FC = () => {
       await registerMember(memberEmail, memberName, memberId, memberPw, role);
       alert("회원가입 성공.");
       // 회원가입 성공 후 필요한 로직 추가 (예: 로그인 페이지로 리다이렉트)
+      navigate("/login");
     } catch (error) {
       alert("회원가입 실패.");
     }

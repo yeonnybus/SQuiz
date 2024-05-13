@@ -8,6 +8,8 @@ import {
   Button,
 } from "@mui/material";
 import styled from "styled-components";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // 스타일드 컴포넌트 정의
 const CenteredContainer = styled.div`
@@ -99,20 +101,35 @@ const subjectStyle = {
 
 // 메인 컴포넌트
 const MakeQuiz: React.FC = () => {
-  const [uploadFileName, setUploadFileName] = useState<string>("");
-  const [endPageNumber, setEndPageNumber] = useState<string>("1");
-  const [startPageNumber, setStartPageNumber] = useState<string>("1");
+  const navigate = useNavigate();
+  interface LocationState {
+    tempQuizName?: string;
+  }
+
+  const location = useLocation();
+  // location.state가 undefined일 수 있으므로, LocationState 타입의 기본값을 제공합니다.
+  const [pdfId, setPdfId] = useState<number>(location.state.pdfId);
+  const [uploadFileName, setUploadFileName] = useState<string>(
+    location.state.uploadedFileName
+  );
+
+  const [endPageNumber, setEndPageNumber] = useState<number>(
+    location.state.totalPageCount
+  );
+  const [startPageNumber, setStartPageNumber] = useState<number>(1);
   const [subjects, setSubjects] = useState<{ label: string; value: string }[]>([
-    { label: "운영체제", value: "os" },
-    { label: "컴퓨터통신", value: "network" },
-    { label: "객체지향", value: "java" },
-    { label: "C프로그래밍", value: "lanc" },
+    { label: "운영체제", value: "운영체제" },
+    { label: "컴퓨터통신", value: "컴퓨터통신" },
+    { label: "객체지향프로그래밍", value: "객체지향프로그래밍" },
+    { label: "C프로그래밍", value: "C프로그래밍" },
   ]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
   const [problemType, setProblemType] = useState<string>("");
   const [problemCount, setProblemCount] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("");
+
+  const [error, setError] = useState<string>("");
 
   const handleTypeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -134,15 +151,32 @@ const MakeQuiz: React.FC = () => {
     setDifficulty(newDifficulty);
   };
 
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.post("/api/your-endpoint", {
+  const handleQuizOptionSubmit = () => {
+    navigate("makequiz2", {
+      state: {
+        pdfId,
         uploadFileName,
+        selectedSubject,
+        startPageNumber,
         endPageNumber,
-      });
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
+        problemType,
+        problemCount,
+        difficulty,
+      },
+    });
+  };
+
+  const handlePageNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(e.target.value);
+    if (!isNaN(value)) {
+      if (value > location.state.totalPageCount) {
+        setError(
+          `끝 페이지 번호는 ${location.state.totalPageCount} 이하여야 합니다.`
+        );
+      } else {
+        setError("");
+        setEndPageNumber(value);
+      }
     }
   };
 
@@ -200,7 +234,10 @@ const MakeQuiz: React.FC = () => {
               variant="standard"
               type="number"
               value={startPageNumber}
-              onChange={(e) => setStartPageNumber(e.target.value)}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                setStartPageNumber(!isNaN(value) ? value : 0);
+              }}
               InputProps={{ style: textFieldStyle.input }} // 세로 길이 조절 적용
             />
             <TextField
@@ -208,7 +245,10 @@ const MakeQuiz: React.FC = () => {
               variant="standard"
               type="number"
               value={endPageNumber}
-              onChange={(e) => setEndPageNumber(e.target.value)}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                setEndPageNumber(!isNaN(value) ? value : 0);
+              }}
               InputProps={{ style: textFieldStyle.input }} // 세로 길이 조절 적용
             />
           </Row>
@@ -285,6 +325,7 @@ const MakeQuiz: React.FC = () => {
             borderRadius: "16px",
             ":hover": { background: "#98E408", color: "white" },
           }}
+          onClick={handleQuizOptionSubmit}
         >
           확인
         </Button>

@@ -4,6 +4,7 @@ import { Button, CircularProgress, Box } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
 import { uploadPdfFile } from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const DropzoneArea = styled.div<{ isDragActive?: boolean }>`
   border: 2px dashed #eeeeee;
@@ -28,6 +29,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
     "idle"
   );
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [pdfId, setPdfId] = useState<number>(0);
+  const [totalPageCount, setTotalPageCount] = useState<number>(0);
+
+  const navigate = useNavigate();
 
   const handleSubmit = useCallback(async () => {
     if (selectedFiles.length === 0) return;
@@ -37,6 +42,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
       const data = await uploadPdfFile(token, selectedFiles);
       console.log("File uploaded successfully", data);
       setUploadedFileName(data.body.data.uploadFileName); // 예시 응답에서 파일 이름을 가져온다고 가정
+      setPdfId(data.body.data.pdfId);
+      setTotalPageCount(data.body.data.totalPageCount);
 
       setUploadStatus("done");
     } catch (error) {
@@ -83,6 +90,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
                 color: "gray",
                 ":hover": { color: "#ffc450" },
               }}
+              onClick={() =>
+                navigate("/makequiz", {
+                  state: { uploadedFileName, pdfId, totalPageCount },
+                })
+              }
             >
               퀴즈 생성하기
             </Button>

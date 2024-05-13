@@ -91,30 +91,6 @@ export const login = async (
   }
 };
 
-// pdf 업로드
-export const uploadPdfFile = async (token: string, files: File[]) => {
-  const formData = new FormData();
-  files.forEach((file) => {
-    formData.append("file", file);
-  });
-
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/upload/upload-pdf`,
-      formData,
-      {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error:", error);
-    throw error;
-  }
-};
 // id찾기 인증번호 확인 api
 export const verifyIdSearchEmailCertification = async (
   email: string,
@@ -150,5 +126,60 @@ export const verifyPwSearchEmailCertification = async (
   } catch (error) {
     console.error("Email verification failed:", error);
     throw new Error("Email verification failed");
+  }
+};
+
+// pdf 업로드
+export const uploadPdfFile = async (token: string, files: File[]) => {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("file", file);
+  });
+
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/upload/upload-pdf`,
+      formData,
+      {
+        headers: {
+          Authorization: token,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const orderQuiz = async (
+  pdfId: number,
+  quizName: string | null,
+  subject: string | null,
+  startPage: number,
+  endPage: number,
+  quizType: string,
+  problemNum: string,
+  rank: string
+) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/quiz`, {
+      pdfId,
+      quizName,
+      subject,
+      startPage,
+      endPage,
+      quizType,
+      problemNum,
+      rank,
+    });
+
+    console.log("퀴즈 요청 성공");
+    //return response.data.userId; // 서버 리스폰스 보고 수정
+  } catch (error) {
+    console.error("퀴즈 요청 실패:", error);
+    throw new Error("퀴즈 요청 실패");
   }
 };

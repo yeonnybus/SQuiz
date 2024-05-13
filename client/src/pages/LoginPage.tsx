@@ -39,7 +39,7 @@ const LoginPage: React.FC = () => {
       // JWT 토큰을 로컬 스토리지에 저장
       localStorage.setItem("authToken", token);
       // 로그인 성공 후 로직 (예: 메인 페이지로 리다이렉트)
-      navigate("main"); // 인증 성공 후 /register2 페이지로 이동
+      navigate("main"); // 인증 성공 후 /main 페이지로 이동
     } catch (error) {
       setLoginError("Login failed. Please try again.");
       alert("Login failed.");

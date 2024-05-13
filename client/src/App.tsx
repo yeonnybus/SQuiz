@@ -7,6 +7,8 @@ import MainPage from "./pages/MainPage";
 import FindId from "./pages/FindId";
 import FindPw from "./pages/FindPw";
 import MakeQuiz from "./pages/MakeQuiz";
+import MakeQuiz2 from "./pages/MakeQuiz2";
+import FruitBasket from "./pages/FruitBasket";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/findid" element={<FindId />} />
         <Route path="/findpw" element={<FindPw />} />
         <Route path="/makequiz" element={<MakeQuiz />} />
+        <Route path="/makequiz2" element={<MakeQuiz2 />} />
+        <Route path="/fruitbasket" element={<FruitBasket />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </div>
