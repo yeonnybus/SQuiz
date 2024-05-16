@@ -6,6 +6,9 @@ import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.service.PdfUploadService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -26,6 +29,7 @@ public class UploadController {
     @PostMapping(value = "/upload-pdf", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "pdf 업로드 API",
             description = "multipart/form-data로 pdf 파일을 입력 받아 업로드하는 API입니다. jwt 토큰 헤더에 보내야합니다~")
+    @ApiResponse(responseCode = "200", description = "pdf 업로드 성공", content = @Content(schema = @Schema(implementation = PdfUploadResponse.class)))
     public ResponseEntity<ApiResponseEntity<PdfUploadResponse>> uploadPdf(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestPart(name = "file", required = false ) MultipartFile file)
             throws IOException {
         PdfUploadResponse pdfUploadResponse = pdfUploadService.uploadPdf(userDetails.getUsername(), file);

@@ -20,28 +20,31 @@ public class Pdf {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column
+
     private String uploadFileName;
-
-    @Column
-    private String storedFileName;
-
-    @Column
-    private String pdfMetaData;
-
-    @Column
+    private String pdfToText;
     private int totalPageCount;
 
     @OneToMany(mappedBy = "pdf", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Quiz> quizes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "pdf", cascade = CascadeType.REMOVE)
+    private List<KC> kcs = new ArrayList<>();
     @Builder
-    public Pdf(Long id, Member member, String uploadFileName, String storedFileName, String pdfMetaData, int totalPageCount) {
+    public Pdf(Long id, Member member, String uploadFileName,  String pdfToText, int totalPageCount) {
         this.id = id;
-        this.member = member;
+        setMember(member);
         this.uploadFileName = uploadFileName;
-        this.storedFileName = storedFileName;
-        this.pdfMetaData = pdfMetaData;
+        this.pdfToText = pdfToText;
         this.totalPageCount = totalPageCount;
+    }
+
+    private void setMember(Member member) {
+        this.member = member;
+        member.getPdfs().add(this);
+    }
+
+    public void setPdfToText(String pdfToText) {
+        this.pdfToText = pdfToText;
     }
 }

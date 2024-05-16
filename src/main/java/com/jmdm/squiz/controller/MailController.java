@@ -2,12 +2,17 @@ package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.EmailCertificationRequest;
 import com.jmdm.squiz.dto.EmailCertificationResponse;
+import com.jmdm.squiz.dto.PdfUploadResponse;
 import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.service.MailSendService;
 import com.jmdm.squiz.service.MailVerifyService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.mail.MessagingException;
@@ -28,6 +33,7 @@ public class MailController {
 
     @PostMapping("/send-certification")
     @Operation(summary = "인증 코드를 전송", description = "사용자의 이메일로 인증코드를 전송하는 API")
+    @ApiResponse(responseCode = "200", description = "이메일 인증 성공", content = @Content(schema = @Schema(implementation = EmailCertificationResponse.class)))
     public ResponseEntity<ApiResponseEntity<EmailCertificationResponse>> sendCertificationNumber(@Validated @RequestBody EmailCertificationRequest request)
             throws MessagingException, NoSuchAlgorithmException {
         EmailCertificationResponse response = mailSendService.sendEmailForCertification(request.getEmail());
@@ -36,6 +42,7 @@ public class MailController {
 
     @PostMapping("/verify")
     @Operation(summary = "인증코드 확인", description = "인증코드가 올바른지 확인하는 API")
+    @ApiResponse(responseCode = "200", description = "인증코드 일치")
     public ResponseEntity<ApiResponseEntity<Void>> verifyCertificationNumber(@RequestBody EmailCertificationResponse request) {
         mailVerifyService.verifyEmail(request.getEmail(), request.getCertificationNumber());
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS));

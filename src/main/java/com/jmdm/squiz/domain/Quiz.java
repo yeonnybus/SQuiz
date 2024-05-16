@@ -24,20 +24,26 @@ public class Quiz {
     @JoinColumn(name = "pdf_id")
     private Pdf pdf;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     private String quizName;
     private SubjectType subject;
     private int startPage;
     private int endPage;
     private QuizType quizType;
-    private ProblemNum problemNum;
+    private int problemNum;
     private Rank rank;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Problem> problems = new ArrayList<>();
+    //Pdf pdf, Member member,
     @Builder
-    public Quiz(Long id, Pdf pdf, String quizName, SubjectType subject, int startPage, int endPage, QuizType quizType, ProblemNum problemNum, Rank rank) {
+    public Quiz(Long id, String quizName, Pdf pdf, Member member, SubjectType subject, int startPage, int endPage, QuizType quizType, int problemNum, Rank rank) {
         this.id = id;
-        this.pdf = pdf;
+        setPdf(pdf);
+        setMember(member);
         this.quizName = quizName;
         this.subject = subject;
         this.startPage = startPage;
@@ -45,5 +51,14 @@ public class Quiz {
         this.quizType = quizType;
         this.problemNum = problemNum;
         this.rank = rank;
+    }
+    private void setPdf(Pdf pdf) {
+        this.pdf = pdf;
+        pdf.getQuizes().add(this);
+    }
+
+    private void setMember(Member member) {
+        this.member = member;
+        member.getQuizs().add(this);
     }
 }

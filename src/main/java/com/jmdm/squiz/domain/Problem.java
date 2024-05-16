@@ -1,8 +1,6 @@
 package com.jmdm.squiz.domain;
 
-import com.jmdm.squiz.dto.AnswerDTO;
 import com.jmdm.squiz.dto.Choice;
-import com.jmdm.squiz.dto.ProblemDTO;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,9 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +22,7 @@ public class Problem {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
+    private int problemNumber;
     private String kc;
     private String question;
 
@@ -37,14 +34,22 @@ public class Problem {
     @OneToMany(mappedBy = "problem", cascade = CascadeType.REMOVE)
     private List<Answer> answers = new ArrayList<>();
 
+    @OneToMany(mappedBy = "problem")
+    private List<FruitBasketProblem> fruitBasketProblems = new ArrayList<>();
+
     @Builder
-    public Problem(Long id, Quiz quiz, String kc, String question, Choice choice, String content) {
+    public Problem(Long id, Quiz quiz, String kc, String question, Choice choice, String content, int problemNumber) {
         this.id = id;
-        this.quiz = quiz;
+        setQuiz(quiz);
         this.kc = kc;
         this.question = question;
         this.choice = choice;
         this.content = content;
+        this.problemNumber = problemNumber;
+    }
+    private void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+        quiz.getProblems().add(this);
     }
 
 }

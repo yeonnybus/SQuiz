@@ -1,5 +1,6 @@
 package com.jmdm.squiz.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Schema(description = "이메일 인증 요청 시 사용하는 request")
 public class EmailCertificationRequest {
     /*
      @NotNull : null만 허용하지 않음, "" 과 " " 허용
