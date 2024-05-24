@@ -49,6 +49,15 @@ public class QuizCheckService {
             Problem problem = problems.get(i);
             CheckProblemDTO checkProblemDTO = checkProblemDTOS.get(i);
             problem.setCheckedAnswer(checkProblemDTO.getCheckedAnswer(), checkProblemDTO.getCheckedBlanks());
+
+            boolean isCorrect = (quiz.getQuizType() == QuizType.BLANK)
+                    ? problem.getCheckedBlanks().equalsBlanks(problem.getBlanks())
+                    : problem.getCheckedAnswer().equals(problem.getAnswer());
+            if (isCorrect) {
+                problem.setCorrect(1);
+            } else {
+                problem.setCorrect(0);
+            }
         });
 
         problemRepository.saveAll(problems);
@@ -78,11 +87,7 @@ public class QuizCheckService {
 
             dto.setKcProblemNum(dto.getKcProblemNum() + 1);
 
-            boolean isCorrect = (quiz.getQuizType() == QuizType.BLANK)
-                    ? problem.getCheckedBlanks().equalsBlanks(problem.getBlanks())
-                    : problem.getCheckedAnswer().equals(problem.getAnswer());
-
-            if (isCorrect) {
+            if (problem.getCorrect() == 1) {
                 correctNum++;
                 dto.correctProblem();
             } else {

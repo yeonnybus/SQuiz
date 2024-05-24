@@ -4,6 +4,7 @@ import com.jmdm.squiz.dto.*;
 import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.service.QuizCheckService;
 import com.jmdm.squiz.service.QuizGenerateService;
+import com.jmdm.squiz.service.QuizProvideService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuizController {
     private final QuizGenerateService quizGenerateService;
     private final QuizCheckService quizCheckService;
+    private final QuizProvideService quizProvideService;
+
     @PostMapping("/generate-quiz")
     @Operation(summary = "퀴즈 생성 API",
             description = "퀴즈 옵션들과 pdf정보를 request로 받아서 퀴즈를 생성하는 API입니다.")
@@ -45,6 +48,16 @@ public class QuizController {
         String memberId = userDetails.getUsername();
         QuizCheckResponse response = quizCheckService.checkQuiz(memberId, request);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "퀴즈 채점 결과입니다."));
+    }
+
+    @PostMapping("/quiz-detail")
+    @Operation(summary = "문제 정오답 요청 API",description = "퀴즈 채점 후 각 문제 당 정오답 및 해설 정보 요청 API")
+    @ApiResponse(responseCode = "200", description = "퀴즈 채점 성공", content = @Content(schema = @Schema(implementation = QuizDetailResponse.class)))
+    public ResponseEntity<ApiResponseEntity<QuizDetailResponse>> getProblems(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                               @RequestBody QuizDetailRequest request) {
+        String memberId = userDetails.getUsername();
+        QuizDetailResponse response = quizProvideService.getQuiz(memberId, request.getQuizId());
+         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "채점된 문제들"));
     }
 
 

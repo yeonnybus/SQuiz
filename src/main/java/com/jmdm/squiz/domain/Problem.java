@@ -39,7 +39,7 @@ public class Problem {
 
     private String checkedAnswer;
     @Embedded
-    CheckedBlanks checkedBlanks;
+    private CheckedBlanks checkedBlanks;
     private int correct;
 
 
