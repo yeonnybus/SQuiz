@@ -3,6 +3,7 @@ package com.jmdm.squiz.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jmdm.squiz.domain.*;
 import com.jmdm.squiz.dto.*;
+import com.jmdm.squiz.enums.SubjectType;
 import com.jmdm.squiz.exception.ErrorCode;
 import com.jmdm.squiz.exception.model.AiServerException;
 import com.jmdm.squiz.exception.model.NotFoundPdfException;
@@ -19,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class QuizGenerateService {
     private final PdfRepository pdfRepository;
     private final QuizRepository quizRepository;
     private final ProblemRepository problemRepository;
+    private final DktPerSubjectRepository dktPerSubjectRepository;
 
     public QuizGenerateResponse generateQuiz(String memberId, QuizGenerateRequest request){
         // pdf 파일 load
@@ -41,8 +45,8 @@ public class QuizGenerateService {
         Quiz quiz = saveQuizAndGetQuiz(pdf, member, request);
 
         //post
-
-//        AiQuizGenerateResponse response = postAiAndGetQuiz(quiz.getId(), pdf, request); // ai post api 호출
+        ArrayList<Dkt> dkts = isPlusQuiz(member, quiz.getSubject());
+//        AiQuizGenerateResponse response = postAiAndGetQuiz(quiz.getId(), pdf, request, dkts); // ai post api 호출
         AiQuizGenerateResponse AiResponse = aiTest(quiz.getId(), request);
         saveProblem(AiResponse, quiz);
         return makeResponse(AiResponse, request);
@@ -119,8 +123,26 @@ public class QuizGenerateService {
         return quiz;
     }
 
+    private ArrayList<Dkt> isPlusQuiz(Member member, SubjectType subjectType) {
+        if (dktPerSubjectRepository.existsByMemberAndSubjectType(member, subjectType)) {
+            DktPerSubject dktPerSubject = dktPerSubjectRepository.findByMemberAndSubjectType(member,subjectType);
+            List<DktList> dktLists = dktPerSubject.getDktLists();
 
-    private AiQuizGenerateResponse postAiAndGetQuiz(Long quizId, Pdf pdf, QuizGenerateRequest request) throws IOException{
+            return dktLists.stream()
+                    .map(dktList -> {
+                        Dkt dkt = new Dkt();
+                        dkt.setKcId(dktList.getKcId());
+                        dkt.setPredict(dktList.getPredict());
+                        return dkt;
+                    })
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else {
+            return null;
+        }
+    }
+
+
+    private AiQuizGenerateResponse postAiAndGetQuiz(Long quizId, Pdf pdf, QuizGenerateRequest request, ArrayList<Dkt> dkts) throws IOException{
         // post 요청할 ai 서버 url
         String aiServerUrl = "http://localhost:8080/api/v1/quiz";
         // 요청 header 설정
@@ -138,7 +160,7 @@ public class QuizGenerateService {
         body.add("rank", request.getRank());
         body.add("pdfText", pdf.getPdfToText());
         body.add("pageKcId", pdf.getPageKcId());
-        body.add("dkt", null); // 추후 문제 재생성시로 바꾸기
+        body.add("dkt", dkts); // 추후 문제 재생성시로 바꾸기
 
         // post 요청
         RestTemplate restTemplate = new RestTemplate();

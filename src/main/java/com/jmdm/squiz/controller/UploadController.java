@@ -1,7 +1,6 @@
 package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.CustomUserDetails;
-import com.jmdm.squiz.dto.PdfUploadRequest;
 import com.jmdm.squiz.dto.PdfUploadResponse;
 import com.jmdm.squiz.enums.SubjectType;
 import com.jmdm.squiz.exception.SuccessCode;

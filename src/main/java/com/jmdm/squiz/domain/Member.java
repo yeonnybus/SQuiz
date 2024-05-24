@@ -42,6 +42,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<FruitBasket> fruitBaskets = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<DktPerSubject> dktPerSubjects = new ArrayList<>();
+
 
     public static Member toMember(MemberDTO memberDTO, BCryptPasswordEncoder bCryptPasswordEncoder){
         Member member = new Member();
