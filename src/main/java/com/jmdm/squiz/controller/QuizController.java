@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,6 +56,9 @@ public class QuizController {
         QuizDetailResponse response = quizProvideService.getQuiz(memberId, request.getQuizId());
          return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "채점된 문제들"));
     }
+
+//    @GetMapping("/load-quizList")
+//    @Operation(summary = "지난 퀴즈 목록 로드 API", description = "지난 퀴즈 목록 페이지 목록들을 불러오는 API")
 
 
 }

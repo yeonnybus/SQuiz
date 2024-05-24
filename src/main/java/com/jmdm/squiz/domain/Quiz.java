@@ -5,7 +5,9 @@ import com.jmdm.squiz.enums.Rank;
 import com.jmdm.squiz.enums.SubjectType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,10 @@ public class Quiz {
     private QuizType quizType;
     private int problemNum;
     private Rank rank;
+    private int correctNum;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Problem> problems = new ArrayList<>();
@@ -57,5 +63,8 @@ public class Quiz {
     private void setMember(Member member) {
         this.member = member;
         member.getQuizs().add(this);
+    }
+    public void setCorrectNum(int correctNum) {
+        this.correctNum = correctNum;
     }
 }

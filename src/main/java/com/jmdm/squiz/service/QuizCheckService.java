@@ -95,6 +95,8 @@ public class QuizCheckService {
             }
         }
         List<CorrectPerKcDTO> correctPerKcDTOS = new ArrayList<>(correctPerKcMap.values());
+        quiz.setCorrectNum(correctNum);
+        quizRepository.save(quiz);
         return makeResponse(quiz, correctNum, correctPerKcDTOS);
     }
 
