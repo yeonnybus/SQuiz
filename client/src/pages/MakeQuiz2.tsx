@@ -12,7 +12,10 @@ const CenteredContainer = styled.div`
   align-items: center;
   height: 100vh;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
 `;
 
 const FormContainer = styled.div`
@@ -73,30 +76,60 @@ const MakeQuiz2: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // location.state가 undefined일 수 있으므로, LocationState 타입의 기본값을 제공합니다.
-  // const [pdfId, setPdfId] = useState<number>(location.state.pdfId);
-  //   const [uploadFileName, setUploadFileName] = useState<string>(location.state.uploadFileName);
-  //   const [endPageNumber, setEndPageNumber] = useState<number>(location.state.endPageNumber);
-  //   const [startPageNumber, setStartPageNumber] = useState<number>(location.state.startPageNumber);
-  //   const [selectedSubject, setSelectedSubject] = useState<string | null>(location.state.selectedSubject);
-
-  //   const [problemType, setProblemType] = useState<string>(location.state.problemType);
-  //   const [problemCount, setProblemCount] = useState<string>(location.state.problemCount);
-  //   const [difficulty, setDifficulty] = useState<string>(location.state.difficulty);
-  const [pdfId, setPdfId] = useState<number>(0);
-  const [uploadFileName, setUploadFileName] = useState<string>("");
-  const [endPageNumber, setEndPageNumber] = useState<number>(1);
-  const [startPageNumber, setStartPageNumber] = useState<number>(1);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(
-    "운영체제"
+  const [pdfId, setPdfId] = useState<number>(location.state.pdfId);
+  const [uploadFileName, setUploadFileName] = useState<string>(
+    location.state.uploadFileName
   );
-  const [problemType, setProblemType] = useState<string>("객관식");
-  const [problemCount, setProblemCount] = useState<string>("15");
-  const [difficulty, setDifficulty] = useState<string>("중");
+  const [endPageNumber, setEndPageNumber] = useState<number>(
+    location.state.endPageNumber
+  );
+  const [startPageNumber, setStartPageNumber] = useState<number>(
+    location.state.startPageNumber
+  );
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(
+    location.state.selectedSubject
+  );
 
-  const [apiSuccess, setApiSuccess] = useState<boolean>(true); // API 호출 성공 여부를 나타내는 상태 추가
+  const [problemType, setProblemType] = useState<string>(
+    location.state.problemType
+  );
+  const [problemCount, setProblemCount] = useState<string>(
+    location.state.problemCount
+  );
+  const [difficulty, setDifficulty] = useState<string>(
+    location.state.difficulty
+  );
+
+  const [problemTypeKey, setProblemTypeKey] = useState<string>(
+    location.state.problemTypeKey
+  );
+  const [difficultyKey, setDifficultyKey] = useState<string>(
+    location.state.difficultyKey
+  );
+  // const [pdfId, setPdfId] = useState<number>(0);
+  // const [uploadFileName, setUploadFileName] = useState<string>("");
+  // const [endPageNumber, setEndPageNumber] = useState<number>(1);
+  // const [startPageNumber, setStartPageNumber] = useState<number>(1);
+  // const [selectedSubject, setSelectedSubject] = useState<string | null>(
+  //   "운영체제"
+  // );
+  // const [problemType, setProblemType] = useState<string>("객관식");
+  // const [problemCount, setProblemCount] = useState<string>("15");
+  // const [difficulty, setDifficulty] = useState<string>("중");
+
+  const [apiSuccess, setApiSuccess] = useState<boolean>(false); // API 호출 성공 여부를 나타내는 상태 추가
+
+  const [quiz, setQuiz] = useState<string>("");
+
+  interface token {
+    jwtToken: string; // JWT 토큰을 props로 받습니다.
+  }
+  const jwtToken = localStorage.getItem("authToken") || "";
+
   const handleQuizOptionSubmit = async () => {
     try {
       const response = await orderQuiz(
+        jwtToken,
         pdfId,
         uploadFileName,
         selectedSubject,
@@ -109,20 +142,26 @@ const MakeQuiz2: React.FC = () => {
 
       console.log(response);
       setApiSuccess(true);
+      setQuiz(JSON.stringify(response));
     } catch (error) {
       console.error(error);
-      setApiSuccess(true);
+      setApiSuccess(false);
     }
   };
 
   const handleLetsGoToQuiz = () => {
-    navigate("quiz");
+    //const res = event.target.dataset.res;
+
+    navigate("/quiz", {
+      state: { quiz },
+    });
   };
 
-  // useEffect(() => {
-  //   // 컴포넌트가 마운트 될 때 비동기 함수 실행
-  //   handleQuizOptionSubmit();
-  // }, []); // 빈 배열을 의존성 배열로 전달하여 컴포넌트가 처음 마운트 될 때만 실행되도록 함
+  useEffect(() => {
+    // 컴포넌트가 마운트 될 때 비동기 함수 실행
+
+    handleQuizOptionSubmit();
+  }, []); // 빈 배열을 의존성 배열로 전달하여 컴포넌트가 처음 마운트 될 때만 실행되도록 함
 
   return (
     <CenteredContainer>
@@ -131,12 +170,12 @@ const MakeQuiz2: React.FC = () => {
           {/* FormContainerNew 내용 */}
           <img src="orange_logo.svg" alt="" width={"100px"} />
           <Label>Quiz</Label>
-          <Label>운영체제 1강</Label>
+          <Label>{uploadFileName}</Label>
           <LabelMini>{selectedSubject}</LabelMini>
           <LabelMini>
-            {problemType} {problemCount} 문제
+            {problemTypeKey} {problemCount} 문제
           </LabelMini>
-          <LabelMini>난이도 {difficulty}</LabelMini>
+          <LabelMini>난이도 {difficultyKey}</LabelMini>
           <Button
             variant="contained"
             color="primary"
@@ -162,9 +201,9 @@ const MakeQuiz2: React.FC = () => {
           <Label>운영체제 1강</Label>
           <LabelMini>{selectedSubject}</LabelMini>
           <LabelMini>
-            {problemType} {problemCount} 문제
+            {problemTypeKey} {problemCount} 문제
           </LabelMini>
-          <LabelMini>난이도 {difficulty}</LabelMini>
+          <LabelMini>난이도 {difficultyKey}</LabelMini>
 
           <CircularProgress
             disableShrink

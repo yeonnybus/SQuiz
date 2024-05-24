@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   TextField,
@@ -18,7 +18,10 @@ const CenteredContainer = styled.div`
   align-items: center;
   height: 100vh;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
 `;
 
 const FormContainer = styled.div`
@@ -118,10 +121,10 @@ const MakeQuiz: React.FC = () => {
   );
   const [startPageNumber, setStartPageNumber] = useState<number>(1);
   const [subjects, setSubjects] = useState<{ label: string; value: string }[]>([
-    { label: "운영체제", value: "운영체제" },
-    { label: "컴퓨터통신", value: "컴퓨터통신" },
-    { label: "객체지향프로그래밍", value: "객체지향프로그래밍" },
-    { label: "C프로그래밍", value: "C프로그래밍" },
+    { label: "운영체제", value: "OPERATING_SYSTEM" },
+    { label: "컴퓨터통신", value: "COMPUTER_COMMUNICATION" },
+    { label: "객체지향프로그래밍", value: "OBJECT_ORIENTED_PROGRAMMING" },
+    { label: "C프로그래밍", value: "C_LANGUAGE" },
   ]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
@@ -129,13 +132,19 @@ const MakeQuiz: React.FC = () => {
   const [problemCount, setProblemCount] = useState<string>("");
   const [difficulty, setDifficulty] = useState<string>("");
 
+  const [problemTypeKey, setProblemTypeKey] = useState<string | null>("");
+
+  const [difficultyKey, setDifficultyKey] = useState<string | null>("");
+
   const [error, setError] = useState<string>("");
 
   const handleTypeChange = (
     event: React.MouseEvent<HTMLElement>,
     newType: string
   ) => {
+    const key = event.currentTarget.getAttribute("data-key");
     setProblemType(newType);
+    setProblemTypeKey(key);
   };
   const handleCountChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -148,11 +157,19 @@ const MakeQuiz: React.FC = () => {
     event: React.MouseEvent<HTMLElement>,
     newDifficulty: string
   ) => {
+    const key = event.currentTarget.getAttribute("data-key");
     setDifficulty(newDifficulty);
+    setDifficultyKey(key);
   };
 
+  useEffect(() => {
+    console.log(problemTypeKey);
+    console.log(difficultyKey);
+    // 서버로부터 데이터를 가져오는 함수를 여기에 구현하세요.
+  }, [problemType, difficulty]);
+
   const handleQuizOptionSubmit = () => {
-    navigate("makequiz2", {
+    navigate("/makequiz2", {
       state: {
         pdfId,
         uploadFileName,
@@ -162,6 +179,8 @@ const MakeQuiz: React.FC = () => {
         problemType,
         problemCount,
         difficulty,
+        problemTypeKey,
+        difficultyKey,
       },
     });
   };
@@ -245,10 +264,7 @@ const MakeQuiz: React.FC = () => {
               variant="standard"
               type="number"
               value={endPageNumber}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                setEndPageNumber(!isNaN(value) ? value : 0);
-              }}
+              onChange={handlePageNumberChange}
               InputProps={{ style: textFieldStyle.input }} // 세로 길이 조절 적용
             />
           </Row>
@@ -263,11 +279,21 @@ const MakeQuiz: React.FC = () => {
               aria-label="문제 유형"
               sx={{ borderRadius: "20px", backgroundColor: "white" }}
             >
-              <ToggleButton value="빈칸" sx={{ borderRadius: "20px" }}>
+              <ToggleButton
+                value="BLANK"
+                data-key="빈칸"
+                sx={{ borderRadius: "20px" }}
+              >
                 빈칸
               </ToggleButton>
-              <ToggleButton value="객관식">객관식</ToggleButton>
-              <ToggleButton value="OX" sx={{ borderRadius: "20px" }}>
+              <ToggleButton value="MULTIPLE_CHOICE" data-key="객관식">
+                객관식
+              </ToggleButton>
+              <ToggleButton
+                value="OX"
+                data-key="O/X"
+                sx={{ borderRadius: "20px" }}
+              >
                 OX
               </ToggleButton>
             </StyledToggleButtonGroup>
@@ -299,16 +325,27 @@ const MakeQuiz: React.FC = () => {
             <Label>난이도</Label>
             <StyledToggleButtonGroup
               value={difficulty}
+              key={difficultyKey}
               exclusive
               onChange={handleDifficultyChange}
               aria-label="난이도"
               sx={{ borderRadius: "20px", backgroundColor: "white" }}
             >
-              <ToggleButton value="상" sx={{ borderRadius: "20px" }}>
+              <ToggleButton
+                value="UPPER"
+                data-key="상"
+                sx={{ borderRadius: "20px" }}
+              >
                 상
               </ToggleButton>
-              <ToggleButton value="중">중</ToggleButton>
-              <ToggleButton value="하" sx={{ borderRadius: "20px" }}>
+              <ToggleButton value="MIDDLE" data-key="중">
+                중
+              </ToggleButton>
+              <ToggleButton
+                value="LOWER"
+                data-key="하"
+                sx={{ borderRadius: "20px" }}
+              >
                 하
               </ToggleButton>
             </StyledToggleButtonGroup>

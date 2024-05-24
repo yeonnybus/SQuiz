@@ -11,7 +11,10 @@ const CenteredContainer = styled.div`
   height: 100vh;
 
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
 `;
 
 const FormContainer = styled.div`
@@ -62,20 +65,56 @@ const InlineContainer = styled.div`
 
 const FruitBasket: React.FC = () => {
   interface Item {
-    name: string;
+    fruitBasketId: number;
+    fruitBasketName: string;
     subject: string;
-    count: number;
-    borntime: string; // ISO 날짜 형식을 가정합니다.
+    problemNum: number;
+    createdAt: string; // ISO 날짜 형식을 가정합니다.
+    updatedAt: string;
   }
 
   const items: Item[] = [
-    { name: "Item 1", subject: "Math", count: 10, borntime: "2020-01-01" },
-    { name: "Item 2", subject: "Science", count: 5, borntime: "2021-02-01" },
-    { name: "Item 3", subject: "Science", count: 5, borntime: "2021-02-01" },
-    { name: "Item 4", subject: "Science", count: 5, borntime: "2021-02-01" },
-    { name: "Item 5", subject: "Science", count: 5, borntime: "2021-02-01" },
-    { name: "Item 6", subject: "Science", count: 5, borntime: "2021-02-01" },
-    { name: "Item 7", subject: "Science", count: 5, borntime: "2021-02-01" },
+    {
+      fruitBasketId: 1,
+      fruitBasketName: "운체 중간 오답 바구니1",
+      subject: "OPERATING_SYSTEM",
+      problemNum: 20,
+      createdAt: "2022-12-15T09:00:00",
+      updatedAt: "2022-12-15T09:00:00",
+    },
+    {
+      fruitBasketId: 1,
+      fruitBasketName: "운체 중간 오답 바구니2",
+      subject: "OPERATING_SYSTEM",
+      problemNum: 10,
+      createdAt: "2022-12-15T09:00:00",
+      updatedAt: "2022-12-15T09:00:00",
+    },
+    {
+      fruitBasketId: 1,
+      fruitBasketName: "운체 중간 오답 바구니3",
+      subject: "OPERATING_SYSTEM",
+      problemNum: 15,
+      createdAt: "2022-12-15T09:00:00",
+      updatedAt: "2022-12-15T09:00:00",
+    },
+    {
+      fruitBasketId: 1,
+      fruitBasketName: "운체 중간 오답 바구니4",
+      subject: "OPERATING_SYSTEM",
+      problemNum: 10,
+      createdAt: "2022-12-15T09:00:00",
+      updatedAt: "2022-12-15T09:00:00",
+    },
+    {
+      fruitBasketId: 1,
+      fruitBasketName: "운체 중간 오답 바구니5",
+      subject: "OPERATING_SYSTEM",
+      problemNum: 5,
+      createdAt: "2022-12-15T09:00:00",
+      updatedAt: "2022-12-15T09:00:00",
+    },
+
     // ... 추가 데이터 아이템들
   ];
 

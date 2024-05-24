@@ -10,7 +10,10 @@ const CenteredContainer = styled.div`
   align-items: center;
   height: 100vh;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
 `;
 
 const FormContainer = styled.div`
@@ -18,7 +21,7 @@ const FormContainer = styled.div`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 500px;
+  max-width: 350px;
   background-color: white;
   padding: 50px;
   border-radius: 24px;

@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // API 요청을 위한 기본 URL 설정
-const API_BASE_URL = "http://10.0.8.99:8080/api/v1";
-const IP = "http://10.0.8.99:8080";
+const API_BASE_URL = "http://10.0.22.185:8080/api/v1";
+const IP = "http://10.0.22.185:8080";
 
 // 이메일 인증 요청 api
 export const sendEmailCertification = async (email: string): Promise<void> => {
@@ -39,6 +39,26 @@ export const verifyEmailCertification = async (
   } catch (error) {
     console.error("Email verification failed:", error);
     throw new Error("Email verification failed");
+  }
+};
+
+export const idDuplicationCheck = async (memberId: string): Promise<void> => {
+  try {
+    // axios.get을 사용하여 서버에 요청을 보냄
+
+    const response = await axios.get(
+      `${API_BASE_URL}/member/check-id-duplication?memberId=${memberId}`
+    );
+
+    // 서버의 응답 처리
+    // 응답 구조 및 처리 방법은 API의 구현에 따라 다를 수 있음
+    console.log("사용 가능한 ID입니다.");
+  } catch (error) {
+    // 에러 처리
+    if (axios.isAxiosError(error)) {
+      //console.log("ID 중복 검사 중 에러 발생:", error.response?.status);
+      console.error("중복된 ID 입니다. 다른 ID를 입력해주세요.");
+    }
   }
 };
 
@@ -130,7 +150,11 @@ export const verifyPwSearchEmailCertification = async (
 };
 
 // pdf 업로드
-export const uploadPdfFile = async (token: string, files: File[]) => {
+export const uploadPdfFile = async (
+  token: string,
+  files: File[],
+  selectedSubject: string | null
+) => {
   const formData = new FormData();
   files.forEach((file) => {
     formData.append("file", file);
@@ -138,7 +162,7 @@ export const uploadPdfFile = async (token: string, files: File[]) => {
 
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/upload/upload-pdf`,
+      `${API_BASE_URL}/upload/upload-pdf?subjectType=${selectedSubject}`,
       formData,
       {
         headers: {
@@ -155,6 +179,7 @@ export const uploadPdfFile = async (token: string, files: File[]) => {
 };
 
 export const orderQuiz = async (
+  jwtToken: string,
   pdfId: number,
   quizName: string | null,
   subject: string | null,
@@ -165,18 +190,27 @@ export const orderQuiz = async (
   rank: string
 ) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/quiz`, {
-      pdfId,
-      quizName,
-      subject,
-      startPage,
-      endPage,
-      quizType,
-      problemNum,
-      rank,
-    });
+    const response = await axios.post(
+      `${API_BASE_URL}/quiz/generate-quiz`,
+      {
+        pdfId,
+        quizName,
+        subject,
+        startPage,
+        endPage,
+        quizType,
+        problemNum,
+        rank,
+      },
+      {
+        headers: {
+          Authorization: jwtToken,
+        },
+      }
+    );
 
     console.log("퀴즈 요청 성공");
+    return response;
     //return response.data.userId; // 서버 리스폰스 보고 수정
   } catch (error) {
     console.error("퀴즈 요청 실패:", error);

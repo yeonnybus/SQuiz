@@ -6,6 +6,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { registerMember } from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import { idDuplicationCheck } from "../api/axios";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -18,7 +19,10 @@ const CenteredContainer = styled.div`
     #f7f0ba,
     #e2f3b4
   ); // 여기에 그라데이션 적용
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
   font-weight: 400;
   font-style: normal;
 `;
@@ -83,26 +87,14 @@ const Register2: React.FC = () => {
     setMemberPw2(event.target.value);
   };
 
-  // id 중복체크 api 통신
-  async function handleIdCheck() {
+  const handleIdCheck = async () => {
     try {
-      // axios.get을 사용하여 서버에 요청을 보냄
-
-      const response = await axios.get(
-        `http://10.0.8.99:8080/api/v1/member/check-id-duplication?memberId=${memberId}`
-      );
-
-      // 서버의 응답 처리
-      // 응답 구조 및 처리 방법은 API의 구현에 따라 다를 수 있음
-      alert("사용 가능한 ID입니다 ㅊㅋㅊㅋ");
+      await idDuplicationCheck(memberId);
+      alert("사용 가능한 ID입니다");
     } catch (error) {
-      // 에러 처리
-      if (axios.isAxiosError(error)) {
-        //console.log("ID 중복 검사 중 에러 발생:", error.response?.status);
-        alert("중복된 ID 입니당!!!!!!");
-      }
+      alert("중복된 ID입니다. 다른 ID를 입력해주세요.");
     }
-  }
+  };
 
   const handleRegister = async () => {
     try {

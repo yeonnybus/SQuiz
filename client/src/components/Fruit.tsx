@@ -5,15 +5,27 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import styled from "styled-components";
 
 interface Item {
-  name: string;
+  fruitBasketId: number;
+  fruitBasketName: string;
   subject: string;
-  count: number;
-  borntime: string; // ISO 날짜 형식을 가정합니다.
+  problemNum: number;
+  createdAt: string; // ISO 날짜 형식을 가정합니다.
+  updatedAt: string;
 }
 
 interface FruitProps {
   items: Item[];
 }
+
+const FruitContainer = styled.div`
+  display: flex;
+  justify-content: center; // 중앙 정렬
+  width: 100%; // 전체 너비
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
+`;
 
 const FormContainer = styled.div`
   display: flex;
@@ -28,19 +40,13 @@ const FormContainer = styled.div`
 `;
 
 const Label = styled.div`
-  align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  width: 100vh;
+  display: flex;
+
   font-size: 22px;
   font-weight: bold;
   margin-bottom: 20px;
   color: black;
-  justify-content: center;
-`;
-
-const FruitContainer = styled.div`
-  display: flex;
-  justify-content: center; // 중앙 정렬
-  width: 100%; // 전체 너비
 `;
 
 const LabelMini = styled.div`
@@ -50,7 +56,7 @@ const LabelMini = styled.div`
 
 const LabelAcmp = styled.div`
   font-size: 16px;
-  margin-left: 100px;
+  margin-left: 50px;
   color: gray;
 `;
 const InlineContainer = styled.div`
@@ -77,14 +83,14 @@ const Fruit: React.FC<FruitProps> = ({ items }) => {
                 width: "300px",
               }}
             >
-              <Label>{item.name}</Label>
+              <Label>{item.fruitBasketName}</Label>
               <InlineContainer>
                 <LabelMini>과목</LabelMini>
                 <LabelAcmp>{item.subject}</LabelAcmp>
               </InlineContainer>
               <InlineContainer>
                 <LabelMini>개수</LabelMini>
-                <LabelAcmp>{item.count}문제</LabelAcmp>
+                <LabelAcmp>{item.problemNum}문제</LabelAcmp>
               </InlineContainer>
               <IconButton
                 aria-label="forward"

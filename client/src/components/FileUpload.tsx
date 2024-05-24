@@ -14,6 +14,10 @@ const DropzoneArea = styled.div<{ isDragActive?: boolean }>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
   height: 500px; /* 원하는 높이로 조정 */
   background-color: ${(props) =>
     props.isDragActive ? "#e0e0e0" : "transparent"};
@@ -21,9 +25,10 @@ const DropzoneArea = styled.div<{ isDragActive?: boolean }>`
 
 interface FileUploadProps {
   token: string; // JWT 토큰을 props로 받습니다.
+  selectedSubject: string | null;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ token, selectedSubject }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadStatus, setUploadStatus] = useState<"idle" | "loading" | "done">(
     "idle"
@@ -39,7 +44,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
     setUploadStatus("loading");
 
     try {
-      const data = await uploadPdfFile(token, selectedFiles);
+      const data = await uploadPdfFile(token, selectedFiles, selectedSubject);
       console.log("File uploaded successfully", data);
       setUploadedFileName(data.body.data.uploadFileName); // 예시 응답에서 파일 이름을 가져온다고 가정
       setPdfId(data.body.data.pdfId);
@@ -90,11 +95,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ token }) => {
                 color: "gray",
                 ":hover": { color: "#ffc450" },
               }}
-              onClick={() =>
+              onClick={(event) => {
+                event.stopPropagation(); // 이벤트 버블링을 중지합니다.
                 navigate("/makequiz", {
                   state: { uploadedFileName, pdfId, totalPageCount },
-                })
-              }
+                });
+              }}
             >
               퀴즈 생성하기
             </Button>

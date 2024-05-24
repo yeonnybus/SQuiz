@@ -20,7 +20,10 @@ const CenteredContainer = styled.div`
     #f7f0ba,
     #e2f3b4
   ); // 여기에 그라데이션 적용z
-  font-family: "Nanum Gothic", sans-serif;
+  font-family: "Pretendard Variable";
+  font-display: swap;
+  src: local("Pretendard Variable"),
+    url("./PretendardVariable.ttf") format("ttf");
   font-weight: 400;
   font-style: normal;
 `;

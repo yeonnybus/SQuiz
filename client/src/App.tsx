@@ -9,6 +9,9 @@ import FindPw from "./pages/FindPw";
 import MakeQuiz from "./pages/MakeQuiz";
 import MakeQuiz2 from "./pages/MakeQuiz2";
 import FruitBasket from "./pages/FruitBasket";
+import Quiz from "./pages/Quiz";
+import QuizResult from "./pages/QuizResult";
+import QuizDetail from "./pages/QuizDetail";
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
         <Route path="/makequiz" element={<MakeQuiz />} />
         <Route path="/makequiz2" element={<MakeQuiz2 />} />
         <Route path="/fruitbasket" element={<FruitBasket />} />
+        <Route path="/quiz" element={<Quiz />} />
+        <Route path="/quizresult" element={<QuizResult />} />
+        <Route path="/quizdetail" element={<QuizDetail />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </div>
