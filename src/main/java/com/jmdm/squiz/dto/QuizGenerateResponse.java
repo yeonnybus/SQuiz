@@ -21,6 +21,10 @@ public class QuizGenerateResponse {
             defaultValue = "운영체제 1강")
     private String quizName;
 
+    @Schema(description = "총 문제 수",
+            defaultValue = "5")
+    private int problemNum;
+
     @Schema(description = "문제 목록")
     private ArrayList<ProblemDTO> problemList;
 }

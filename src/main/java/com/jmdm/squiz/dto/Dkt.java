@@ -3,8 +3,7 @@ package com.jmdm.squiz.dto;
 import lombok.Data;
 
 @Data
-public class KcDTO {
+public class Dkt {
     private int kcId;
-    private int correct; // 맞으면 1, 틀리면 0
+    private float predict;
 }
-

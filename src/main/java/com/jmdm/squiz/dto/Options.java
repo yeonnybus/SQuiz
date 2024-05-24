@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Embeddable
-public class Choice {
+public class Options {
     @Schema(defaultValue = "a 선택지")
     private String option_a;
     @Schema(defaultValue = "b 선택지")

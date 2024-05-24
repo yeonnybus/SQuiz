@@ -51,5 +51,4 @@ springdoc:
     operations-sorter: method
   paths-to-match:
     - /api/**
-file:
-  dir: /Users/suacho/Desktop/
+

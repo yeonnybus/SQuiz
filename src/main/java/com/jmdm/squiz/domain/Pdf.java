@@ -1,5 +1,6 @@
 package com.jmdm.squiz.domain;
 
+import com.jmdm.squiz.enums.SubjectType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,19 +25,21 @@ public class Pdf {
     private String uploadFileName;
     private String pdfToText;
     private int totalPageCount;
+    private SubjectType subjectType;
+    private String pageKcId;
 
     @OneToMany(mappedBy = "pdf", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Quiz> quizes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "pdf", cascade = CascadeType.REMOVE)
-    private List<KC> kcs = new ArrayList<>();
     @Builder
-    public Pdf(Long id, Member member, String uploadFileName,  String pdfToText, int totalPageCount) {
+    public Pdf(Long id, Member member, String uploadFileName, SubjectType subjectType, String pdfToText, int totalPageCount, String pageKcId) {
         this.id = id;
         setMember(member);
+        this.subjectType = subjectType;
         this.uploadFileName = uploadFileName;
         this.pdfToText = pdfToText;
         this.totalPageCount = totalPageCount;
+        this.pageKcId = pageKcId;
     }
 
     private void setMember(Member member) {
@@ -46,5 +49,9 @@ public class Pdf {
 
     public void setPdfToText(String pdfToText) {
         this.pdfToText = pdfToText;
+    }
+
+    public void setPageKcId(String pageKcId) {
+        this.pageKcId = pageKcId;
     }
 }

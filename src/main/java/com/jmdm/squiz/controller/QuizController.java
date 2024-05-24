@@ -2,6 +2,7 @@ package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.*;
 import com.jmdm.squiz.exception.SuccessCode;
+import com.jmdm.squiz.service.QuizCheckService;
 import com.jmdm.squiz.service.QuizGenerateService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,23 +19,32 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/quiz")
 @Tag(name = "Quiz 관련 API", description = "quiz를 생성하고 채점하는 API입니다.")
 public class QuizController {
     private final QuizGenerateService quizGenerateService;
+    private final QuizCheckService quizCheckService;
     @PostMapping("/generate-quiz")
     @Operation(summary = "퀴즈 생성 API",
             description = "퀴즈 옵션들과 pdf정보를 request로 받아서 퀴즈를 생성하는 API입니다.")
     @ApiResponse(responseCode = "200", description = "퀴즈 생성 성공", content = @Content(schema = @Schema(implementation = QuizGenerateResponse.class)))
-    public ResponseEntity<ApiResponseEntity<QuizGenerateResponse>> generateQuiz(@AuthenticationPrincipal CustomUserDetails userDetails, @Validated  @RequestBody QuizGenerateRequest request)
-    throws IOException {
+    public ResponseEntity<ApiResponseEntity<QuizGenerateResponse>> generateQuiz(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                @Validated  @RequestBody QuizGenerateRequest request) {
         String memberId = userDetails.getUsername();
         QuizGenerateResponse response = quizGenerateService.generateQuiz(memberId, request);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "퀴즈 정보입니다."));
+    }
+
+    @PostMapping("/check-quiz")
+    @Operation(summary = "퀴즈 채점 API")
+    @ApiResponse(responseCode = "200", description = "퀴즈 채점 성공", content = @Content(schema = @Schema(implementation = QuizCheckResponse.class)))
+    public ResponseEntity<ApiResponseEntity<QuizCheckResponse>> checkQuiz(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                          @RequestBody QuizCheckRequest request) {
+        String memberId = userDetails.getUsername();
+        QuizCheckResponse response = quizCheckService.checkQuiz(memberId, request);
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "퀴즈 채점 결과입니다."));
     }
 
 

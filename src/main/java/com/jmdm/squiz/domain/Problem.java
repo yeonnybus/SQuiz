@@ -1,6 +1,8 @@
 package com.jmdm.squiz.domain;
 
-import com.jmdm.squiz.dto.Choice;
+import com.jmdm.squiz.dto.Blanks;
+import com.jmdm.squiz.dto.CheckedBlanks;
+import com.jmdm.squiz.dto.Options;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -22,34 +24,53 @@ public class Problem {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    private int problemNumber;
-    private String kc;
+    private int problemNo;
+    private int kcId;
     private String question;
-
-    @Embedded
-    private Choice choice;
-
     private String content;
 
-    @OneToMany(mappedBy = "problem", cascade = CascadeType.REMOVE)
-    private List<Answer> answers = new ArrayList<>();
+    @Embedded
+    private Options options;
+    private String answer;
+
+    @Embedded
+    private Blanks blanks;
+    private String explanation;
+
+    private String checkedAnswer;
+    @Embedded
+    CheckedBlanks checkedBlanks;
+    private int correct;
+
 
     @OneToMany(mappedBy = "problem")
     private List<FruitBasketProblem> fruitBasketProblems = new ArrayList<>();
 
     @Builder
-    public Problem(Long id, Quiz quiz, String kc, String question, Choice choice, String content, int problemNumber) {
+    public Problem(Long id, Quiz quiz, int kcId, String question, Options options, String content, int problemNo, String answer, Blanks blanks, String explanation) {
         this.id = id;
         setQuiz(quiz);
-        this.kc = kc;
+        this.kcId = kcId;
         this.question = question;
-        this.choice = choice;
+        this.options = options;
         this.content = content;
-        this.problemNumber = problemNumber;
+        this.problemNo = problemNo;
+        this.answer = answer;
+        this.blanks = blanks;
+        this.explanation = explanation;
     }
     private void setQuiz(Quiz quiz) {
         this.quiz = quiz;
         quiz.getProblems().add(this);
+    }
+
+    public void setCheckedAnswer(String checkedAnswer, CheckedBlanks blanks) {
+        this.checkedAnswer = checkedAnswer;
+        this.checkedBlanks = blanks;
+    }
+
+    public void setCorrect(int correct) {
+        this.correct = correct;
     }
 
 }

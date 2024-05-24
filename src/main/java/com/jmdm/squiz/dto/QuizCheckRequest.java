@@ -5,10 +5,9 @@ import lombok.Data;
 
 import java.util.ArrayList;
 
-@Data
-public class AiQuizGenerateResponse {
-    private Long quizId;
-    private QuizType quizType;
-    private ArrayList<AiProblemDTO> problemList;
 
+@Data
+public class QuizCheckRequest {
+    private Long quizId;
+    private ArrayList<CheckProblemDTO> problems;
 }

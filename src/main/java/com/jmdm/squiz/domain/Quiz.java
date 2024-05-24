@@ -1,6 +1,5 @@
 package com.jmdm.squiz.domain;
 
-import com.jmdm.squiz.enums.ProblemNum;
 import com.jmdm.squiz.enums.QuizType;
 import com.jmdm.squiz.enums.Rank;
 import com.jmdm.squiz.enums.SubjectType;
@@ -8,9 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

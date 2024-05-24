@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jmdm.squiz.domain.Member;
 import com.jmdm.squiz.domain.Pdf;
 import com.jmdm.squiz.dto.AiGetTextAndClassifyKcResponse;
-import com.jmdm.squiz.dto.KcDTO;
 import com.jmdm.squiz.dto.PdfUploadResponse;
+import com.jmdm.squiz.enums.SubjectType;
 import com.jmdm.squiz.exception.ErrorCode;
 import com.jmdm.squiz.exception.model.AiServerException;
 import com.jmdm.squiz.repository.MemberRepository;
@@ -34,21 +34,38 @@ public class PdfUploadService {
     private final PdfRepository pdfRepository;
     private final MemberRepository memberRepository;
 
-    @Value("${file.dir}")
-    private String fileDir;
+    public PdfUploadResponse uploadPdf(String memberId, SubjectType subjectType, MultipartFile pdf) throws IOException {
+        if (pdf.isEmpty()) {
+            return null; // 파일 에러 띄우기
+        }
 
-    private String getFullPath(String filename) {
-        return fileDir + filename;
-    }
+        // pdfId 얻기 위해 저장
+        String uploadFileName = pdf.getOriginalFilename();
+        int totalPageCount = getPageCount(pdf);
+        Member member = memberRepository.findByMemberId(memberId);
+        Pdf storedPdf = Pdf.builder()
+                .member(member)
+                .uploadFileName(uploadFileName)
+                .totalPageCount(totalPageCount)
+                .subjectType(subjectType)
+                .build();
+        pdfRepository.save(storedPdf);
 
-    private String extractExt(String uploadFileName) {
-        int pos = uploadFileName.lastIndexOf(".");
-        return uploadFileName.substring(pos+1);
-    }
-    private String createStoredFileName(String uploadFileName) {
-        String ext = extractExt(uploadFileName);
-        String uuid = UUID.randomUUID().toString();
-        return uuid + "." + ext;
+        // ai post pdf text 생성, kc 분류
+//        AiGetTextAndClassifyKcResponse response = getTextAndKCs(storedPdf.getId(), subjectType, pdf);
+        AiGetTextAndClassifyKcResponse response = aiTest(storedPdf.getId());
+
+        // PdfToText, kc 저장
+        storedPdf.setPdfToText(response.getPdfToText());
+        storedPdf.setPageKcId(response.getPageKcId());
+        pdfRepository.save(storedPdf);
+
+        // pdf 업로드 response 생성
+        return PdfUploadResponse.builder()
+                .pdfId(storedPdf.getId())
+                .uploadFileName(uploadFileName)
+                .totalPageCount(totalPageCount)
+                .build();
     }
 
     private int getPageCount(MultipartFile pdf) throws IOException {
@@ -58,7 +75,7 @@ public class PdfUploadService {
         return pageCount;
     }
 
-    private AiGetTextAndClassifyKcResponse getTextAndKCs(Long pdfId, MultipartFile pdf) throws JsonProcessingException {
+    private AiGetTextAndClassifyKcResponse getTextAndKCs(Long pdfId, SubjectType subjectType, MultipartFile pdf) throws JsonProcessingException {
         String aiServerUrl = "http://localhost:8080/api/v1/pdf/kc";
 
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
@@ -67,6 +84,7 @@ public class PdfUploadService {
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("pdfId", pdfId);
         body.add("pdf", pdf);
+        body.add("subject", subjectType);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<MultiValueMap<String, Object>> request = new HttpEntity<>(body, headers);
@@ -84,44 +102,12 @@ public class PdfUploadService {
         AiGetTextAndClassifyKcResponse response = new AiGetTextAndClassifyKcResponse();
         response.setPdfId(pdfId);
         response.setPdfToText("이것은 pdf를 OCR까지 사용해서 text로 바꾼것!");
-        ArrayList<KcDTO> kcs = new ArrayList<>();
-        for(int i = 1; i < 3; i++) {
-            KcDTO kc = new KcDTO();
-            kc.setPageNumber(i);
-            kc.setKcId(123);
-            kcs.add(kc);
-        }
-        response.setKcs(kcs);
+        response.setPageKcId("0: 5,\n" +
+                "\t\t\t1: 3,\n" +
+                "\t\t\t2: 3,\n" +
+                "\t\t\t...\n" +
+                "\t\t\t30: 24");
         return response;
-    }
-
-    public PdfUploadResponse uploadPdf(String memberId, MultipartFile pdf) throws IOException {
-        if (pdf.isEmpty()) {
-            return null; // 파일 에러 띄우기
-        }
-        // pdfId 얻기 위해 저장
-        String uploadFileName = pdf.getOriginalFilename();
-        int totalPageCount = getPageCount(pdf);
-        Member member = memberRepository.findByMemberId(memberId);
-        Pdf storedPdf = Pdf.builder()
-                .member(member)
-                .uploadFileName(uploadFileName)
-                .totalPageCount(totalPageCount)
-                .build();
-//        AiGetTextAndClassifyKcResponse response = getTextAndKCs(storedPdf.getId(), pdf);
-        AiGetTextAndClassifyKcResponse response = aiTest(storedPdf.getId());
-
-        // PdfToText, kc 저장
-        storedPdf.setPdfToText(response.getPdfToText());
-        pdfRepository.save(storedPdf);
-        PdfUploadResponse pdfUploadResponse = PdfUploadResponse.builder()
-                .pdfId(storedPdf.getId())
-                .uploadFileName(uploadFileName)
-                .totalPageCount(totalPageCount)
-                .build();
-        return pdfUploadResponse;
-        // 업로드 파일명, 서버 저장 명 선언 및 초기화
-        //application.yml에 file 저장 dir 선언 후 그 경로로
     }
 
 }
