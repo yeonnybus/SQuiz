@@ -4,6 +4,7 @@ import com.jmdm.squiz.dto.*;
 import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.service.QuizCheckService;
 import com.jmdm.squiz.service.QuizGenerateService;
+import com.jmdm.squiz.service.QuizListLoadService;
 import com.jmdm.squiz.service.QuizProvideService;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ public class QuizController {
     private final QuizGenerateService quizGenerateService;
     private final QuizCheckService quizCheckService;
     private final QuizProvideService quizProvideService;
+    private final QuizListLoadService quizListLoadService;
 
     @PostMapping("/generate-quiz")
     @Operation(summary = "퀴즈 생성 API",
@@ -54,11 +56,17 @@ public class QuizController {
                                                                @RequestBody QuizDetailRequest request) {
         String memberId = userDetails.getUsername();
         QuizDetailResponse response = quizProvideService.getQuiz(memberId, request.getQuizId());
-         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "채점된 문제들"));
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "채점된 문제들"));
     }
 
-//    @GetMapping("/load-quizList")
-//    @Operation(summary = "지난 퀴즈 목록 로드 API", description = "지난 퀴즈 목록 페이지 목록들을 불러오는 API")
+    @GetMapping("/load-quizList")
+    @Operation(summary = "지난 퀴즈 목록 로드 API", description = "지난 퀴즈 목록 페이지 목록들을 불러오는 API")
+    @ApiResponse(responseCode = "200", description = "지난 퀴즈목록 전송 성공", content = @Content(schema = @Schema(implementation = QuizListLoadResponse.class)))
+    public ResponseEntity<ApiResponseEntity<QuizListLoadResponse>> loadQuizs(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        String memberId = userDetails.getUsername();
+        QuizListLoadResponse response = quizListLoadService.loadQuizList(memberId);
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "요청한 퀴즈 목록들"));
+    }
 
 
 }
