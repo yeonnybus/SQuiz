@@ -1,8 +1,26 @@
 import axios from "axios";
 
 // API 요청을 위한 기본 URL 설정
-const API_BASE_URL = "http://10.0.22.185:8080/api/v1";
-const IP = "http://10.0.22.185:8080";
+const API_BASE_URL = "http://192.168.0.163:8080/api/v1";
+const IP = "http://192.168.0.163:8080";
+
+export interface CheckedBlanks {
+  chekedBlank_1: string | null;
+  chekedBlank_2: string | null;
+  chekedBlank_3: string | null;
+  chekedBlank_4: string | null;
+}
+
+export interface ProblemForSubmit {
+  problemNo: number;
+  checkedAnswer: string;
+  checkedBlanks: CheckedBlanks;
+}
+
+export interface QuizSubmission {
+  quizId: number;
+  problems: ProblemForSubmit[];
+}
 
 // 이메일 인증 요청 api
 export const sendEmailCertification = async (email: string): Promise<void> => {
@@ -215,5 +233,24 @@ export const orderQuiz = async (
   } catch (error) {
     console.error("퀴즈 요청 실패:", error);
     throw new Error("퀴즈 요청 실패");
+  }
+};
+
+// pdf 업로드
+export const quizSubmit = async (token: string, submission: QuizSubmission) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/quiz/check-quiz`,
+      submission,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
   }
 };

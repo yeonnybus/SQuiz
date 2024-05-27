@@ -33,14 +33,14 @@ const FormContainer = styled.div`
   margin: 5px;
   background-color: white;
   padding-bottom: 5px;
-  padding-top: 35px;
-  padding-left: 35px;
-  padding-right: 35px;
+  padding-top: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
   border-radius: 32px;
 `;
 
 const Label = styled.div`
-  min-width: 30vh;
+  width: 330px;
   display: flex;
 
   font-size: 22px;
@@ -59,13 +59,20 @@ const LabelAcmp = styled.div`
   margin-left: 50px;
   color: gray;
 `;
+
+const LabelAcmp2 = styled.div`
+  font-size: 16px;
+  margin-left: 17px;
+  color: gray;
+`;
+
 const InlineContainer = styled.div`
   display: flex;
-  width: 70vh;
+  width: 330px;
   align-items: center;
 `;
 
-const Fruit: React.FC<FruitProps> = ({ items }) => {
+const QuizList: React.FC<FruitProps> = ({ items }) => {
   return (
     <FruitContainer>
       <Grid
@@ -89,8 +96,12 @@ const Fruit: React.FC<FruitProps> = ({ items }) => {
                 <LabelAcmp>{item.subject}</LabelAcmp>
               </InlineContainer>
               <InlineContainer>
-                <LabelMini>개수</LabelMini>
-                <LabelAcmp>{item.problemNum}문제</LabelAcmp>
+                <LabelMini>점수</LabelMini>
+                <LabelAcmp>1 / {item.problemNum}</LabelAcmp>
+              </InlineContainer>
+              <InlineContainer>
+                <LabelMini>취약 파트</LabelMini>
+                <LabelAcmp2>가상메모리, 덧셈</LabelAcmp2>
               </InlineContainer>
               <IconButton
                 aria-label="forward"
@@ -113,4 +124,4 @@ const Fruit: React.FC<FruitProps> = ({ items }) => {
   );
 };
 
-export default Fruit;
+export default QuizList;

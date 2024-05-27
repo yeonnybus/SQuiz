@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "@mui/material";
 import { Gauge, gaugeClasses } from "@mui/x-charts/Gauge";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -45,13 +46,14 @@ const FormContainer2 = styled.div`
 const InlineS = styled.div`
   display: flex;
   width: 80vw;
+  flex-wrap: wrap; /* Flex wrap 추가 */
+  justify-content: space-around; /* 여백 분배 */
 `;
 const InCol = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
-
-  width: 80vw;
+  margin: 10px; /* 여백 추가 */
 `;
 
 const InlineS2 = styled.div`
@@ -75,19 +77,17 @@ const Label = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  min-width: 100px;
   font-size: 25px;
   font-weight: bold;
-
   color: black;
 `;
 
 const LabelMini = styled.div`
   display: flex;
-  align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  align-items: center;
+  min-width: 100px;
   font-size: 20px;
-
   color: black;
   text-align: center;
   justify-content: center;
@@ -95,10 +95,9 @@ const LabelMini = styled.div`
 
 const LabelMini2 = styled.div`
   display: flex;
-  align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  align-items: center;
+  min-width: 100px;
   font-size: 20px;
-
   color: black;
   text-align: center;
   margin-left: auto;
@@ -106,61 +105,60 @@ const LabelMini2 = styled.div`
 `;
 
 const LabelMini3 = styled.div`
-  align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  align-items: center;
+  min-width: 100px;
   font-size: 20px;
-
   color: black;
   text-align: center;
 `;
 
 const Label2 = styled.div`
   display: flex;
-
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  min-width: 100px;
   font-size: 22px;
   font-weight: bold;
-
   color: black;
 `;
 
 const BigNum = styled.div`
   display: flex;
-
   font-size: 6em;
   font-weight: bold;
   color: #f57f10;
   margin-bottom: 35px;
 `;
+
 const SmallNum = styled.div`
   display: flex;
-
-  /* 필요하다면 최소 너비 지정 */
   font-size: 3em;
   font-weight: bold;
   color: gray;
 `;
 
+export interface CorrectPerKcDTO {
+  kcName: string;
+  kcProblemNum: number;
+  correctNum: number;
+}
+
+export interface QuizResult {
+  quizId: number;
+  quizName: string;
+  problemNum: number;
+  correctNum: number;
+  correctPerKcDTOS: CorrectPerKcDTO[];
+}
+
 function QuizResult() {
+  const location = useLocation();
+  const [resultObject, setResultObject] = useState<QuizResult>(
+    JSON.parse(location.state.result)
+  );
   const [onResult, setonResult] = useState<boolean>(false);
-  const [count, setCount] = useState(5);
-  const [data, setData] = useState<{ id: number; value: number }[]>([]); // 데이터 상태 초기화
 
   useEffect(() => {
-    // 서버로부터 데이터를 받아오는 함수
-    const fetchData = async () => {
-      // API 호출 로직을 여기에 구현
-      // 예시 데이터
-      const serverData = [
-        { id: 1, value: 50 },
-        { id: 2, value: 40 },
-        { id: 3, value: 80 },
-      ];
-      setData(serverData); // 상태 업데이트
-    };
-
-    fetchData(); // 함수 실행
-  }, []); // 의존성 배열을 빈 배열로 설정하여 컴포넌트 마운트 시 한 번만 실
+    console.log(resultObject);
+  }, [resultObject]);
 
   return (
     <CenteredContainer>
@@ -181,6 +179,9 @@ function QuizResult() {
 
               ":hover": { background: "#ffc450", color: "black" },
             }}
+            onClick={() => {
+              setonResult(true);
+            }}
           >
             결과 보기
           </Button>
@@ -189,12 +190,12 @@ function QuizResult() {
         <FormContainer2>
           <InlineS>
             <Label2>Quiz</Label2>
-            <Label2>운영체제21222강</Label2>
+            <Label2>운영체제 1강</Label2>
           </InlineS>
           <LabelMini>점수</LabelMini>
           <InlineS2>
-            <BigNum>2</BigNum>
-            <SmallNum>/1</SmallNum>
+            <BigNum>{resultObject.correctNum}</BigNum>
+            <SmallNum>/{resultObject.problemNum}</SmallNum>
           </InlineS2>
           <InlineS3>
             <LabelMini2>주제별 정답률</LabelMini2>
@@ -210,30 +211,27 @@ function QuizResult() {
             </Button>
           </InlineS3>
           <InlineS>
-            {data.map((item) => (
-              <React.Fragment key={item.id}>
-                <InCol>
-                  <Gauge
-                    key={item.id}
-                    width={150}
-                    height={150}
-                    value={item.value}
-                    cornerRadius="50%"
-                    sx={(theme) => ({
-                      [`& .${gaugeClasses.valueText}`]: {
-                        fontSize: 20,
-                      },
-                      [`& .${gaugeClasses.valueArc}`]: {
-                        fill: "#314CF1",
-                      },
-                      [`& .${gaugeClasses.referenceArc}`]: {
-                        fill: theme.palette.text.disabled,
-                      },
-                    })}
-                  />
-                  <LabelMini3>{item.id}</LabelMini3>
-                </InCol>
-              </React.Fragment>
+            {resultObject.correctPerKcDTOS.map((item, index) => (
+              <InCol key={index}>
+                <Gauge
+                  width={150}
+                  height={150}
+                  value={(item.correctNum / item.kcProblemNum) * 100}
+                  cornerRadius="50%"
+                  sx={(theme) => ({
+                    [`& .${gaugeClasses.valueText}`]: {
+                      fontSize: 20,
+                    },
+                    [`& .${gaugeClasses.valueArc}`]: {
+                      fill: "#314CF1",
+                    },
+                    [`& .${gaugeClasses.referenceArc}`]: {
+                      fill: theme.palette.text.disabled,
+                    },
+                  })}
+                />
+                <LabelMini3>{item.kcName}</LabelMini3>
+              </InCol>
             ))}
           </InlineS>
         </FormContainer2>

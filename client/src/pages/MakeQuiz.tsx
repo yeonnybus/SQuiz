@@ -126,7 +126,9 @@ const MakeQuiz: React.FC = () => {
     { label: "객체지향프로그래밍", value: "OBJECT_ORIENTED_PROGRAMMING" },
     { label: "C프로그래밍", value: "C_LANGUAGE" },
   ]);
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<string>(
+    location.state.selectedSubject
+  );
 
   const [problemType, setProblemType] = useState<string>("");
   const [problemCount, setProblemCount] = useState<string>("");
@@ -212,38 +214,6 @@ const MakeQuiz: React.FC = () => {
             sx={{ marginLeft: -5 }}
           />
         </RowQuiz>
-
-        <Label>과목</Label>
-
-        <Autocomplete
-          style={subjectStyle}
-          options={subjects}
-          getOptionLabel={(option) => option.label}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              InputProps={{
-                ...params.InputProps,
-                style: {
-                  paddingTop: "3px", // 수직 정렬을 위해 상단 패딩 조정
-                  // 필요하다면 여기에 verticalAlign: 'middle' 같은 스타일도 추가할 수 있습니다.
-                  borderRadius: "20px",
-                },
-              }}
-            />
-          )}
-          sx={{
-            "& .MuiInputBase-root": { height: "40px" },
-          }}
-          value={
-            subjects.find((subject) => subject.value === selectedSubject) ||
-            null
-          }
-          onChange={(
-            event: any,
-            newValue: { label: string; value: string } | null
-          ) => setSelectedSubject(newValue?.value || null)}
-        />
 
         <StyledRow>
           <Row style={innerElementStyle}>

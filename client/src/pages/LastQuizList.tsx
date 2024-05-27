@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Fruit from "../components/Fruit";
 import styled from "styled-components";
 import { TextField, Autocomplete, IconButton } from "@mui/material";
+import QuizList from "../components/QuizList";
 //import { FilterToggle, SortToggle, ItemDisplay } from "./components"; // 컴포넌트 경로에 맞게 조정하세요.
 
 const CenteredContainer = styled.div`
@@ -22,9 +23,11 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
 
+  width: 100vh;
+
   padding-left: 50px;
-  padding-top: 50px;
-  margin-bottom: 50px;
+  padding-top: 20px;
+  margin-bottom: 40px;
 `;
 
 const Label = styled.div`
@@ -34,11 +37,12 @@ const Label = styled.div`
   color: black;
 `;
 const LabelMini = styled.div`
-  font-size: 24px;
-  margin-top: 30px;
-  margin-bottom: 50px;
-  margin-right: 50%;
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  margin-right: 450px;
   color: black;
+  min-width: 400px;
 `;
 
 const LabelAcmp = styled.div`
@@ -57,11 +61,16 @@ const subjectStyle = {
 
 const InlineContainer = styled.div`
   display: flex;
-
+  width: 80vw;
   align-items: center;
 `;
 
-const FruitBasket: React.FC = () => {
+const Horizon = styled.div`
+  border-bottom: 2px solid #fffbe3;
+  width: 93vw;
+`;
+
+const LastQuizList: React.FC = () => {
   interface Item {
     fruitBasketId: number;
     fruitBasketName: string;
@@ -139,7 +148,7 @@ const FruitBasket: React.FC = () => {
   return (
     <CenteredContainer>
       <FormContainer>
-        <Label>과일 바구니</Label>
+        <Label>지난 퀴즈 목록</Label>
         <InlineContainer>
           <LabelMini>생성된 퀴즈를 확인하세요</LabelMini>
           <Filter>
@@ -190,6 +199,7 @@ const FruitBasket: React.FC = () => {
                       paddingTop: "3px", // 수직 정렬을 위해 상단 패딩 조정
                       // 필요하다면 여기에 verticalAlign: 'middle' 같은 스타일도 추가할 수 있습니다.
                       borderRadius: "20px",
+                      width: "15vw",
                     },
                   }}
                 />
@@ -209,10 +219,11 @@ const FruitBasket: React.FC = () => {
             />
           </Filter>
         </InlineContainer>
+        <Horizon />
       </FormContainer>
-      <Fruit items={items} />
+      <QuizList items={items} />
     </CenteredContainer>
   );
 };
 
-export default FruitBasket;
+export default LastQuizList;

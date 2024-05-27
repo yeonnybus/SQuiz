@@ -1,8 +1,7 @@
 // MainPage.tsx
-import React from "react";
+import React, { useState } from "react";
 import { CenteredContainer, FormContainer } from "../widgets/styles";
 import FileUpload from "../components/FileUpload";
-import { useState } from "react";
 import styled from "styled-components";
 import { TextField, Autocomplete, Button } from "@mui/material";
 
@@ -24,10 +23,10 @@ export const FormContainer2 = styled.div`
 const Label = styled.div`
   display: flex;
   align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-
   font-weight: bold;
   margin-bottom: 10px;
 `;
+
 const LabelSmall = styled.div`
   display: flex;
   align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
@@ -35,6 +34,7 @@ const LabelSmall = styled.div`
   color: gray;
   font-size: 14px;
 `;
+
 const subjectStyle = {
   width: "200px", // 마지막 요소를 제외한 하단 마진 추가
 };
@@ -51,7 +51,19 @@ const MainPage: React.FC = () => {
   ]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
-  return { jwtToken } && { isSubject } ? (
+  const handleConfirmClick = () => {
+    if (selectedSubject) {
+      setIsSubject(true);
+    }
+  };
+
+  return jwtToken && isSubject ? (
+    <CenteredContainer>
+      <FormContainer>
+        <FileUpload token={jwtToken} selectedSubject={selectedSubject} />
+      </FormContainer>
+    </CenteredContainer>
+  ) : (
     <CenteredContainer>
       <FormContainer2>
         <LabelSmall>퀴즈/요약본을 만들고 싶은</LabelSmall>
@@ -68,7 +80,6 @@ const MainPage: React.FC = () => {
                 ...params.InputProps,
                 style: {
                   paddingTop: "3px", // 수직 정렬을 위해 상단 패딩 조정
-                  // 필요하다면 여기에 verticalAlign: 'middle' 같은 스타일도 추가할 수 있습니다.
                   borderRadius: "20px",
                   width: "17vh",
                 },
@@ -99,19 +110,11 @@ const MainPage: React.FC = () => {
             width: "25vh",
             marginTop: "20vh",
           }}
-          onClick={() => {
-            setIsSubject(true);
-          }}
+          onClick={handleConfirmClick}
         >
           확인
         </Button>
       </FormContainer2>
-    </CenteredContainer>
-  ) : (
-    <CenteredContainer>
-      <FormContainer>
-        <FileUpload token={jwtToken} selectedSubject={selectedSubject} />
-      </FormContainer>
     </CenteredContainer>
   );
 };

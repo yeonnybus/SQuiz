@@ -8,7 +8,7 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  width: 40%; // 부모 요소의 너비를 따라 가로로 전체 너비를 차지
+  width: 100%; // 부모 요소의 너비를 따라 가로로 전체 너비를 차지
   margin-top: 5%;
   background-color: white;
   padding: 45px;
@@ -140,7 +140,7 @@ function MiniQuizExplain() {
         정다현바보조수아바보박나은바보정다현바보조수아바보박나은바보정다현바보조수아바보박나은바보정성연짱
       </LabelMini4>
       <KeyboardArrowRightIcon
-        sx={{ width: "100%", justifyContent: "right", marginLeft: "52%" }}
+        sx={{ width: "10vh", justifyContent: "right", marginLeft: "96%" }}
       />
     </FormContainer>
   );

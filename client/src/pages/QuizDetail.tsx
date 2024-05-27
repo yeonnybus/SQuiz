@@ -23,8 +23,7 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: 5%;
-  width: 80%;
+  width: 80vw;
   background-color: rgba(255, 255, 255, 0.5);
   padding: 50px;
   border-radius: 24px;
@@ -82,6 +81,7 @@ const InlineS2 = styled.div`
 
 const Left = styled.div`
   margin-top: 5%;
+  margin-right: 3%;
 `;
 
 function QuizDetail() {

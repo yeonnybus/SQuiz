@@ -98,7 +98,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, selectedSubject }) => {
               onClick={(event) => {
                 event.stopPropagation(); // 이벤트 버블링을 중지합니다.
                 navigate("/makequiz", {
-                  state: { uploadedFileName, pdfId, totalPageCount },
+                  state: {
+                    uploadedFileName,
+                    pdfId,
+                    totalPageCount,
+                    selectedSubject,
+                  },
                 });
               }}
             >
