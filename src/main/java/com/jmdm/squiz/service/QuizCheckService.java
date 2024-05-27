@@ -78,14 +78,14 @@ public class QuizCheckService {
 
         for (Problem problem : problems) {
             String targetKcName = KC.fromId(problem.getKcId());
+            System.out.println("targetKcName = " + targetKcName);
             CorrectPerKcDTO dto = correctPerKcMap.computeIfAbsent(targetKcName, k -> {
                 CorrectPerKcDTO newDto = new CorrectPerKcDTO();
                 newDto.setKcName(k);
                 newDto.setKcProblemNum(0);
                 return newDto;
             });
-
-            dto.setKcProblemNum(dto.getKcProblemNum() + 1);
+            System.out.println("dto = " + dto);
 
             if (problem.getCorrect() == 1) {
                 correctNum++;

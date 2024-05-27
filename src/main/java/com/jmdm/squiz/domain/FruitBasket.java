@@ -3,6 +3,7 @@ package com.jmdm.squiz.domain;
 import com.jmdm.squiz.enums.SubjectType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -38,4 +39,24 @@ public class FruitBasket {
     @UpdateTimestamp
     @Column(updatable = true)
     private LocalDateTime updatedAt;
+
+    @Builder
+    public FruitBasket(Long id, String fruitBasketName, SubjectType subject, int problemNum, Member member, List<FruitBasketProblem> fruitBasketProblems, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.fruitBasketName = fruitBasketName;
+        this.subject = subject;
+        this.problemNum = problemNum;
+        setMember(member);
+        this.fruitBasketProblems = fruitBasketProblems;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+    private void setMember(Member member) {
+        this.member = member;
+        member.getFruitBaskets().add(this);
+    }
+
+    public void setProblemNum(int num) {
+        this.problemNum = num;
+    }
 }

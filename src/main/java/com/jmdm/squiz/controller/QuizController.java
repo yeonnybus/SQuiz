@@ -62,11 +62,12 @@ public class QuizController {
     @GetMapping("/load-quizList")
     @Operation(summary = "지난 퀴즈 목록 로드 API", description = "지난 퀴즈 목록 페이지 목록들을 불러오는 API")
     @ApiResponse(responseCode = "200", description = "지난 퀴즈목록 전송 성공", content = @Content(schema = @Schema(implementation = QuizListLoadResponse.class)))
-    public ResponseEntity<ApiResponseEntity<QuizListLoadResponse>> loadQuizs(@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponseEntity<QuizListLoadResponse>> loadQuizzs(@AuthenticationPrincipal CustomUserDetails userDetails) {
         String memberId = userDetails.getUsername();
         QuizListLoadResponse response = quizListLoadService.loadQuizList(memberId);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "요청한 퀴즈 목록들"));
     }
+
 
 
 }

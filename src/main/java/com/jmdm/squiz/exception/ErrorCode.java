@@ -12,7 +12,9 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "이메일이 존재하지 않습니다."),
     AI_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ai 서버에서 에러가 발생했습니다."),
     PDF_NOT_FOUND(HttpStatus.NOT_FOUND, "pdf가 존재하지 않습니다."),
-    QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "quiz가 존재하지 않습니다.")
+    QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "quiz가 존재하지 않습니다."),
+    FRUIT_BASKET_NOT_FOUND(HttpStatus.NOT_FOUND, "fruit basket이 존재하지 않습니다."),
+    PROBLEM_NOT_FOUND(HttpStatus.NOT_FOUND, "problem이 존재하지 않습니다.")
     ;
 
     private final HttpStatus code;

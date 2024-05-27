@@ -88,7 +88,7 @@ public class QuizGenerateService {
     private static AiProblemDTO getProblemDTO(int i) {
         AiProblemDTO aiProblemDTO = new AiProblemDTO();
         aiProblemDTO.setProblemNo(i + 1);
-        aiProblemDTO.setKcId(3);
+        aiProblemDTO.setKcId(i);
         aiProblemDTO.setQuestion("이것은 질문입니다. 지금은 객관식" + (i + 1));
         Options options = new Options();
         options.setOption_a("a");
