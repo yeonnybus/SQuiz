@@ -1,5 +1,6 @@
 package com.jmdm.squiz.dto;
 
+import com.jmdm.squiz.enums.QuizType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +11,8 @@ public class ProblemAnswerDTO {
     @Schema(description = "문제 번호",
             defaultValue = "1")
     private int problemNo;
+    @Schema(description = "문제 유형", defaultValue = "MULTIPLE_CHOICE")
+    private QuizType quizType;
     @Schema(description = "문제",
             defaultValue = "올바른 선택지를 고르시오.")
     private String question;
@@ -30,7 +33,7 @@ public class ProblemAnswerDTO {
     private int isCorrect;
 
     @Builder
-    public ProblemAnswerDTO(int problemNo, String question, Options options, String content, String answer, String checkedAnswer, Blanks blanks, CheckedBlanks checkedBlanks, int isCorrect) {
+    public ProblemAnswerDTO(int problemNo, String question, Options options, String content, String answer, String checkedAnswer, Blanks blanks, CheckedBlanks checkedBlanks, int isCorrect, QuizType quizType) {
         this.problemNo = problemNo;
         this.question = question;
         this.options = options;
@@ -40,5 +43,6 @@ public class ProblemAnswerDTO {
         this.blanks = blanks;
         this.checkedBlanks = checkedBlanks;
         this.isCorrect = isCorrect;
+        this.quizType = quizType;
     }
 }

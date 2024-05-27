@@ -27,6 +27,7 @@ public class QuizProvideService {
         for (Problem problem : problems) {
             ProblemAnswerDTO problemAnswerDTO = ProblemAnswerDTO.builder()
                     .problemNo(problem.getProblemNo())
+                    .quizType(quiz.getQuizType())
                     .question(problem.getQuestion())
                     .options(problem.getOptions())
                     .content(problem.getContent())

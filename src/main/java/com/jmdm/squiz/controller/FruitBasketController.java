@@ -59,12 +59,13 @@ public class FruitBasketController {
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS));
     }
 
-//    @GetMapping(name = "/problems")
-//    @Operation(summary = "특정 과일 바구니의 문제들을 불러오는 API",
-//            description = "사용자의 특정 과일 바구니 id를 받아 문제들을 불러오는 API입니다.")
-//    public ResponseEntity<ApiResponseEntity<ProblemsLoadResponse>> loadFruitBaskets(@AuthenticationPrincipal CustomUserDetails userDetails,
-//                                                                                    @RequestParam Long fruitBasketId) {
-//        ProblemsLoadResponse response = fruitBasketService.loadProblems(fruitBasketId);
-//        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "해당 과일 바구니의 문제들입니다."));
-//    }
+    @PostMapping("/load-problems")
+    @Operation(summary = "과일바구니 속 문제 불러오기 API")
+    public ResponseEntity<ApiResponseEntity<ProblemsLoadResponse>> loadProblems(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                @RequestBody ProblemsLoadRequest request) {
+        String memberId = userDetails.getUsername();
+        ProblemsLoadResponse response = fruitBasketService.loadProblems(memberId, request);
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "해당 과목의 과일바구니 목록"));
+    }
+
 }

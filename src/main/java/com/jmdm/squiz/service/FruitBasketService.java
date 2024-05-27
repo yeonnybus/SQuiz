@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -98,8 +99,38 @@ public class FruitBasketService {
                 .orElseThrow(() -> new NotFoundProblemException(ErrorCode.PROBLEM_NOT_FOUND, ErrorCode.PROBLEM_NOT_FOUND.getMessage()));
         FruitBasketProblem fruitBasketProblem = FruitBasketProblem.builder()
                 .fruitBasket(fruitBasket)
+                .quizType(request.getQuizType())
                 .problem(problem)
                 .build();
         fruitBasketProblemRepository.save(fruitBasketProblem);
     }
+
+    public ProblemsLoadResponse loadProblems(String memberId, ProblemsLoadRequest request) {
+        FruitBasket fruitBasket = fruitBasketRepository.findById(request.getFruitBasketId())
+                .orElseThrow(() -> new NotFoundFruitBasketException(ErrorCode.FRUIT_BASKET_NOT_FOUND, ErrorCode.FRUIT_BASKET_NOT_FOUND.getMessage()));
+        List<FruitBasketProblem> fruitBasketProblems = fruitBasket.getFruitBasketProblems();
+        fruitBasketProblems.sort(Comparator.comparing(FruitBasketProblem::getCreatedAt));
+        ArrayList<ProblemAnswerDTO> problemList = new ArrayList<>();
+        int i = 1;
+        for (FruitBasketProblem fruitBasketProblem : fruitBasketProblems) {
+            ProblemAnswerDTO dto = ProblemAnswerDTO.builder()
+                    .problemNo(i)
+                    .quizType(fruitBasketProblem.getQuizType())
+                    .question(fruitBasketProblem.getProblem().getQuestion())
+                    .options(fruitBasketProblem.getProblem().getOptions())
+                    .content(fruitBasketProblem.getProblem().getContent())
+                    .answer(fruitBasketProblem.getProblem().getAnswer())
+                    .checkedAnswer(fruitBasketProblem.getProblem().getCheckedAnswer())
+                    .blanks(fruitBasketProblem.getProblem().getBlanks())
+                    .checkedBlanks(fruitBasketProblem.getProblem().getCheckedBlanks())
+                    .isCorrect(fruitBasketProblem.getProblem().getCorrect())
+                    .build();
+            problemList.add(dto);
+            i++;
+        }
+        ProblemsLoadResponse response = new ProblemsLoadResponse();
+        response.setProblemList(problemList);
+        return response;
+    }
+
 }
