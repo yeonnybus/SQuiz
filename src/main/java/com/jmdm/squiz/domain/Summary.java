@@ -17,13 +17,16 @@ public class Summary {
     @OneToOne
     private Pdf pdf;
 
-    private String summary;
+    private String filePath;
+    private String storedFileName;
+
 
     @Builder
-    public Summary(Long id, Pdf pdf, String summary) {
+    public Summary(Long id, Pdf pdf, String filePath, String storedFileName) {
         this.id = id;
         setPdf(pdf);
-        this.summary = summary;
+        this.filePath = filePath;
+        this.storedFileName = storedFileName;
     }
 
     private void setPdf(Pdf pdf) {

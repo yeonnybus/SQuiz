@@ -18,6 +18,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +36,7 @@ public class QuizGenerateService {
     private final QuizRepository quizRepository;
     private final ProblemRepository problemRepository;
     private final DktPerSubjectRepository dktPerSubjectRepository;
+    private final FileService fileService;
 
     public QuizGenerateResponse generateQuiz(String memberId, QuizGenerateRequest request) throws IOException {
         // pdf 파일 load
@@ -72,38 +76,6 @@ public class QuizGenerateService {
         }
         response.setProblemList(problemDTOS);
         return response;
-    }
-
-    private AiQuizGenerateResponse aiTest(Long quizId, QuizGenerateRequest request) {
-        AiQuizGenerateResponse response = new AiQuizGenerateResponse();
-
-        ArrayList<AiProblemDTO> aiProblemDTOS = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            AiProblemDTO aiProblemDTO = getProblemDTO(i);
-            aiProblemDTOS.add(aiProblemDTO);
-        }
-        response.setQuizId(quizId);
-        response.setQuizType(request.getQuizType());
-        response.setProblemList(aiProblemDTOS);
-        return response;
-    }
-
-    private static AiProblemDTO getProblemDTO(int i) {
-        AiProblemDTO aiProblemDTO = new AiProblemDTO();
-        aiProblemDTO.setProblemNo(i + 1);
-        aiProblemDTO.setKcId(i);
-        aiProblemDTO.setQuestion("이것은 질문입니다. 지금은 객관식" + (i + 1));
-        Options options = new Options();
-        options.setOption_a("a");
-        options.setOption_b("b");
-        options.setOption_c("c");
-        options.setOption_d("d");
-        aiProblemDTO.setOptions(options);
-        aiProblemDTO.setAnswer("a");
-        Blanks blanks = new Blanks();
-        aiProblemDTO.setBlanks(blanks);
-        aiProblemDTO.setExplanation("a가 답인 이유는 a니까!");
-        return aiProblemDTO;
     }
 
 
@@ -161,7 +133,7 @@ public class QuizGenerateService {
         body.put("quizType", request.getQuizType());
         body.put("problemNum", request.getProblemNum());
         body.put("rank", request.getRank());
-        body.put("pdfText", pdf.getPdfToText());
+        body.put("pdfText", fileService.loadData(pdf.getFilePath()));
         body.put("pageKcId", pdf.getPageKcId());
         System.out.println(pdf.getPageKcId().getClass());
         body.put("dkt", dkts); // 추후 문제 재생성시로 바꾸기
@@ -198,7 +170,8 @@ public class QuizGenerateService {
                     .build();
             problemRepository.save(problem);
         }
-
     }
+
+
 
 }

@@ -25,7 +25,8 @@ public class Pdf {
     private Summary summary;
 
     private String uploadFileName;
-    private String pdfToText;
+    private String storedFileName;
+    private String filePath;
     private int totalPageCount;
     private SubjectType subjectType;
     private String pageKcId;
@@ -34,12 +35,13 @@ public class Pdf {
     private List<Quiz> quizes = new ArrayList<>();
 
     @Builder
-    public Pdf(Long id, Member member, String uploadFileName, SubjectType subjectType, String pdfToText, int totalPageCount, String pageKcId) {
+    public Pdf(Long id, Member member, String uploadFileName, SubjectType subjectType, String filePath, String storedFileName, int totalPageCount, String pageKcId) {
         this.id = id;
         setMember(member);
         this.subjectType = subjectType;
         this.uploadFileName = uploadFileName;
-        this.pdfToText = pdfToText;
+        this.filePath = filePath;
+        this.storedFileName = storedFileName;
         this.totalPageCount = totalPageCount;
         this.pageKcId = pageKcId;
     }
@@ -47,10 +49,6 @@ public class Pdf {
     private void setMember(Member member) {
         this.member = member;
         member.getPdfs().add(this);
-    }
-
-    public void setPdfToText(String pdfToText) {
-        this.pdfToText = pdfToText;
     }
 
     public void setPageKcId(String pageKcId) {

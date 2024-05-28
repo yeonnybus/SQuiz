@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/summary")
@@ -23,7 +25,7 @@ public class SummaryController {
     @GetMapping(value = "/generate")
     @Operation(summary = "요약본을 생성하는 API", description = "pdf Id를 입력받아 요약본을 생성하고 보여주는 API입니다.")
     public ResponseEntity<ApiResponseEntity<SummaryGenerateResponse>> generateSummary(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                                      @RequestParam("pdfId") Long pdfId) throws JsonProcessingException {
+                                                                                      @RequestParam("pdfId") Long pdfId) throws IOException {
         String memberId = userDetails.getUsername();
         SummaryGenerateResponse response = summaryService.generateSummary(memberId, pdfId);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "summary 입니다."));
@@ -32,7 +34,7 @@ public class SummaryController {
     @GetMapping("/load")
     @Operation(summary = "요약본을 로드하는 API")
     public ResponseEntity<ApiResponseEntity<SummaryGenerateResponse>> loadSummary(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                                      @RequestParam Long quizId) {
+                                                                                      @RequestParam Long quizId) throws IOException {
         String memberId = userDetails.getUsername();
         SummaryGenerateResponse response = summaryService.loadSummary(quizId);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "생성된 summary 입니다."));

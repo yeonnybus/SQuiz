@@ -27,6 +27,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,35 +40,39 @@ public class SummaryService {
     private final MemberRepository memberRepository;
     private final SummaryRepository summaryRepository;
     private final QuizRepository quizRepository;
+    private final FileService fileService;
 
-    public SummaryGenerateResponse loadSummary(Long quizId) {
+    public SummaryGenerateResponse loadSummary(Long quizId) throws IOException {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new NotFoundQuizException(ErrorCode.QUIZ_NOT_FOUND, ErrorCode.QUIZ_NOT_FOUND.getMessage()));
         Summary summary = summaryRepository.findByPdf(quiz.getPdf());
         SummaryGenerateResponse response = new SummaryGenerateResponse();
-        response.setSummary(summary.getSummary());
+        response.setSummary(fileService.loadData(summary.getFilePath()));
         return response;
     }
 
-    public SummaryGenerateResponse generateSummary(String memberId, Long pdfId) throws JsonProcessingException {
+    public SummaryGenerateResponse generateSummary(String memberId, Long pdfId) throws IOException {
         Pdf pdf = pdfRepository.findById(pdfId)
                 .orElseThrow(() -> new NotFoundPdfException(ErrorCode.PDF_NOT_FOUND, ErrorCode.PDF_NOT_FOUND.getMessage()));
         Member member = memberRepository.findByMemberId(memberId);
 
-        AiSummaryGenerateResponse AiResponse = postAiAndGetSummary(pdf);
+        AiSummaryGenerateResponse aiResponse = postAiAndGetSummary(pdf);
+        String storedFileName = fileService.getStoredFileName();
+        String filePath = storedFileName+".md";
+        fileService.saveData(aiResponse.getSummaryInMd(), filePath);
 
         Summary summary = Summary.builder()
-                .summary(AiResponse.getSummaryInMd())
+                .storedFileName(storedFileName)
+                .filePath(filePath)
                 .pdf(pdf)
                 .build();
         summaryRepository.save(summary);
         SummaryGenerateResponse response = new SummaryGenerateResponse();
-        response.setSummary(AiResponse.getSummaryInMd());
+        response.setSummary(aiResponse.getSummaryInMd());
         return response;
-
     }
 
-    private AiSummaryGenerateResponse postAiAndGetSummary(Pdf pdf) throws JsonProcessingException {
+    private AiSummaryGenerateResponse postAiAndGetSummary(Pdf pdf) throws IOException {
         // post 요청할 ai 서버 url
         String aiServerUrl = "http://192.168.0.166:8000/api/v1/summary";
         // 요청 header 설정
@@ -75,7 +82,7 @@ public class SummaryService {
         // 요청 body 설정
         Map<String, Object> body = new HashMap<>();
         body.put("pdfId", pdf.getId());
-        body.put("pdfText", pdf.getPdfToText());
+        body.put("pdfText", fileService.loadData(pdf.getFilePath()));
         body.put("subject", pdf.getSubjectType());
         body.put("pageKcId", pdf.getPageKcId());
         System.out.println("body = " + body);
@@ -89,4 +96,5 @@ public class SummaryService {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(AiResponse.getBody(), AiSummaryGenerateResponse.class);
     }
+
 }

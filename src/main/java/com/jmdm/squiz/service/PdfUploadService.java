@@ -26,8 +26,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -36,6 +39,8 @@ import java.util.UUID;
 public class PdfUploadService {
     private final PdfRepository pdfRepository;
     private final MemberRepository memberRepository;
+    private final FileService fileService;
+
 
     @Transactional
     public PdfUploadResponse uploadPdf(String memberId, SubjectType subjectType, MultipartFile pdf) throws IOException {
@@ -47,20 +52,22 @@ public class PdfUploadService {
         String uploadFileName = pdf.getOriginalFilename();
         int totalPageCount = getPageCount(pdf);
         Member member = memberRepository.findByMemberId(memberId);
+        String storedFileName = fileService.getStoredFileName();
+        String filePath = storedFileName+".txt";
         Pdf storedPdf = Pdf.builder()
                 .member(member)
                 .uploadFileName(uploadFileName)
                 .totalPageCount(totalPageCount)
                 .subjectType(subjectType)
+                .storedFileName(storedFileName)
+                .filePath(filePath)
                 .build();
         pdfRepository.save(storedPdf);
 
         // ai post pdf text 생성, kc 분류
         AiGetTextAndClassifyKcResponse response = getTextAndKCs(storedPdf.getId(), subjectType, pdf);
-//        AiGetTextAndClassifyKcResponse response = aiTest(storedPdf.getId());
-
+        fileService.saveData(response.getPdfText(), filePath);
         // PdfToText, kc 저장
-        storedPdf.setPdfToText(response.getPdfText());
         storedPdf.setPageKcId(response.getPageKcId());
         pdfRepository.save(storedPdf);
 
@@ -103,18 +110,6 @@ public class PdfUploadService {
         return mapper.readValue(response.getBody(), AiGetTextAndClassifyKcResponse.class);
 
     }
-
-//    private AiGetTextAndClassifyKcResponse aiTest(Long pdfId) {
-//        AiGetTextAndClassifyKcResponse response = new AiGetTextAndClassifyKcResponse();
-//        response.setPdfId(pdfId);
-//        response.setPdfToText("이것은 pdf를 OCR까지 사용해서 text로 바꾼것!");
-//        response.setPageKcId("0: 5,\n" +
-//                "\t\t\t1: 3,\n" +
-//                "\t\t\t2: 3,\n" +
-//                "\t\t\t...\n" +
-//                "\t\t\t30: 24");
-//        return response;
-//    }
 
     private static class MultipartInputStreamFileResource extends InputStreamResource {
         private final String filename;
