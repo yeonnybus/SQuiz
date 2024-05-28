@@ -39,4 +39,5 @@ public class UploadController {
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, pdfUploadResponse, "업로드한 pdf 관련 정보입니다."));
     }
 
+
 }

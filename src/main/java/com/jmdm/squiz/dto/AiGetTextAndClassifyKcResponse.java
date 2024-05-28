@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class AiGetTextAndClassifyKcResponse {
     private Long pdfId;
-    private String pdfToText;
+    private String pdfText;
     private String pageKcId;
 }

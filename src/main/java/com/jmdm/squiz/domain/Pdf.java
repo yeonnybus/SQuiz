@@ -21,6 +21,8 @@ public class Pdf {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @OneToOne(mappedBy = "pdf")
+    private Summary summary;
 
     private String uploadFileName;
     private String pdfToText;
@@ -53,5 +55,9 @@ public class Pdf {
 
     public void setPageKcId(String pageKcId) {
         this.pageKcId = pageKcId;
+    }
+
+    public void setSummary(Summary summary) {
+        this.summary = summary;
     }
 }

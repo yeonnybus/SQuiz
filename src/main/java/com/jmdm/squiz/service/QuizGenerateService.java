@@ -20,7 +20,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +34,7 @@ public class QuizGenerateService {
     private final ProblemRepository problemRepository;
     private final DktPerSubjectRepository dktPerSubjectRepository;
 
-    public QuizGenerateResponse generateQuiz(String memberId, QuizGenerateRequest request){
+    public QuizGenerateResponse generateQuiz(String memberId, QuizGenerateRequest request) throws IOException {
         // pdf 파일 load
         Long pdfId =request.getPdfId();
         Pdf pdf = pdfRepository.findById(pdfId)
@@ -46,8 +48,9 @@ public class QuizGenerateService {
 
         //post
         ArrayList<Dkt> dkts = isPlusQuiz(member, quiz.getSubject());
-//        AiQuizGenerateResponse response = postAiAndGetQuiz(quiz.getId(), pdf, request, dkts); // ai post api 호출
-        AiQuizGenerateResponse AiResponse = aiTest(quiz.getId(), request);
+        AiQuizGenerateResponse AiResponse = postAiAndGetQuiz(quiz.getId(), pdf, request, dkts); // ai post api 호출
+//        AiQuizGenerateResponse AiResponse = aiTest(quiz.getId(), request);
+        System.out.println("AiResponse = " + AiResponse);
         saveProblem(AiResponse, quiz);
         return makeResponse(AiResponse, request);
     }
@@ -144,27 +147,29 @@ public class QuizGenerateService {
 
     private AiQuizGenerateResponse postAiAndGetQuiz(Long quizId, Pdf pdf, QuizGenerateRequest request, ArrayList<Dkt> dkts) throws IOException{
         // post 요청할 ai 서버 url
-        String aiServerUrl = "http://localhost:8080/api/v1/quiz";
+        String aiServerUrl = "http://192.168.0.166:8000/api/v1/quiz";
         // 요청 header 설정
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // 요청 body 설정
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("quizId", quizId);
-        body.add("subject", pdf.getSubjectType());
-        body.add("startPage", request.getStartPage());
-        body.add("endPage", request.getEndPage());
-        body.add("quizType", request.getQuizType());
-        body.add("problemNum", request.getProblemNum());
-        body.add("rank", request.getRank());
-        body.add("pdfText", pdf.getPdfToText());
-        body.add("pageKcId", pdf.getPageKcId());
-        body.add("dkt", dkts); // 추후 문제 재생성시로 바꾸기
+        Map<String, Object> body = new HashMap<>();
+        body.put("quizId", quizId);
+        body.put("subject", pdf.getSubjectType().toString());
+        body.put("startPage", request.getStartPage());
+        body.put("endPage", request.getEndPage());
+        body.put("quizType", request.getQuizType());
+        body.put("problemNum", request.getProblemNum());
+        body.put("rank", request.getRank());
+        body.put("pdfText", pdf.getPdfToText());
+        body.put("pageKcId", pdf.getPageKcId());
+        System.out.println(pdf.getPageKcId().getClass());
+        body.put("dkt", dkts); // 추후 문제 재생성시로 바꾸기
+        System.out.println("body = " + body);
 
         // post 요청
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<MultiValueMap<String, Object>> AiRequest = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> AiRequest = new HttpEntity<>(body, headers);
         ResponseEntity<String> AiResponse = restTemplate.postForEntity(aiServerUrl, AiRequest, String.class);
         if (! AiResponse.getStatusCode().is2xxSuccessful()) {
             quizRepository.deleteById(quizId);

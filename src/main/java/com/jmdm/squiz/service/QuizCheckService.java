@@ -1,16 +1,16 @@
 package com.jmdm.squiz.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jmdm.squiz.domain.Problem;
-import com.jmdm.squiz.domain.Quiz;
+import com.jmdm.squiz.domain.*;
 import com.jmdm.squiz.dto.*;
 import com.jmdm.squiz.enums.KC;
 import com.jmdm.squiz.enums.QuizType;
 import com.jmdm.squiz.enums.SubjectType;
 import com.jmdm.squiz.exception.ErrorCode;
+import com.jmdm.squiz.exception.SuccessCode;
 import com.jmdm.squiz.exception.model.NotFoundQuizException;
-import com.jmdm.squiz.repository.ProblemRepository;
-import com.jmdm.squiz.repository.QuizRepository;
+import com.jmdm.squiz.repository.*;
+import com.jmdm.squiz.utils.ApiResponseEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,8 +30,11 @@ import java.util.stream.IntStream;
 public class QuizCheckService {
     private final QuizRepository quizRepository;
     private final ProblemRepository problemRepository;
+    private final DktPerSubjectRepository dktPerSubjectRepository;
+    private final DktListRepository dktListRepository;
+    private final MemberRepository memberRepository;
 
-    public QuizCheckResponse checkQuiz(String memberId, QuizCheckRequest request) {
+    public QuizCheckResponse checkQuiz(String memberId, QuizCheckRequest request) throws IOException {
         // quiz 불러오기
         Quiz quiz = quizRepository.findById(request.getQuizId())
                 .orElseThrow(() -> new NotFoundQuizException(ErrorCode.QUIZ_NOT_FOUND, ErrorCode.QUIZ_NOT_FOUND.getMessage()));
@@ -45,7 +48,7 @@ public class QuizCheckService {
         checkProblemDTOS.sort(Comparator.comparingInt(CheckProblemDTO::getProblemNo));
 
         // 문제에 사용자가 체크한 답을 저장
-        IntStream.range(0, quiz.getProblemNum()).forEach(i -> {
+        IntStream.range(0, quiz.getProblemNum() - 1).forEach(i -> {
             Problem problem = problems.get(i);
             CheckProblemDTO checkProblemDTO = checkProblemDTOS.get(i);
             problem.setCheckedAnswer(checkProblemDTO.getCheckedAnswer(), checkProblemDTO.getCheckedBlanks());
@@ -61,16 +64,37 @@ public class QuizCheckService {
         });
 
         problemRepository.saveAll(problems);
+        List<KcDTO> kcDTOS = new ArrayList<>();
+        for (Problem problem : problems) {
+            KcDTO dto = new KcDTO();
+            dto.setKcId(problem.getKcId());
+            dto.setCorrect(problem.getCorrect());
+            kcDTOS.add(dto);
+        }
+        AiQuizCheckResponse AiResponse = postAiAndGetDkt(memberId, quiz.getSubject(), kcDTOS);
 
-        // AI post 요청 및 response 생성
-//        trackDKT(problems);
+
 
         return gradeQuiz(quiz, problems);
     }
 
-//    private void trackDKT(List<Problem> problems) {
-//
-//    }
+    private void saveDkt(AiQuizCheckResponse response) {
+        Member member = memberRepository.findByMemberId(response.getMemberId());
+        DktPerSubject dktPerSubject = DktPerSubject.builder()
+                .member(member)
+                .subjectType(response.getSubjectType())
+                .build();
+        dktPerSubjectRepository.save(dktPerSubject);
+        for (Dkt dkt : response.getDkt()) {
+            DktList dktList = DktList.builder()
+                    .kcId(dkt.getKcId())
+                    .predict(dkt.getPredict())
+                    .dktPerSubject(dktPerSubject)
+                    .build();
+            dktListRepository.save(dktList);
+        }
+    }
+
 
     private QuizCheckResponse gradeQuiz(Quiz quiz, List<Problem> problems) {
         int correctNum = 0;
@@ -112,7 +136,7 @@ public class QuizCheckService {
 
     private AiQuizCheckResponse postAiAndGetDkt(String memberId, SubjectType subjectType, List<KcDTO> interactions) throws IOException {
         // post 요청할 ai 서버 url
-        String aiServerUrl = "http://localhost:8080/api/v1/dkt";
+        String aiServerUrl = "http://192.168.0.166:8000/api/v1/dkt";
         // 요청 header 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
