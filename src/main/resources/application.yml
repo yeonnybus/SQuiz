@@ -53,4 +53,10 @@ springdoc:
     - /api/**
 file:
   directory : "/Users/suacho/Desktop"
+ai:
+  server:
+    url: http://10.0.1.81:8000/api/v1
+front:
+  server:
+    url: http://localhost:3000
 

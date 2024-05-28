@@ -19,22 +19,10 @@ public class MailVerifyService {
     }
 
     private boolean isVerify(String email, String certificationNumber) {
-        String result = (String)redisService.getData(email);
-        if(result == null){
+        String result = (String) redisService.getData(email);
+        if (result == null) {
             throw new NotFoundEmailException(ErrorCode.EMAIL_NOT_FOUND, ErrorCode.EMAIL_NOT_FOUND.getMessage());
         }
         return result.equals(certificationNumber);
-//        boolean validatedEmail = isEmailExists(email);
-//        System.out.println("validatedEmail = " + validatedEmail);
-//        if (!validatedEmail) {
-//            throw new NotFoundEmailException(ErrorCode.EMAIL_NOT_FOUND, ErrorCode.EMAIL_NOT_FOUND.getMessage());
-//        }
-//        return (certificationNumberDao.getData(email).equals(certificationNumber));
     }
-
-//    private boolean isEmailExists(String email) {
-//        return certificationNumberDao.getData(email);
-//    }
-
-
 }

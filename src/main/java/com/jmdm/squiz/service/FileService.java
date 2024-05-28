@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,11 +16,15 @@ public class FileService {
     @Value("${file.directory}")
     private String directory;
 
-    public String getStoredFileName(){
+    public List<String> getStoredFileName(String ext){
         String uuid = UUID.randomUUID().toString();
-        String storedFileName = uuid + ".txt";
+        String storedFileName = uuid + ext;
         String filePath = Paths.get(directory, storedFileName).toString();
-        return storedFileName;
+        System.out.println(filePath);
+        List<String> list = new ArrayList<>();
+        list.add(storedFileName);
+        list.add(filePath);
+        return list;
     }
 
     public void saveData(String data, String filePath) {

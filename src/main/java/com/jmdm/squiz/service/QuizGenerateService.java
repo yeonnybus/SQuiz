@@ -9,6 +9,7 @@ import com.jmdm.squiz.exception.model.AiServerException;
 import com.jmdm.squiz.exception.model.NotFoundPdfException;
 import com.jmdm.squiz.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -37,6 +38,8 @@ public class QuizGenerateService {
     private final ProblemRepository problemRepository;
     private final DktPerSubjectRepository dktPerSubjectRepository;
     private final FileService fileService;
+    @Value("${ai.server.url}")
+    private String aiUrl;
 
     public QuizGenerateResponse generateQuiz(String memberId, QuizGenerateRequest request) throws IOException {
         // pdf 파일 load
@@ -119,7 +122,7 @@ public class QuizGenerateService {
 
     private AiQuizGenerateResponse postAiAndGetQuiz(Long quizId, Pdf pdf, QuizGenerateRequest request, ArrayList<Dkt> dkts) throws IOException{
         // post 요청할 ai 서버 url
-        String aiServerUrl = "http://192.168.0.166:8000/api/v1/quiz";
+        String aiServerUrl = aiUrl + "/quiz";
         // 요청 header 설정
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

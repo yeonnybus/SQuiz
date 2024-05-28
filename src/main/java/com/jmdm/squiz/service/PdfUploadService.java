@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -40,6 +41,8 @@ public class PdfUploadService {
     private final PdfRepository pdfRepository;
     private final MemberRepository memberRepository;
     private final FileService fileService;
+    @Value("${ai.server.url}")
+    private String aiUrl;
 
 
     @Transactional
@@ -52,8 +55,9 @@ public class PdfUploadService {
         String uploadFileName = pdf.getOriginalFilename();
         int totalPageCount = getPageCount(pdf);
         Member member = memberRepository.findByMemberId(memberId);
-        String storedFileName = fileService.getStoredFileName();
-        String filePath = storedFileName+".txt";
+        List<String> list = fileService.getStoredFileName(".txt");
+        String storedFileName = list.get(0);
+        String filePath = list.get(1);
         Pdf storedPdf = Pdf.builder()
                 .member(member)
                 .uploadFileName(uploadFileName)
@@ -67,6 +71,7 @@ public class PdfUploadService {
         // ai post pdf text 생성, kc 분류
         AiGetTextAndClassifyKcResponse response = getTextAndKCs(storedPdf.getId(), subjectType, pdf);
         fileService.saveData(response.getPdfText(), filePath);
+//        fileService.saveData("그냥 아무말아무말", filePath);
         // PdfToText, kc 저장
         storedPdf.setPageKcId(response.getPageKcId());
         pdfRepository.save(storedPdf);
@@ -87,7 +92,7 @@ public class PdfUploadService {
     }
 
     private AiGetTextAndClassifyKcResponse getTextAndKCs(Long pdfId, SubjectType subjectType, MultipartFile pdf) throws IOException {
-        String aiServerUrl = "http://192.168.0.166:8000/api/v1/pdf/kc";
+        String aiServerUrl = aiUrl + "/pdf/kc";
 
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);

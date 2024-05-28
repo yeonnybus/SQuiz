@@ -12,6 +12,7 @@ import com.jmdm.squiz.exception.model.NotFoundQuizException;
 import com.jmdm.squiz.repository.*;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -33,6 +34,8 @@ public class QuizCheckService {
     private final DktPerSubjectRepository dktPerSubjectRepository;
     private final DktListRepository dktListRepository;
     private final MemberRepository memberRepository;
+    @Value("${ai.server.url}")
+    private String aiUrl;
 
     public QuizCheckResponse checkQuiz(String memberId, QuizCheckRequest request) throws IOException {
         // quiz 불러오기
@@ -136,7 +139,7 @@ public class QuizCheckService {
 
     private AiQuizCheckResponse postAiAndGetDkt(String memberId, SubjectType subjectType, List<KcDTO> interactions) throws IOException {
         // post 요청할 ai 서버 url
-        String aiServerUrl = "http://192.168.0.166:8000/api/v1/dkt";
+        String aiServerUrl = aiUrl + "/dkt";
         // 요청 header 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

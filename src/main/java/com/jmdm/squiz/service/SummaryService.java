@@ -18,6 +18,7 @@ import com.jmdm.squiz.repository.PdfRepository;
 import com.jmdm.squiz.repository.QuizRepository;
 import com.jmdm.squiz.repository.SummaryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -41,6 +43,8 @@ public class SummaryService {
     private final SummaryRepository summaryRepository;
     private final QuizRepository quizRepository;
     private final FileService fileService;
+    @Value("${ai.server.url}")
+    private String aiUrl;
 
     public SummaryGenerateResponse loadSummary(Long quizId) throws IOException {
         Quiz quiz = quizRepository.findById(quizId)
@@ -57,8 +61,9 @@ public class SummaryService {
         Member member = memberRepository.findByMemberId(memberId);
 
         AiSummaryGenerateResponse aiResponse = postAiAndGetSummary(pdf);
-        String storedFileName = fileService.getStoredFileName();
-        String filePath = storedFileName+".md";
+        List<String> list = fileService.getStoredFileName(".md");
+        String storedFileName = list.get(0);
+        String filePath = list.get(1);
         fileService.saveData(aiResponse.getSummaryInMd(), filePath);
 
         Summary summary = Summary.builder()
@@ -74,7 +79,7 @@ public class SummaryService {
 
     private AiSummaryGenerateResponse postAiAndGetSummary(Pdf pdf) throws IOException {
         // post 요청할 ai 서버 url
-        String aiServerUrl = "http://192.168.0.166:8000/api/v1/summary";
+        String aiServerUrl = aiUrl + "/summary";
         // 요청 header 설정
         HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
