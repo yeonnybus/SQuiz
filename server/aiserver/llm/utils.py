@@ -5,6 +5,19 @@ class KCList:
     def __init__(self):
         self.df = pd.read_csv("aiserver/data/KnowledgeComponent.csv")
 
+    # 과목에 따른 kc idx 정하는 함수
+    def get_kc_idx(self, subject):
+        if subject == "OPERATING_SYSTEM":
+            return 0, 93
+        elif subject == "COMPUTER_COMMUNICATION":
+            return 93, 249
+        elif subject == "C_LANGUAGE":
+            return 249, 324
+        elif subject == "OBJECT_ORIENTED_PROGRAMMING":
+            return 324, 435
+        else:
+            return 0, 0
+
 
 def get_page_txt(txt, page):
     """

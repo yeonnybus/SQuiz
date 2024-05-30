@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify
 from http import HTTPStatus
 from ..llm import summary
+from ..llm.summary import SummaryGenerator
 
 summary_bp = Blueprint('summary', __name__, url_prefix='/summary')
-
+summary_generator = SummaryGenerator()
 
 @summary_bp.route('', methods=['POST'])
 def create_summary():
@@ -13,11 +14,12 @@ def create_summary():
     """
     try:
         params = request.get_json()
-        gen_summary = summary.get_summary(params)
+        print("params", params)
+        gen_summary = summary_generator.get_summary(params)
+        print("gen_summary", gen_summary)
 
-        # TODO 에러 처리
         return jsonify(gen_summary),  HTTPStatus.OK
 
     except Exception as e:
         print(str(e))
-        return jsonify(None),  HTTPStatus.INTERNAL_SERVER_ERROR
+        return jsonify(str(e)),  HTTPStatus.INTERNAL_SERVER_ERROR

@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request
-from ..llm import utils_pdf_kc
+from ..llm.pdf_kc import KCClassifier, PdfUtility
 
 pdf_bp = Blueprint('pdf', __name__, url_prefix='/pdf')
-
+pdfUtility = PdfUtility()
+kcClassifier = KCClassifier()
 
 @pdf_bp.route('/kc', methods=['POST'])
 def pdf_to_kc():
@@ -12,8 +13,9 @@ def pdf_to_kc():
         pdf = request.files['pdf']
         subject = request.form.get('subject')
         print("pdf/kc")
-        pdf_text = utils_pdf_kc.pdf_to_text(pdf)
-        page_kc_id = utils_pdf_kc.kc_classifier(pdf_text, subject)
+
+        pdf_text = pdfUtility.pdf_to_text(pdf)
+        page_kc_id = kcClassifier.kc_classifier(pdf_text, subject)
 
         response = {
             "pdfId": int(pdf_id),
