@@ -8,14 +8,10 @@ dkt_utils = DKTUtility()
 @dkt_bp.route('', methods=['POST'])
 def dkt():
     try:
-        print(10)
         mem_id = request.get_json().get('memberId')
-        print(12)
         subject = request.get_json().get('subject')
-        print(14)
         interactions = request.get_json().get('interactions')
-        print(16)
-        dkt_res = dkt_utils.dkt_model(subject, interactions)
+        dkt_res = dkt_utils.dkt_model(mem_id, subject, interactions)
 
         response = {
             "memberId": mem_id,
