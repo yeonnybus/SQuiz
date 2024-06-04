@@ -6,16 +6,6 @@ COPY . /app
 # python의 작업 위치 /app
 WORKDIR /app
 
-## 가상 환경 생성
-#RUN python -m venv venv
-#
-## 가상 환경 활성화 및 pip 업그레이드
-#RUN . venv/bin/activate && pip install --upgrade pip
-#
-## 가상 환경에서 패키지 설치
-##RUN . venv/bin/activate && pip install tensorflow-cpu==2.10.0 --force-reinstall
-#
-#RUN . venv/bin/activate && pip install -r requirements.txt
 RUN apt-get update && apt-get install -y \
     libhdf5-dev \
     gcc \
@@ -35,3 +25,4 @@ EXPOSE 8000
 
 # 가상 환경에서 flask app 실행
 CMD ["python3", "run.py"]
+
