@@ -34,6 +34,7 @@ public class FruitBasketController {
     @PostMapping("/make")
     @Operation(summary = "과일 바구니를 만드는 API",
     description = "문제를 풀고 난 후 과일바구니를 선택하는 상황에서 새로운 과일바구니를 만들었을 때 사용하는 API")
+    @ApiResponse(responseCode = "200", description = "새로운 과일바구니 생성 성공", content = @Content(schema = @Schema(implementation = FruitBasketMakeResponse.class)))
     public ResponseEntity<ApiResponseEntity<FruitBasketMakeResponse>> makeFruitBasket(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                                       @RequestBody FruitBasketMakeRequest request) {
         String memberId = userDetails.getUsername();
@@ -42,7 +43,9 @@ public class FruitBasketController {
     }
 
     @PostMapping("/load-specific")
-    @Operation(summary = "특정 과목의 과일바구니 목록을 불러오는 API")
+    @Operation(summary = "특정 과목의 과일바구니 목록을 불러오는 API",
+    description = "문제를 풀고 별표를 눌렀을때 과일바구니 목록들 요청시 사용하는 API")
+    @ApiResponse(responseCode = "200", description = "특정 과목 과일바구니 목록 로드 성공", content = @Content(schema = @Schema(implementation = SpecificFruitBasketsLoadResponse.class)))
     public ResponseEntity<ApiResponseEntity<SpecificFruitBasketsLoadResponse>> loadSpecificFruitBaskets(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                                                         @RequestBody SpecificFruitBasketLoadRequest request) {
         String memberId = userDetails.getUsername();
@@ -51,7 +54,8 @@ public class FruitBasketController {
     }
 
     @PostMapping("/add-problem")
-    @Operation(summary = "과일바구니에 문제 추가하기")
+    @Operation(summary = "과일바구니에 문제 추가하기", description = "문제를 풀고 특정 과일바구니에 문제 추가할 때 사용하는 API")
+    @ApiResponse(responseCode = "200", description = "과일바구니 문제 추가 성공", content = @Content(schema = @Schema(implementation = SuccessCode.class)))
     public ResponseEntity<ApiResponseEntity<Void>> addProblem(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                               @RequestBody ProblemAddRequest request) {
         String memberId = userDetails.getUsername();
@@ -60,7 +64,8 @@ public class FruitBasketController {
     }
 
     @PostMapping("/load-problems")
-    @Operation(summary = "과일바구니 속 문제 불러오기 API")
+    @Operation(summary = "과일바구니 속 문제 불러오기 API", description = "특정 과일 바구니 속 문제를 불러오는 API")
+    @ApiResponse(responseCode = "200", description = "특정 과일바구니 속 문제 로드 성공", content = @Content(schema = @Schema(implementation = ProblemsLoadResponse.class)))
     public ResponseEntity<ApiResponseEntity<ProblemsLoadResponse>> loadProblems(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                                 @RequestBody ProblemsLoadRequest request) {
         String memberId = userDetails.getUsername();

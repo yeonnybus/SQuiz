@@ -22,7 +22,7 @@ public class QuizDTO {
     private int problemNum;
     @Schema(description = "맞은 문제수", defaultValue = "8")
     private int correctNum;
-    @Schema(description = "dkt 추적 결과 50점 보다 낮은 dkt", defaultValue = "[{\"가상메모리\"},{\"페이징\"} ]")
+    @Schema(description = "최대 4개의 하위 dkt 이름", defaultValue = "[{\"가상메모리\"},{\"페이징\"} ]")
     ArrayList<String> weakPart;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")

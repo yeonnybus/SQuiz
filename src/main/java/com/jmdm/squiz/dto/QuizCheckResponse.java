@@ -14,6 +14,13 @@ public class QuizCheckResponse {
             defaultValue = "1")
     private Long quizId;
 
+    @Schema(description = "db에 저장되는 pdfId", defaultValue = "1")
+    private Long pdfId;
+
+    @Schema(description = "db에 저장되는 summaryId, null이면 요약본 생성하기 다른 값이 있으면 요약본 로드 하기",
+    defaultValue = "null")
+    private Long summaryId;
+
     @Schema(description = "퀴즈 이름",
     defaultValue = "운영체제 1강")
     private String quizName;

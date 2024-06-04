@@ -45,6 +45,7 @@ public class PdfUploadService {
     private String aiUrl;
 
 
+
     @Transactional
     public PdfUploadResponse uploadPdf(String memberId, SubjectType subjectType, MultipartFile pdf) throws IOException {
         if (pdf.isEmpty()) {
@@ -55,25 +56,23 @@ public class PdfUploadService {
         String uploadFileName = pdf.getOriginalFilename();
         int totalPageCount = getPageCount(pdf);
         Member member = memberRepository.findByMemberId(memberId);
-        List<String> list = fileService.getStoredFileName(".txt");
-        String storedFileName = list.get(0);
-        String filePath = list.get(1);
+        String storedFileName = fileService.getStoredFileName(".txt");
         Pdf storedPdf = Pdf.builder()
                 .member(member)
                 .uploadFileName(uploadFileName)
                 .totalPageCount(totalPageCount)
                 .subjectType(subjectType)
                 .storedFileName(storedFileName)
-                .filePath(filePath)
                 .build();
         pdfRepository.save(storedPdf);
 
         // ai post pdf text 생성, kc 분류
         AiGetTextAndClassifyKcResponse response = getTextAndKCs(storedPdf.getId(), subjectType, pdf);
-        fileService.saveData(response.getPdfText(), filePath);
-//        fileService.saveData("그냥 아무말아무말", filePath);
+        String s3FilePath = fileService.saveData(response.getPdfText(), storedFileName);
+//        String s3FilePath = fileService.saveData("그냥 아무말아무말", storedFileName);
         // PdfToText, kc 저장
         storedPdf.setPageKcId(response.getPageKcId());
+        storedPdf.setFilePath(s3FilePath);
         pdfRepository.save(storedPdf);
 
         // pdf 업로드 response 생성

@@ -33,4 +33,8 @@ public class DktList {
         this.dktPerSubject = dktPerSubject;
         dktPerSubject.getDktLists().add(this);
     }
+
+    public void setPredict(float predict) {
+        this.predict = predict;
+    }
 }

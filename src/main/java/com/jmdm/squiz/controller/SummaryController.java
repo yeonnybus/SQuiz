@@ -34,7 +34,7 @@ public class SummaryController {
     @GetMapping("/load")
     @Operation(summary = "요약본을 로드하는 API")
     public ResponseEntity<ApiResponseEntity<SummaryGenerateResponse>> loadSummary(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                                      @RequestParam Long quizId) throws IOException {
+                                                                                      @RequestParam("quizId") Long quizId) throws IOException {
         String memberId = userDetails.getUsername();
         SummaryGenerateResponse response = summaryService.loadSummary(quizId);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "생성된 summary 입니다."));

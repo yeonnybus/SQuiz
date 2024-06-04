@@ -8,6 +8,6 @@ import java.util.ArrayList;
 @Data
 public class AiQuizCheckResponse {
     private String memberId;
-    private SubjectType subjectType;
+    private SubjectType subject;
     private ArrayList<Dkt> dkt;
 }

@@ -58,4 +58,5 @@ public class Pdf {
     public void setSummary(Summary summary) {
         this.summary = summary;
     }
+    public void setFilePath(String filePath) { this.filePath = filePath; }
 }

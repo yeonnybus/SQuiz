@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @EqualsAndHashCode
 @Schema(description = "이메일 인증 요청 시 사용하는 request")
 public class EmailCertificationRequest {
@@ -22,5 +19,7 @@ public class EmailCertificationRequest {
      */
     @NotBlank(message = "이메일 입력은 필수입니다.")
     @Email(message = "이메일 형식이 올바르지 않습니다.")
+    @Schema(description = "이메일",
+    defaultValue = "squiz.uos@gmail.com")
     private String email;
 }

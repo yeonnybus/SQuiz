@@ -2,10 +2,7 @@ package com.jmdm.squiz.controller;
 
 import com.jmdm.squiz.dto.*;
 import com.jmdm.squiz.exception.SuccessCode;
-import com.jmdm.squiz.service.QuizCheckService;
-import com.jmdm.squiz.service.QuizGenerateService;
-import com.jmdm.squiz.service.QuizListLoadService;
-import com.jmdm.squiz.service.QuizProvideService;
+import com.jmdm.squiz.service.*;
 import com.jmdm.squiz.utils.ApiResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,6 +26,7 @@ public class QuizController {
     private final QuizCheckService quizCheckService;
     private final QuizProvideService quizProvideService;
     private final QuizListLoadService quizListLoadService;
+    private final PastQuizResultLoadService pastQuizResultLoadService;
 
     @PostMapping("/generate-quiz")
     @Operation(summary = "퀴즈 생성 API",
@@ -68,6 +66,16 @@ public class QuizController {
         String memberId = userDetails.getUsername();
         QuizListLoadResponse response = quizListLoadService.loadQuizList(memberId);
         return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "요청한 퀴즈 목록들"));
+    }
+
+    @GetMapping("/checked-quiz-result")
+    @Operation(summary = "풀었던 퀴즈의 결과를 요청하는 API", description = "지난 퀴즈 목록 페이지에서 특정 퀴즈 id를 request로 받아 채점 결과를 제공하는 API")
+    @ApiResponse(responseCode = "200", description = "퀴즈 채점 성공", content = @Content(schema = @Schema(implementation = QuizCheckResponse.class)))
+    public ResponseEntity<ApiResponseEntity<QuizCheckResponse>> loadCheckedQuizResult(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                         @RequestParam("quizId") Long quizId) {
+        String memberId = userDetails.getUsername();
+        QuizCheckResponse response = pastQuizResultLoadService.loadPastQuizResult(quizId);
+        return ResponseEntity.ok(ApiResponseEntity.ok(SuccessCode.SUCCESS, response, "지난 퀴즈의 채점 결과"));
     }
 
 

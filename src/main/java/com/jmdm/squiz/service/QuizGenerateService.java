@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -40,7 +41,7 @@ public class QuizGenerateService {
     private final FileService fileService;
     @Value("${ai.server.url}")
     private String aiUrl;
-
+    @Transactional
     public QuizGenerateResponse generateQuiz(String memberId, QuizGenerateRequest request) throws IOException {
         // pdf 파일 load
         Long pdfId =request.getPdfId();
@@ -83,9 +84,9 @@ public class QuizGenerateService {
 
 
     private Quiz saveQuizAndGetQuiz(Pdf pdf, Member member, QuizGenerateRequest request) {
-        System.out.println(pdf);
-        System.out.println(member);
-        System.out.println(request);
+//        System.out.println(pdf);
+//        System.out.println(member);
+//        System.out.println(request);
         Quiz quiz = Quiz.builder()
                 .pdf(pdf)
                 .member(member)
@@ -136,7 +137,7 @@ public class QuizGenerateService {
         body.put("quizType", request.getQuizType());
         body.put("problemNum", request.getProblemNum());
         body.put("rank", request.getRank());
-        body.put("pdfText", fileService.loadData(pdf.getFilePath()));
+        body.put("pdfText", fileService.loadDataFromUrl(pdf.getFilePath()));
         body.put("pageKcId", pdf.getPageKcId());
         System.out.println(pdf.getPageKcId().getClass());
         body.put("dkt", dkts); // 추후 문제 재생성시로 바꾸기
@@ -146,10 +147,6 @@ public class QuizGenerateService {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<Map<String, Object>> AiRequest = new HttpEntity<>(body, headers);
         ResponseEntity<String> AiResponse = restTemplate.postForEntity(aiServerUrl, AiRequest, String.class);
-        if (! AiResponse.getStatusCode().is2xxSuccessful()) {
-            quizRepository.deleteById(quizId);
-            throw new AiServerException(ErrorCode.AI_SERVER_ERROR, ErrorCode.AI_SERVER_ERROR.getMessage());
-        }
 
         // problem, answer 저장
         ObjectMapper mapper = new ObjectMapper();

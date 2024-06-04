@@ -10,8 +10,11 @@ import com.jmdm.squiz.exception.model.NotFoundQuizException;
 import com.jmdm.squiz.repository.QuizRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -19,10 +22,12 @@ import java.util.List;
 public class QuizProvideService {
     private final QuizRepository quizRepository;
 
+    @Transactional
     public QuizDetailResponse getQuiz(String memberId, Long quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new NotFoundQuizException(ErrorCode.QUIZ_NOT_FOUND, ErrorCode.QUIZ_NOT_FOUND.getMessage()));
         List<Problem> problems = quiz.getProblems();
+        problems.sort(Comparator.comparingInt(Problem::getProblemNo));
         ArrayList<ProblemAnswerDTO> problemAnswerDTOS = new ArrayList<>();
         for (Problem problem : problems) {
             ProblemAnswerDTO problemAnswerDTO = ProblemAnswerDTO.builder()
@@ -45,6 +50,7 @@ public class QuizProvideService {
                 .quizName(quiz.getQuizName())
                 .problemNum(quiz.getProblemNum())
                 .problemList(problemAnswerDTOS)
+                .subjectType(quiz.getSubject())
                 .build();
     }
 

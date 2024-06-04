@@ -51,7 +51,7 @@ public class SummaryService {
                 .orElseThrow(() -> new NotFoundQuizException(ErrorCode.QUIZ_NOT_FOUND, ErrorCode.QUIZ_NOT_FOUND.getMessage()));
         Summary summary = summaryRepository.findByPdf(quiz.getPdf());
         SummaryGenerateResponse response = new SummaryGenerateResponse();
-        response.setSummary(fileService.loadData(summary.getFilePath()));
+        response.setSummary(fileService.loadDataFromUrl(summary.getFilePath()));
         return response;
     }
 
@@ -61,14 +61,11 @@ public class SummaryService {
         Member member = memberRepository.findByMemberId(memberId);
 
         AiSummaryGenerateResponse aiResponse = postAiAndGetSummary(pdf);
-        List<String> list = fileService.getStoredFileName(".md");
-        String storedFileName = list.get(0);
-        String filePath = list.get(1);
-        fileService.saveData(aiResponse.getSummaryInMd(), filePath);
-
+        String storedFileName = fileService.getStoredFileName(".md");
+        String s3FilePath = fileService.saveData(aiResponse.getSummaryInMd(), storedFileName);
         Summary summary = Summary.builder()
                 .storedFileName(storedFileName)
-                .filePath(filePath)
+                .filePath(s3FilePath)
                 .pdf(pdf)
                 .build();
         summaryRepository.save(summary);
@@ -87,7 +84,7 @@ public class SummaryService {
         // 요청 body 설정
         Map<String, Object> body = new HashMap<>();
         body.put("pdfId", pdf.getId());
-        body.put("pdfText", fileService.loadData(pdf.getFilePath()));
+        body.put("pdfText", fileService.loadDataFromUrl(pdf.getFilePath()));
         body.put("subject", pdf.getSubjectType());
         body.put("pageKcId", pdf.getPageKcId());
         System.out.println("body = " + body);

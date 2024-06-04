@@ -18,6 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -36,7 +37,7 @@ public class QuizCheckService {
     private final MemberRepository memberRepository;
     @Value("${ai.server.url}")
     private String aiUrl;
-
+    @Transactional
     public QuizCheckResponse checkQuiz(String memberId, QuizCheckRequest request) throws IOException {
         // quiz 불러오기
         Quiz quiz = quizRepository.findById(request.getQuizId())
@@ -51,8 +52,9 @@ public class QuizCheckService {
         checkProblemDTOS.sort(Comparator.comparingInt(CheckProblemDTO::getProblemNo));
 
         // 문제에 사용자가 체크한 답을 저장
-        IntStream.range(0, quiz.getProblemNum() - 1).forEach(i -> {
+        IntStream.range(0, quiz.getProblemNum()).forEach(i -> {
             Problem problem = problems.get(i);
+            System.out.println("problem = " + problem);
             CheckProblemDTO checkProblemDTO = checkProblemDTOS.get(i);
             problem.setCheckedAnswer(checkProblemDTO.getCheckedAnswer(), checkProblemDTO.getCheckedBlanks());
 
@@ -75,7 +77,7 @@ public class QuizCheckService {
             kcDTOS.add(dto);
         }
         AiQuizCheckResponse AiResponse = postAiAndGetDkt(memberId, quiz.getSubject(), kcDTOS);
-
+        saveDkt(AiResponse);
 
 
         return gradeQuiz(quiz, problems);
@@ -83,19 +85,41 @@ public class QuizCheckService {
 
     private void saveDkt(AiQuizCheckResponse response) {
         Member member = memberRepository.findByMemberId(response.getMemberId());
-        DktPerSubject dktPerSubject = DktPerSubject.builder()
-                .member(member)
-                .subjectType(response.getSubjectType())
-                .build();
-        dktPerSubjectRepository.save(dktPerSubject);
-        for (Dkt dkt : response.getDkt()) {
+        DktPerSubject dktPerSubject = dktPerSubjectRepository.findByMemberAndSubjectType(member, response.getSubject());
+        if (dktPerSubject == null) {
+            dktPerSubject = DktPerSubject.builder()
+                    .member(member)
+                    .subjectType(response.getSubject())
+                    .build();
+            dktPerSubjectRepository.save(dktPerSubject);
+            for (Dkt dkt : response.getDkt()) {
             DktList dktList = DktList.builder()
                     .kcId(dkt.getKcId())
                     .predict(dkt.getPredict())
                     .dktPerSubject(dktPerSubject)
                     .build();
             dktListRepository.save(dktList);
+            return ;
+            }
         }
+        List<DktList> savedDktLists = dktPerSubject.getDktLists();
+        for (Dkt dkt : response.getDkt()) {
+            Optional<DktList> savedDktList = savedDktLists.stream()
+                    .filter(v -> v.getKcId() == dkt.getKcId())
+                    .findAny();
+            if (savedDktList.isEmpty()) {
+                DktList dktList = DktList.builder()
+                    .kcId(dkt.getKcId())
+                    .predict(dkt.getPredict())
+                    .dktPerSubject(dktPerSubject)
+                    .build();
+            dktListRepository.save(dktList);
+            } else {
+                savedDktList.get().setPredict(dkt.getPredict());
+                dktListRepository.save(savedDktList.get());
+            }
+        }
+
     }
 
 
@@ -120,19 +144,29 @@ public class QuizCheckService {
             } else {
                 dto.wrongProblem();
             }
-        }
-        List<CorrectPerKcDTO> correctPerKcDTOS = new ArrayList<>(correctPerKcMap.values());
+        }List<CorrectPerKcDTO> correctPerKcDTOS = new ArrayList<>(correctPerKcMap.values());
+
         quiz.setCorrectNum(correctNum);
         quizRepository.save(quiz);
-        return makeResponse(quiz, correctNum, correctPerKcDTOS);
+        return makeResponse(quiz, correctPerKcDTOS);
     }
 
-    private QuizCheckResponse makeResponse(Quiz quiz, int correctNum, List<CorrectPerKcDTO> correctPerKcDTOS) {
+    public QuizCheckResponse makeResponse(Quiz quiz, List<CorrectPerKcDTO> correctPerKcDTOS) {
         QuizCheckResponse response = new QuizCheckResponse();
+        Pdf pdf = quiz.getPdf();
+        Summary summary = pdf.getSummary();
+        Long summaryId;
+        if (summary == null) {
+            summaryId = null;
+        }else {
+            summaryId = summary.getId();
+        }
+        response.setSummaryId(summaryId);
         response.setQuizId(quiz.getId());
+        response.setPdfId(pdf.getId());
         response.setQuizName(quiz.getQuizName());
         response.setProblemNum(quiz.getProblemNum());
-        response.setCorrectNum(correctNum);
+        response.setCorrectNum(quiz.getCorrectNum());
         response.setCorrectPerKcDTOS(correctPerKcDTOS);
         return response;
     }
@@ -145,14 +179,14 @@ public class QuizCheckService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // 요청 body 설정
-        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("memberId", memberId);
-        body.add("subject", subjectType);
-        body.add("interactions", interactions);
-
+        Map<String, Object> body = new HashMap<>();
+        body.put("memberId", memberId);
+        body.put("subject", subjectType);
+        body.put("interactions", interactions);
+        System.out.println("body = " + body);
         // post 요청
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<MultiValueMap<String, Object>> aiRequest = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> aiRequest = new HttpEntity<>(body, headers);
         ResponseEntity<String> aiResponse = restTemplate.postForEntity(aiServerUrl, aiRequest, String.class);
 
         // response 처리

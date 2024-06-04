@@ -15,6 +15,7 @@ import com.jmdm.squiz.repository.MemberRepository;
 import com.jmdm.squiz.repository.ProblemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -47,7 +48,7 @@ public class FruitBasketService {
         response.setFruitBaskets(fruitBasketDTOS);
         return response;
     }
-
+    @Transactional
     public FruitBasketMakeResponse makeFruitBasket(String memberId, FruitBasketMakeRequest request) {
         Member member = memberRepository.findByMemberId(memberId);
         FruitBasket fruitBasket = FruitBasket.builder()
@@ -69,7 +70,7 @@ public class FruitBasketService {
         response.setNewFruitBasket(newFruitBasket);
         return response;
     }
-
+    @Transactional
     public SpecificFruitBasketsLoadResponse loadSpecificFruitBaskets(String memberId, SpecificFruitBasketLoadRequest request) {
         Member member = memberRepository.findByMemberId(memberId);
         List<FruitBasket> fruitBaskets = member.getFruitBaskets();
@@ -91,7 +92,7 @@ public class FruitBasketService {
         response.setFruitBaskets(fruitBasketDTOS);
         return response;
     }
-
+    @Transactional
     public void addProblem(String memberId, ProblemAddRequest request) {
         FruitBasket fruitBasket = fruitBasketRepository.findById(request.getFruitBasketId())
                 .orElseThrow(() -> new NotFoundFruitBasketException(ErrorCode.FRUIT_BASKET_NOT_FOUND, ErrorCode.FRUIT_BASKET_NOT_FOUND.getMessage()));
@@ -104,7 +105,7 @@ public class FruitBasketService {
                 .build();
         fruitBasketProblemRepository.save(fruitBasketProblem);
     }
-
+    @Transactional
     public ProblemsLoadResponse loadProblems(String memberId, ProblemsLoadRequest request) {
         FruitBasket fruitBasket = fruitBasketRepository.findById(request.getFruitBasketId())
                 .orElseThrow(() -> new NotFoundFruitBasketException(ErrorCode.FRUIT_BASKET_NOT_FOUND, ErrorCode.FRUIT_BASKET_NOT_FOUND.getMessage()));

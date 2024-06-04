@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    container_name: redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+  backend:
+    image: squizuos/squiz-backend:v1.0.6
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis

@@ -37,4 +37,11 @@ public class DktPerSubject {
         this.member = member;
         member.getDktPerSubjects().add(this);
     }
+    // dktLists가 null인 경우 초기화하는 메서드
+    public List<DktList> getDktLists() {
+        if (dktLists == null) {
+            dktLists = new ArrayList<>();
+        }
+        return dktLists;
+    }
 }

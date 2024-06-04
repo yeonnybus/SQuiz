@@ -8,11 +8,9 @@ import com.jmdm.squiz.repository.DktPerSubjectRepository;
 import com.jmdm.squiz.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -22,7 +20,8 @@ public class QuizListLoadService {
     private final MemberRepository memberRepository;
     private final DktPerSubjectRepository dktPerSubjectRepository;
 
-    private static final float CRITERIA = 50;
+
+    @Transactional
     public QuizListLoadResponse loadQuizList(String memberId) {
         Member member = memberRepository.findByMemberId(memberId);
         List<Quiz> quizList = member.getQuizs();
@@ -56,14 +55,23 @@ public class QuizListLoadService {
         List<DktList> dktLists = dktPerSubject.getDktLists();
 
         kcIdList.forEach(targetKcId -> {
-            List<DktList> targetDktLists = dktLists.stream()
-                .filter(dkt -> dkt.getKcId() == targetKcId)
-                .toList();
-             for (DktList dkt : targetDktLists) {
-                 if (dkt.getPredict() < CRITERIA) {
-                     weakPart.add(KC.fromId(dkt.getKcId()));
-                 }
-             }
+            List<DktList> targetDktLists = new ArrayList<>(dktLists.stream()
+                    .filter(dkt -> dkt.getKcId() == targetKcId)
+                    .toList());
+//             for (DktList dkt : targetDktLists) {
+//                 if (dkt.getPredict() < CRITERIA) {
+//                     weakPart.add(KC.fromId(dkt.getKcId()));
+//                 }
+//             }
+            targetDktLists.sort(Comparator.comparing(DktList::getPredict));
+            int cnt = 0;
+            for (DktList dkt : targetDktLists) {
+                if (cnt == 4) {
+                    break;
+                }
+                weakPart.add(KC.fromId(dkt.getKcId()));
+                cnt++;
+            }
         });
         return weakPart;
     }
