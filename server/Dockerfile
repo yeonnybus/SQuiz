@@ -15,9 +15,11 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --upgrade pip
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install tensorflow==2.10.0 --force-reinstall
+
+RUN pip install flask-cors==4.0.
 
 
 # Expose the port the app runs on
