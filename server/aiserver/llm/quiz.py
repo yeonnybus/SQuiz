@@ -17,7 +17,8 @@ class QuizGenerator:
         self.kc_df = kc_df
         self.controller = component_controller
 
-    def txt_format_for_quiz(self, txt, page_kc_id):
+
+    def txt_format_for_quiz(self, txt, page_kc_id, start_page, end_page):
         """
         pdf text를 퀴즈 생성기의 입력 포맷으로 변환하여 리턴
 
@@ -26,23 +27,23 @@ class QuizGenerator:
         :return: 퀴즈 생성기 입력 포맷 문자열 (ex. <KC1>: ~~~ <KC2>:~~~)
         """
         j = {}
-        pages = page_kc_id.keys()
-
-        for page_number in pages:
+        pages = list(page_kc_id.keys())
+        end_page += 1  
+        selected_pages = pages[start_page:end_page]
+        for page_number in selected_pages:
             kc_id = page_kc_id[page_number]
             if kc_id in j:
-                j[kc_id] = j[kc_id] + " " + get_page_txt(txt, page_number)
+                j[kc_id] += " " + get_page_txt(txt, page_number)
             else:
                 j[kc_id] = get_page_txt(txt, page_number)
 
         input_txt = ""
-
         kc_id_list = list(j.keys())
 
-        for i in range(len(kc_id_list)):
-            input_txt += "<" + str(kc_id_list[i]) + "> " + kc_df.loc[kc_id_list[i]]["kc"] + ": "
-            input_txt += j[kc_id_list[i]] + "\n"
-
+        for kc_id in kc_id_list:
+            input_txt += f"<{kc_id}> {self.kc_df.loc[kc_id]['kc']}: "
+            input_txt += j[kc_id] + "\n"
+            
         return input_txt
 
     def get_quiz(self, params):
@@ -50,7 +51,7 @@ class QuizGenerator:
         print(type(params["pageKcId"]))
         page_kc_id = json.loads(params["pageKcId"])
 
-        req = {"pdftxt": self.txt_format_for_quiz(params["pdfText"], page_kc_id),
+        req = {"pdftxt": self.txt_format_for_quiz(params["pdfText"], page_kc_id, params["startPage"], params["endPage"]),
                "rank": str(params["rank"]),
                "problem_num": str(params["problemNum"]),
                "subject": params["subject"]}
