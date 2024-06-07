@@ -1,8 +1,9 @@
 from flask import Flask
-
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
 
     from .views import main_views, quiz_views, summary_views, pdf_views, dkt_views
     main_views.v1_bp.register_blueprint(quiz_views.quiz_bp)  # /api/v1/quiz
