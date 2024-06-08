@@ -42,12 +42,15 @@ class DKTUtility:
 
         kc_first_mastery = {kc: None for kc in range(self.num_skills)}  # KC별 처음 이해도 추적용
         kc_last_mastery = {kc: None for kc in range(self.num_skills)}  # KC별 마지막 이해도 추적용
+        kc_counts = {kc: 0 for kc in range(self.num_skills)}  # 각 KC의 등장 횟수 추적용
 
         # 각 KC의 마지막 등장 시점을 추적
         last_occurrence = {kc: None for kc in range(self.num_skills)}
         for seq in seqs:
-            for t, (skill, _) in enumerate(seq):
+            for t, (skill, _ ) in enumerate(seq):
                 last_occurrence[skill] = t
+                kc_counts[skill] += 1
+
 
         dkt_model_instance = dktmodel(self.num_skills)
         model = dkt_model_instance.load_model(self.num_skills, self.hidden_units, self.time_window)
@@ -58,12 +61,9 @@ class DKTUtility:
 
         def predictor(X, Y):
             batch_activations = model.predict_on_batch(X)
-            print("batch_activations", batch_activations)
             skill = Y[:, :, 0:self.num_skills]
-            print("skill", skill)
             obs = Y[:, :, self.num_skills]
             y_pred = np.squeeze(np.array(batch_activations))
-            print("y_pred", y_pred)
             rel_pred = np.sum(y_pred * skill, axis=2)
             for b in range(0, X.shape[0]):
                 for t in range(0, X.shape[1]):
@@ -81,11 +81,20 @@ class DKTUtility:
         
         results = []
         for kc in range(self.num_skills):
-            if kc_first_mastery[kc] is not None and kc_last_mastery[kc] is not None:
-                change = kc_last_mastery[kc] - kc_first_mastery[kc]
+            if kc_counts[kc] > 0:  # kc를 푼 경우에만
+                first = kc_first_mastery[kc]
+                last = kc_last_mastery[kc]
+                if kc_counts[kc] == 1:
+                    correct = any((obs for pred, obs in preds if pred == last))
+                    change = 0.00005 if correct else -0.00005
+                else:
+                    if first is not None and last is not None:
+                        change = last - first
+                    else:
+                        change = None
                 results.append({
                     "kcId": kc,
-                    "predict": round(change * 100, 4)
+                    "predict": round(change * 100, 4) if change is not None else None
                 })
 
         return results
