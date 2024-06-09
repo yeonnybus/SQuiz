@@ -19,6 +19,7 @@ class ComponentController:
         else:
             rank = "MIDDLE"
 
+        
         print(f"문제 난이도: {rank}")
         example_choice = ""
 
@@ -70,6 +71,15 @@ class ComponentController:
                 "You must create " + problem_num + "problems."
                 "Keep in mind that you must create problems according to the given number of problems. "
         )
+
+        dkt = params['dkt']
+
+        if len(dkt) >= 2:
+            sorted_dkt = sorted(dkt, key=lambda x: x["predict"])
+            kc_list = [sorted_dkt[0]["kcId"], sorted_dkt[1]["kcId"]]            
+
+            sys_content_for_choice += "Keep in mind that more than half of the total problems must be created for the following KC IDs: " + ", ".join(map(str, kc_list)) + ". Keep in mind that These KC IDs are of utmost importance and require a higher number of problems than other KC IDs."
+
 
         user_content_for_choice = (
                 "Create " + problem_num + "multiple-choice, four-choice problems for learning operating systems. "
@@ -160,6 +170,14 @@ class ComponentController:
                 "You must create " + problem_num + "problems."
                 "Keep in mind that you must create " + problem_num + "problems."
         )
+
+        dkt = params['dkt']
+
+        if len(dkt) >= 2:
+            sorted_dkt = sorted(dkt, key=lambda x: x["predict"])
+            kc_list = [sorted_dkt[0]["kcId"], sorted_dkt[1]["kcId"]]            
+            
+            sys_content_for_ox += "Keep in mind that more than half of the total problems must be created for the following KC IDs: " + ", ".join(map(str, kc_list)) + ". Keep in mind that These KC IDs are of utmost importance and require a higher number of problems than other KC IDs."
 
         user_content_for_ox = (
                 "Create " + problem_num + "true/false problems for learning operating systems. "
@@ -258,6 +276,15 @@ class ComponentController:
                 "You must create " + problem_num + " problems. "
                 "Please make the problem difficulty level " + rank +
                 "Keep in mind that you must create problems according to the given number of problems.")
+   
+        dkt = params['dkt']
+
+        if len(dkt) >= 2:
+            sorted_dkt = sorted(dkt, key=lambda x: x["predict"])
+            kc_list = [sorted_dkt[0]["kcId"], sorted_dkt[1]["kcId"]]            
+            
+            sys_content_for_blank += "Keep in mind that more than half of the total problems must be created for the following KC IDs: " + ", ".join(map(str, kc_list)) + ". Keep in mind that These KC IDs are of utmost importance and require a higher number of problems than other KC IDs."
+
 
         user_content_for_blank = (
                 "Create " + problem_num + "fill-in-blank problems for learning operating systems. "

@@ -52,7 +52,9 @@ class QuizGenerator:
         req = {"pdftxt": self.txt_format_for_quiz(params["pdfText"], page_kc_id, params["startPage"], params["endPage"]),
                "rank": str(params["rank"]),
                "problem_num": str(params["problemNum"]),
-               "subject": params["subject"]}
+               "subject": params["subject"],
+               "dkt": params.get('dkt')
+               }
 
         problem_list = []
         retries = 3 # 퀴즈 생성 에러시 최대 재시도 횟수
