@@ -26,5 +26,5 @@ def pdf_to_kc():
         return jsonify(response), 200
 
     except Exception as e:
-        print(str(e))
+        print(e)
         return jsonify({"error": str(e)}), 500

@@ -32,8 +32,9 @@ class OpenAIClient:
             for i in range(len(tool_calls)):
                 t = json.loads(tool_calls[i].function.arguments)
                 quiz.append(t)
+                print(t)
                 print("QUIZ GENERATE!! >> No. ", i)
-
+            print("퀴즈 생성 완료")
             return quiz
         except Exception as e:
             print(e)
@@ -55,6 +56,7 @@ class OpenAIClient:
             tool_calls = response.choices[0].message.tool_calls
             raw_summary = json.loads(tool_calls[0].function.arguments)["summary"]
 
+            print("요약 생성 완료")
             return raw_summary
 
         except Exception as e:
@@ -72,6 +74,7 @@ class OpenAIClient:
 
             tool_calls = response.choices[0].message.tool_calls
 
+            print("KC 분류 완료")
             return tool_calls
 
         except Exception as e:

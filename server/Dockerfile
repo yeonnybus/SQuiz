@@ -10,14 +10,15 @@ RUN apt-get update && apt-get install -y \
     libhdf5-dev \
     gcc \
     g++ \
+    poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 
 RUN pip install --upgrade pip
 
-RUN pip install --no-cache-dir -r requirements.txt
-
 RUN pip install tensorflow==2.10.0 --force-reinstall
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install flask-cors==4.0.
 

@@ -1,15 +1,13 @@
 from .OpenAIClient import OpenAIClient
 from .utils import *
 import json
+import time
 from .ComponentController import ComponentController
 
-# TODO 인스턴스 생성 한 번만 가능?
 openai_client = OpenAIClient()
 kc_df = KCList().df
 component_controller = ComponentController()
 
-
-# TODO 요약본 생성기 클래스로 만들기
 
 class QuizGenerator:
     def __init__(self):
@@ -57,15 +55,50 @@ class QuizGenerator:
                "subject": params["subject"]}
 
         problem_list = []
+        retries = 3 # 퀴즈 생성 에러시 최대 재시도 횟수
 
         # 퀴즈 종류에 따라 퀴즈 생성
         if params["quizType"] == "MULTIPLE_CHOICE":
-            print("MULTIPLE_CHOICE")
-            problem_list = self.get_choice_quiz(req)
+            print("Quiz type: MULTIPLE_CHOICE")
+            for attempt in range(retries):
+                try:
+                    problem_list = self.get_choice_quiz(req)
+                    break  # 함수가 성공적으로 실행되면 종료합니다.
+                except Exception as e:
+                    print(f"Error occurred: {e}")
+                    if attempt < retries - 1:
+                        print(f"Retrying... ({attempt + 1}/{retries})")
+                    else:
+                        print("All retries failed.")
+                        raise  # 모든 재시도가 실패하면 예외를 다시 발생시킵니다.
+
         elif params["quizType"] == "OX":
-            problem_list = self.get_ox_quiz(req)
+            print("Quiz type: OX Quiz")
+            for attempt in range(retries):
+                try:
+                    problem_list = self.get_ox_quiz(req)
+                    break  # 함수가 성공적으로 실행되면 종료합니다.
+                except Exception as e:
+                    print(f"Error occurred: {e}")
+                    if attempt < retries - 1:
+                        print(f"Retrying... ({attempt + 1}/{retries})")
+                    else:
+                        print("All retries failed.")
+                        raise  # 모든 재시도가 실패하면 예외를 다시 발생시킵니다.
+
         elif params["quizType"] == "BLANK":
-            problem_list = self.get_blank_quiz(req)
+            print("Quiz type: BLANK")
+            for attempt in range(retries):
+                try:
+                    problem_list = self.get_blank_quiz(req)
+                    break  # 함수가 성공적으로 실행되면 종료합니다.
+                except Exception as e:
+                    print(f"Error occurred: {e}")
+                    if attempt < retries - 1:
+                        print(f"Retrying... ({attempt + 1}/{retries})")
+                    else:
+                        print("All retries failed.")
+                        raise  # 모든 재시도가 실패하면 예외를 다시 발생시킵니다.
 
         gen_quiz = {
             "quizId": params["quizId"],
@@ -104,8 +137,8 @@ class QuizGenerator:
                     "explanation": raw_quiz[i]["explanation"],
                 }
                 choice_problem_list.append(prob)
-            print("prob_list", choice_problem_list)
-            print("len: ", len(choice_problem_list))
+
+            self.print_choice_prob(raw_quiz)
             return choice_problem_list
 
         except Exception as e:
@@ -142,6 +175,7 @@ class QuizGenerator:
             }
             ox_problem_list.append(prob)
 
+        self.print_ox_prob(raw_quiz)
         return ox_problem_list
 
 
@@ -152,11 +186,17 @@ class QuizGenerator:
         # postprocessing
         blank_problem_list = []
         for i in range(len(raw_quiz)):
+            if raw_quiz[i]["is_markdown"] == True:
+                content = "<markdown>" + raw_quiz[i]["content"]
+                print(f"{i}번 문제는 코드 문제.")
+            else:
+                content = raw_quiz[i]["content"]
+
             prob = {
                 "problemNo": i + 1,
                 "kcId": raw_quiz[i]["kc_id"],
                 "question": raw_quiz[i]["question"],
-                "content": raw_quiz[i]["content"],
+                "content": content,
                 "options": {
                     "option_a": None,
                     "option_b": None,
@@ -174,5 +214,87 @@ class QuizGenerator:
             }
             blank_problem_list.append(prob)
 
+        self.print_blank_prob(raw_quiz)
         return blank_problem_list
 
+    def print_choice_prob(self, quiz):
+        for i in range(len(quiz)):
+            print("+----------------------------------------+")
+            print("+               문제 ", str(i), "                 +")
+            print("+----------------------------------------+")
+            print("KC ID: ", quiz[i]['kc_id'])
+            print("KC by GPT:  ", quiz[i]['kc'])
+            print("True KC:  ", self.kc_df.loc[quiz[i]['kc_id']]['kc'])
+            print()
+            print(quiz[i]['question'])
+            print()
+            print("A. ", quiz[i]['options']['option_a'])
+            print("B. ", quiz[i]['options']['option_b'])
+            print("C. ", quiz[i]['options']['option_c'])
+            print("D. ", quiz[i]['options']['option_d'])
+            print()
+            print("Answer:  ", quiz[i]['answer'])
+            print("Explanation:  ", quiz[i]['explanation'])
+            print()
+
+    def print_ox_prob(self, quiz):
+        for i in range(len(quiz)):
+            print("+----------------------------------------+")
+            print("|                문제 ", str(i), "                 |")
+            print("+----------------------------------------+")
+            print("KC ID: ", quiz[i]['kc_id'])
+            print("KC by GPT:  ", quiz[i]['kc'])
+            print("True KC:  ", self.kc_df.loc[quiz[i]['kc_id']]['kc'])
+            print()
+            print(quiz[i]['question'])
+            print()
+            if quiz[i]['answer']:
+                print("    +=========+            +---------+")
+                print("    | ✔️  O    |            |    X    |")
+                print("    +=========+            +---------+")
+            else:
+                print("    +---------+            +=========+")
+                print("    |    O    |            | ✔️  X    |")
+                print("    +---------+            +=========+")
+            print()
+            print("Answer:  ", quiz[i]['answer'])
+            print("Explanation:  ", quiz[i]['explanation'])
+            print()
+
+    import textwrap
+    def print_blank_prob(self,  quiz):
+        for i in range(len(quiz)):
+            print("+----------------------------------------+")
+            print("+               문제 ", str(i), "                  +")
+            print("+----------------------------------------+")
+            print("KC ID: ", quiz[i]['kc_id'])
+            print("KC by GPT:  ", quiz[i]['kc'])
+            print("True KC:  ", self.kc_df.loc[quiz[i]['kc_id']]['kc'])
+            print("MD? ", quiz[i]['is_markdown'])
+            print()
+            print(quiz[i]['question'])
+            print()
+            print(quiz[i]['content'])
+            print()
+
+            for j in range(4):
+                b = "blank_" + str(j + 1)
+                if quiz[i]['blanks'][b] != None:
+                    print("(", str(j + 1), "):    ", quiz[i]['blanks'][b])
+
+            print("Explanation:  ",quiz[i]['explanation'])
+            print()
+
+    def retry_function(self, func, retries=3, delay=1):
+        for attempt in range(retries):
+            try:
+                func()
+                return  # 함수가 성공적으로 실행되면 종료합니다.
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                if attempt < retries - 1:
+                    print(f"Retrying... ({attempt + 1}/{retries})")
+                    time.sleep(delay)
+                else:
+                    print("All retries failed.")
+                    raise  # 모든 재시도가 실패하면 예외를 다시 발생시킵니다.

@@ -13,10 +13,10 @@ def create_quiz():
     :return: 생성된 퀴즈 목록
     """
     try:
-        print("quiz, try")
+        print("퀴즈 생성 요청")
         params = request.get_json()
-        print(params)
         gen_quiz = quiz_generator.get_quiz(params)
+        print(gen_quiz)
 
         return jsonify(gen_quiz), HTTPStatus.OK
 

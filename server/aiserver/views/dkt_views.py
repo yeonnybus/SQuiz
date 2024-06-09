@@ -8,6 +8,7 @@ dkt_utils = DKTUtility()
 @dkt_bp.route('', methods=['POST'])
 def dkt():
     try:
+        print("try, dkt")
         mem_id = request.get_json().get('memberId')
         subject = request.get_json().get('subject')
         interactions = request.get_json().get('interactions')
@@ -18,6 +19,7 @@ def dkt():
             "subject": subject,
             "dkt": dkt_res
         }
+        print("DKT 완료")
         return jsonify(response), 200
 
     except Exception as e:
