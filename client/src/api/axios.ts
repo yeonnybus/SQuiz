@@ -1,11 +1,11 @@
 import axios from "axios";
 
 // API 요청을 위한 기본 URL 설정
-// const API_BASE_URL = "api/api/v1";
-// const IP = "api";
+const API_BASE_URL = "api/api/v1";
+const IP = "api";
 
-const API_BASE_URL = "http://52.78.150.74:8080/api/v1";
-const IP = "http://52.78.150.74:8080";
+// const API_BASE_URL = "http://52.78.150.74:8080/api/v1";
+// const IP = "http://52.78.150.74:8080";
 
 export interface CheckedBlanks {
   chekedBlank_1: string | null;
