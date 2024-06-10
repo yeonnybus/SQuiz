@@ -80,7 +80,7 @@ const Register: React.FC = () => {
   const handleVerifyEmail = async () => {
     try {
       await verifyEmailCertification(email, verificationCode);
-      alert("Email verification successful.");
+      alert("이메일 인증에 성공했습니다");
       navigate("/register2", { state: { email: email } }); // 인증 성공 후 /register2 페이지로 이동
     } catch (error) {
       alert("Failed to verify email.");

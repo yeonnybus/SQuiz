@@ -36,7 +36,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, selectedSubject }) => {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
   const [pdfId, setPdfId] = useState<number>(0);
   const [totalPageCount, setTotalPageCount] = useState<number>(0);
-
+  const generateQuizNum: string = "1";
   const navigate = useNavigate();
 
   const handleSubmit = useCallback(async () => {
@@ -79,8 +79,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, selectedSubject }) => {
         <CircularProgress />
       ) : uploadStatus === "done" ? (
         <>
-          <img src="pdf_icon.svg" alt="" />
-          <p>{`${uploadedFileName}`}</p>
+          <img src="pdf_icon.svg" alt="" style={{ marginTop: "140px" }} />
+          <p style={{ marginBottom: "140px" }}>{`${uploadedFileName}`}</p>
           <Box
             sx={{
               display: "flex", // 이 줄을 추가하여 flexbox를 활성화합니다.
@@ -91,9 +91,11 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, selectedSubject }) => {
           >
             <Button
               sx={{
-                m: 1,
-                color: "gray",
-                ":hover": { color: "#ffc450" },
+                color: "white",
+                background: "gray",
+                borderRadius: "16px",
+                width: "150px",
+                ":hover": { background: "#ffc450", color: "black" },
               }}
               onClick={(event) => {
                 event.stopPropagation(); // 이벤트 버블링을 중지합니다.
@@ -103,20 +105,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ token, selectedSubject }) => {
                     pdfId,
                     totalPageCount,
                     selectedSubject,
+                    generateQuizNum,
                   },
                 });
               }}
             >
               퀴즈 생성하기
-            </Button>
-            <Button
-              sx={{
-                m: 1,
-                color: "gray",
-                ":hover": { color: "#ffc450" },
-              }}
-            >
-              요약 생성하기
             </Button>
           </Box>
         </>

@@ -1,21 +1,10 @@
 import React from "react";
 import { Grid, IconButton } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
-interface Item {
-  fruitBasketId: number;
-  fruitBasketName: string;
-  subject: string;
-  problemNum: number;
-  createdAt: string; // ISO 날짜 형식을 가정합니다.
-  updatedAt: string;
-}
-
-interface FruitProps {
-  items: Item[];
-}
+import { checkQuizResult } from "../api/axios";
 
 const FruitContainer = styled.div`
   display: flex;
@@ -72,7 +61,50 @@ const InlineContainer = styled.div`
   align-items: center;
 `;
 
-const QuizList: React.FC<FruitProps> = ({ items }) => {
+export interface Quiz {
+  quizId: number;
+  quizName: string;
+  subjectType: string;
+  problemNum: number;
+  correctNum: number;
+  weakPart: string[];
+  createdAt: string;
+  uploadFileName: string;
+}
+
+export interface QuizListResponse {
+  quizList: Quiz[];
+  token: string;
+}
+
+const QuizList: React.FC<QuizListResponse> = ({ quizList, token }) => {
+  const [result, setResult] = useState<string>("");
+
+  const [subjects, setSubjects] = useState<{ label: string; value: string }[]>([
+    { label: "운영체제", value: "OPERATING_SYSTEM" },
+    { label: "컴퓨터통신", value: "COMPUTER_COMMUNICATION" },
+    { label: "객체지향프로그래밍", value: "OBJECT_ORIENTED_PROGRAMMING" },
+    { label: "C프로그래밍", value: "C_LANGUAGE" },
+  ]);
+
+  const navigate = useNavigate();
+  const handleloadQuizResult = async (token: string, qid: number) => {
+    try {
+      const response = await checkQuizResult(token, qid);
+      console.log(response);
+      const resultData = response.body.data;
+      const stringData = JSON.stringify(resultData);
+      console.log(stringData);
+      setResult(stringData);
+      console.log(result);
+      navigate("/quizresult", {
+        state: { stringData },
+      });
+    } catch (error) {
+      console.error("Error adding new fruit basket:", error);
+    }
+  };
+
   return (
     <FruitContainer>
       <Grid
@@ -80,45 +112,56 @@ const QuizList: React.FC<FruitProps> = ({ items }) => {
         spacing={2}
         sx={{ justifyContent: "center", rowGap: "1em", columnGap: "2em" }}
       >
-        {items.map((item, index) => (
-          <FormContainer>
-            <Grid
-              item
-              xs={4}
-              key={index}
-              sx={{
-                width: "300px",
-              }}
-            >
-              <Label>{item.fruitBasketName}</Label>
-              <InlineContainer>
-                <LabelMini>과목</LabelMini>
-                <LabelAcmp>{item.subject}</LabelAcmp>
-              </InlineContainer>
-              <InlineContainer>
-                <LabelMini>점수</LabelMini>
-                <LabelAcmp>1 / {item.problemNum}</LabelAcmp>
-              </InlineContainer>
-              <InlineContainer>
-                <LabelMini>취약 파트</LabelMini>
-                <LabelAcmp2>가상메모리, 덧셈</LabelAcmp2>
-              </InlineContainer>
-              <IconButton
-                aria-label="forward"
-                size="small"
-                sx={{
-                  marginTop: "30px",
-                  marginLeft: "250px",
-                  backgroundColor: "black",
-                  color: "white",
-                  marginBottom: "20px",
-                }}
-              >
-                <ArrowForwardIcon />
-              </IconButton>
-            </Grid>
-          </FormContainer>
-        ))}
+        {quizList &&
+          quizList.map((item, index) => {
+            const subjectLabel = subjects.find(
+              (subject) => subject.value === item.subjectType
+            )?.label;
+
+            return (
+              <FormContainer key={index}>
+                <Grid
+                  item
+                  xs={4}
+                  sx={{
+                    width: "300px",
+                  }}
+                >
+                  <Label>{item.quizName}</Label>
+                  <InlineContainer>
+                    <LabelMini>과목</LabelMini>
+                    <LabelAcmp>{subjectLabel}</LabelAcmp>
+                  </InlineContainer>
+                  <InlineContainer>
+                    <LabelMini>점수</LabelMini>
+                    <LabelAcmp>
+                      {item.correctNum} / {item.problemNum}
+                    </LabelAcmp>
+                  </InlineContainer>
+                  <InlineContainer>
+                    <LabelMini>취약 파트</LabelMini>
+                    <LabelAcmp2>{item.weakPart.join(", ")}</LabelAcmp2>
+                  </InlineContainer>
+                  <IconButton
+                    aria-label="forward"
+                    size="small"
+                    sx={{
+                      marginTop: "30px",
+                      marginLeft: "250px",
+                      backgroundColor: "black",
+                      color: "white",
+                      marginBottom: "20px",
+                    }}
+                    onClick={() => {
+                      handleloadQuizResult(token, item.quizId);
+                    }}
+                  >
+                    <ArrowForwardIcon />
+                  </IconButton>
+                </Grid>
+              </FormContainer>
+            );
+          })}
       </Grid>
     </FruitContainer>
   );

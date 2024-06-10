@@ -19,26 +19,27 @@ import Header from "../components/Header";
 const CenteredContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100%;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
   font-family: "Pretendard Variable";
   font-display: swap;
   src: local("Pretendard Variable"),
     url("./PretendardVariable.ttf") format("ttf");
-  flex-direction: column;
 `;
 
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 100vh;
-  margin: 20px;
+  width: 80%;
+
+  margin: 100px;
   background-color: white;
   padding: 5%;
-  padding-left: 10%;
-  padding-right: 10%;
+
   border-radius: 24px;
 `;
 
@@ -49,7 +50,7 @@ const LabelOption = styled.div<{ isSelected: boolean }>`
   font-size: 15px;
   margin-bottom: 25px;
   color: black;
-  justify-content: start;
+  justify-content: center;
   border: ${(props) =>
     props.isSelected ? "2px solid black;" : "1px solid gray"};
   border-radius: 24px;
@@ -128,6 +129,7 @@ interface ApiResponse {
     pragma: string;
   };
 }
+// axios.ts
 
 export interface CheckedBlanks {
   chekedBlank_1: string | null;
@@ -163,7 +165,6 @@ const modalStyle = {
   justifyContent: "center",
   background: "#fffbe3",
 };
-
 const Inline = styled.div`
   display: flex;
   justify-content: center;
@@ -188,12 +189,11 @@ const generateQuizSubmission = (quizId: number, fullAnswer: string[]) => {
   };
 };
 
-function Quiz() {
+function QuizOx() {
   const jwtToken = localStorage.getItem("authToken") || "";
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const [result, setResult] = useState<string>("");
   const [quizObject, setQuizObject] = useState<ApiResponse>(
     JSON.parse(location.state.quiz)
   );
@@ -204,7 +204,8 @@ function Quiz() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
   const quizId: number = quizObject.data.body.data.quizId;
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [result, setResult] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => {
@@ -256,16 +257,13 @@ function Quiz() {
   };
 
   const handleConfirmSubmit = async () => {
-    setIsSubmitting(true); // 로딩 상태 시작
-    console.log(currentIndex);
-    console.log(fullAnswer.length);
+    setLoading(true);
     if (
       currentIndex === problemList - 1 &&
       fullAnswer.length < currentIndex + 1
     ) {
       fullAnswer.push(nowAnswer);
     }
-
     const submission: QuizSubmission = generateQuizSubmission(
       quizId,
       fullAnswer
@@ -274,7 +272,6 @@ function Quiz() {
     try {
       const response = await quizSubmit(jwtToken, submission);
 
-      console.log(response);
       const resultData = response.body.data;
       const stringData = JSON.stringify(resultData);
       console.log(stringData);
@@ -286,10 +283,9 @@ function Quiz() {
     } catch (error) {
       console.error(error);
     } finally {
-      setIsSubmitting(false); // 로딩 상태 종료
+      setLoading(false);
+      setIsModalOpen(false);
     }
-    // 여기에 제출 로직 추가
-    setIsModalOpen(false);
   };
 
   return (
@@ -309,31 +305,20 @@ function Quiz() {
             padding: "10px",
             paddingLeft: "1vw",
             paddingRight: "1vw",
+            marginBottom: "5vw",
           }}
         >
-          <Grid item xs={6} sx={{ marginBottom: "2vh" }}>
+          <Grid item xs={6}>
             <LabelOption
-              isSelected={selectedOption === "a"}
-              onClick={() => handleOptionClick("a")}
-            >{`(a)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_a}  `}</LabelOption>
+              isSelected={selectedOption === "o"}
+              onClick={() => handleOptionClick("o")}
+            >{`O`}</LabelOption>
           </Grid>
           <Grid item xs={6}>
             <LabelOption
-              isSelected={selectedOption === "b"}
-              onClick={() => handleOptionClick("b")}
-            >{`(b)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_b}  `}</LabelOption>
-          </Grid>
-          <Grid item xs={6}>
-            <LabelOption
-              isSelected={selectedOption === "c"}
-              onClick={() => handleOptionClick("c")}
-            >{`(c)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_c}  `}</LabelOption>
-          </Grid>
-          <Grid item xs={6}>
-            <LabelOption
-              isSelected={selectedOption === "d"}
-              onClick={() => handleOptionClick("d")}
-            >{`(d)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_d}  `}</LabelOption>
+              isSelected={selectedOption === "x"}
+              onClick={() => handleOptionClick("x")}
+            >{`X`}</LabelOption>
           </Grid>
         </Grid>
         <IconButton
@@ -342,7 +327,7 @@ function Quiz() {
           sx={{
             color: "gray",
             position: "absolute",
-            left: "40px",
+            left: "30px",
             top: "50%",
             transform: "translateY(-50%)",
           }}
@@ -356,7 +341,7 @@ function Quiz() {
           sx={{
             color: "gray",
             position: "absolute",
-            right: "40px",
+            right: "30px",
             top: "50%",
             transform: "translateY(-50%)",
           }}
@@ -401,6 +386,7 @@ function Quiz() {
                   margin: "2%",
                 }}
                 onClick={handleCloseModal}
+                disabled={loading}
               >
                 다시풀어보기
               </Button>
@@ -416,9 +402,9 @@ function Quiz() {
                   margin: "2%",
                 }}
                 onClick={handleConfirmSubmit}
-                disabled={isSubmitting} // 로딩 중에는 버튼 비활성화
+                disabled={loading}
               >
-                {isSubmitting ? <CircularProgress size={24} /> : "제출하기"}
+                {loading ? <CircularProgress size={24} /> : "제출하기"}
               </Button>
             </Inline>
           </Box>
@@ -428,4 +414,4 @@ function Quiz() {
   );
 }
 
-export default Quiz;
+export default QuizOx;

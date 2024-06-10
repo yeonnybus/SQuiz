@@ -1,8 +1,13 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Grid, IconButton } from "@mui/material";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-
+import {
+  TextField,
+  Autocomplete,
+  Button,
+  createFilterOptions,
+} from "@mui/material";
 const FormContainer = styled.div`
   position: relative;
   display: flex;
@@ -25,7 +30,7 @@ const Label = styled.div`
   color: black;
 `;
 
-const LabelMini = styled.div<LabelProps>`
+const LabelMini = styled.div`
   display: flex;
   align-items: center;
   min-width: 80px;
@@ -38,17 +43,8 @@ const LabelMini = styled.div<LabelProps>`
   border-radius: 24px;
   height: 70px;
   padding-left: 30px;
-  ${(props) => getBorderStyle(props.isAnswer, props.isChecked)}
 `;
-const getBorderStyle = (isAnswer: boolean, isChecked: boolean) => css`
-  border: ${isAnswer && isChecked
-    ? "1px solid green"
-    : isAnswer
-    ? "1px solid green"
-    : isChecked
-    ? "1px solid red"
-    : "1px solid #d9d9d9"};
-`;
+
 const LabelMini2 = styled.div`
   min-width: 80%;
   font-size: 16px;
@@ -103,6 +99,7 @@ const InCol = styled.div`
 `;
 
 const Line = styled.div`
+  margin-top: 10px;
   border-bottom: 1px solid;
   border-color: #c3c3c3;
   width: 100%;
@@ -151,12 +148,7 @@ interface MiniQuizExplain2Props {
   quiz: ProblemListResponse;
 }
 
-interface LabelProps {
-  isAnswer: boolean;
-  isChecked: boolean;
-}
-
-function MiniQuizExplain2({ quiz }: MiniQuizExplain2Props) {
+function MiniQuizExplainB({ quiz }: MiniQuizExplain2Props) {
   return (
     <>
       {quiz.problemList.map((item, index) => (
@@ -164,40 +156,35 @@ function MiniQuizExplain2({ quiz }: MiniQuizExplain2Props) {
           <Grid item xs={6}>
             <FormContainer>
               <InlineS2>
-                <Label>{`Q${index + 1}.\u00A0\u00A0\u00A0`}</Label>
+                <Label>{`Q${index + 1}.\u00A0\u00A0\u00A0 `}</Label>
                 <LabelMini2>{`${item.question}`}</LabelMini2>
               </InlineS2>
-              <Grid
-                container
-                rowSpacing={1}
-                columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-                sx={{ padding: "5px" }}
-              >
-                <Grid item xs={6}>
-                  <LabelMini
-                    isAnswer={item.answer === "a"}
-                    isChecked={item.checkedAnswer === "a"}
-                  >{`${item.options.option_a}`}</LabelMini>
-                </Grid>
-                <Grid item xs={6}>
-                  <LabelMini
-                    isAnswer={item.answer === "b"}
-                    isChecked={item.checkedAnswer === "b"}
-                  >{`${item.options.option_b}`}</LabelMini>
-                </Grid>
-                <Grid item xs={6}>
-                  <LabelMini
-                    isAnswer={item.answer === "c"}
-                    isChecked={item.checkedAnswer === "c"}
-                  >{`${item.options.option_c}`}</LabelMini>
-                </Grid>
-                <Grid item xs={6}>
-                  <LabelMini
-                    isAnswer={item.answer === "d"}
-                    isChecked={item.checkedAnswer === "d"}
-                  >{`${item.options.option_d}`}</LabelMini>
-                </Grid>
-              </Grid>
+              <LabelMini2>{`${item.content}`}</LabelMini2>
+              {Array(4)
+                .fill(null)
+                .map((_, i) => {
+                  const value = item.blanks[`blank_${i + 1}` as keyof Blanks];
+
+                  return value === "none" ? null : (
+                    <TextField
+                      key={i}
+                      label={`빈칸 ${i + 1}`}
+                      value={value}
+                      margin="none"
+                      variant="standard"
+                      sx={{
+                        display: "block", // Ensure the element is block-level
+                        margin: "0 auto", // Center the element horizontally
+                        "& .MuiInputLabel-root": {
+                          color: "#FE9F2C",
+                        },
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "#FE9F2C",
+                        },
+                      }}
+                    />
+                  );
+                })}
               <Line />
               <LabelMini3>해설</LabelMini3>
               <LabelMini4>{item.explanation}</LabelMini4>
@@ -209,4 +196,4 @@ function MiniQuizExplain2({ quiz }: MiniQuizExplain2Props) {
   );
 }
 
-export default MiniQuizExplain2;
+export default MiniQuizExplainB;

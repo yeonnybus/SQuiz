@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import styled, { css } from "styled-components";
+import ReactMarkdown from "react-markdown";
+import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Grid,
+  TextField,
   IconButton,
   Button,
   Modal,
@@ -19,49 +20,28 @@ import Header from "../components/Header";
 const CenteredContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100%;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
   font-family: "Pretendard Variable";
   font-display: swap;
   src: local("Pretendard Variable"),
     url("./PretendardVariable.ttf") format("ttf");
-  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 100vh;
-  margin: 20px;
+  width: 80%;
+  margin: 100px;
   background-color: white;
   padding: 5%;
-  padding-left: 10%;
-  padding-right: 10%;
   border-radius: 24px;
-`;
-
-const LabelOption = styled.div<{ isSelected: boolean }>`
-  display: flex;
-  align-items: center;
-  min-width: 80px;
-  font-size: 15px;
-  margin-bottom: 25px;
-  color: black;
-  justify-content: start;
-  border: ${(props) =>
-    props.isSelected ? "2px solid black;" : "1px solid gray"};
-  border-radius: 24px;
-  height: 70px;
-  cursor: pointer;
-  box-sizing: border-box;
-  padding: ${(props) =>
-    props.isSelected
-      ? "1px 1px"
-      : "2px 2px"}; // Adjust padding to account for border thickness
-  padding-left: 30px;
-  padding-right: 30px;
 `;
 
 const Label = styled.div`
@@ -84,18 +64,12 @@ const LabelMini = styled.div`
   justify-content: end;
 `;
 
-interface ProblemOptions {
-  option_a: string;
-  option_b: string;
-  option_c: string;
-  option_d: string;
-}
-
 interface Problem {
   problemNo: number;
   question: string;
-  options: ProblemOptions;
+  options: {};
   content: string | null;
+  blankNum: number;
 }
 
 interface QuizData {
@@ -163,7 +137,6 @@ const modalStyle = {
   justifyContent: "center",
   background: "#fffbe3",
 };
-
 const Inline = styled.div`
   display: flex;
   justify-content: center;
@@ -172,51 +145,55 @@ const Inline = styled.div`
   margin: 2%;
 `;
 
-const generateQuizSubmission = (quizId: number, fullAnswer: string[]) => {
+const generateQuizSubmission = (
+  quizId: number,
+  checkedBlanks: CheckedBlanks[]
+): QuizSubmission => {
   return {
     quizId: quizId,
-    problems: fullAnswer.map((answer, index) => ({
+    problems: checkedBlanks.map((blanks, index) => ({
       problemNo: index + 1,
-      checkedAnswer: answer,
+      checkedAnswer: "",
       checkedBlanks: {
-        chekedBlank_1: null,
-        chekedBlank_2: null,
-        chekedBlank_3: null,
-        chekedBlank_4: null,
+        chekedBlank_1: blanks.chekedBlank_1 || null,
+        chekedBlank_2: blanks.chekedBlank_2 || null,
+        chekedBlank_3: blanks.chekedBlank_3 || null,
+        chekedBlank_4: blanks.chekedBlank_4 || null,
       },
     })),
   };
 };
 
-function Quiz() {
+function QuizOx() {
   const jwtToken = localStorage.getItem("authToken") || "";
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const navigate = useNavigate();
   const location = useLocation();
-  const [result, setResult] = useState<string>("");
   const [quizObject, setQuizObject] = useState<ApiResponse>(
     JSON.parse(location.state.quiz)
   );
   const problemList: number = quizObject.data.body.data.problemList.length;
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [nowAnswer, setNowAnswer] = useState<string>("0");
-  const [fullAnswer, setFullAnswer] = useState<string[]>([]);
+  const [checkedBlanks, setCheckedBlanks] = useState<CheckedBlanks[]>(
+    Array(problemList).fill({
+      chekedBlank_1: null,
+      chekedBlank_2: null,
+      chekedBlank_3: null,
+      chekedBlank_4: null,
+    })
+  );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalMessage, setModalMessage] = useState<string>("");
   const quizId: number = quizObject.data.body.data.quizId;
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [result, setResult] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => {
       if (prevIndex < problemList - 1) {
-        fullAnswer.push(nowAnswer);
-        setNowAnswer("0");
-        setSelectedOption(null);
-        console.log(fullAnswer);
         return prevIndex + 1;
       } else {
         alert("퀴즈가 끝났습니다!");
-        return prevIndex; // 문제 리스트의 끝에 도달했을 경우, 인덱스를 업데이트하지 않습니다.
+        return prevIndex;
       }
     });
   };
@@ -224,31 +201,31 @@ function Quiz() {
   const handleBefore = () => {
     setCurrentIndex((prevIndex) => {
       if (prevIndex > 0) {
-        setSelectedOption(null);
-
-        fullAnswer.pop();
-        console.log(fullAnswer);
         return prevIndex - 1;
       } else {
         alert("첫번째 문제입니다");
-        return prevIndex; // 문제 리스트의 끝에 도달했을 경우, 인덱스를 업데이트하지 않습니다.
+        return prevIndex;
       }
     });
   };
 
-  const handleOptionClick = (option: string) => {
-    setSelectedOption(option);
-    setNowAnswer(option);
+  const handleBlankChange = (
+    problemIndex: number,
+    blankIndex: number,
+    value: string
+  ) => {
+    const updatedBlanks = [...checkedBlanks];
+    const key = `chekedBlank_${blankIndex + 1}` as keyof CheckedBlanks;
+    updatedBlanks[problemIndex] = {
+      ...updatedBlanks[problemIndex],
+      [key]: value || null,
+    };
+    setCheckedBlanks(updatedBlanks);
   };
 
   const handleSubmit = () => {
-    if (fullAnswer.includes("0")) {
-      setModalMessage("정답을 체크하지 않은 문제가 있어요! 이대로 제출할까요?");
-      setIsModalOpen(true);
-    } else {
-      setModalMessage("퀴즈를 제출할까요?");
-      setIsModalOpen(true);
-    }
+    setModalMessage("퀴즈를 제출할까요?");
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
@@ -256,41 +233,31 @@ function Quiz() {
   };
 
   const handleConfirmSubmit = async () => {
-    setIsSubmitting(true); // 로딩 상태 시작
-    console.log(currentIndex);
-    console.log(fullAnswer.length);
-    if (
-      currentIndex === problemList - 1 &&
-      fullAnswer.length < currentIndex + 1
-    ) {
-      fullAnswer.push(nowAnswer);
-    }
-
+    setLoading(true);
     const submission: QuizSubmission = generateQuizSubmission(
       quizId,
-      fullAnswer
+      checkedBlanks
     );
     console.log("Quiz Submission JSON:", submission);
     try {
       const response = await quizSubmit(jwtToken, submission);
 
-      console.log(response);
       const resultData = response.body.data;
       const stringData = JSON.stringify(resultData);
       console.log(stringData);
       setResult(stringData);
-      console.log(result);
       navigate("/quizresult", {
         state: { stringData },
       });
     } catch (error) {
       console.error(error);
     } finally {
-      setIsSubmitting(false); // 로딩 상태 종료
+      setLoading(false);
+      setIsModalOpen(false);
     }
-    // 여기에 제출 로직 추가
-    setIsModalOpen(false);
   };
+
+  const currentProblem = quizObject.data.body.data.problemList[currentIndex];
 
   return (
     <CenteredContainer>
@@ -299,50 +266,51 @@ function Quiz() {
         <Label>{`Q${
           currentIndex + 1
         }.\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${
-          quizObject.data.body.data.problemList[currentIndex].question
+          currentProblem.question
         }`}</Label>
-        <Grid
-          container
-          rowSpacing={1}
-          columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-          sx={{
-            padding: "10px",
-            paddingLeft: "1vw",
-            paddingRight: "1vw",
-          }}
-        >
-          <Grid item xs={6} sx={{ marginBottom: "2vh" }}>
-            <LabelOption
-              isSelected={selectedOption === "a"}
-              onClick={() => handleOptionClick("a")}
-            >{`(a)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_a}  `}</LabelOption>
-          </Grid>
-          <Grid item xs={6}>
-            <LabelOption
-              isSelected={selectedOption === "b"}
-              onClick={() => handleOptionClick("b")}
-            >{`(b)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_b}  `}</LabelOption>
-          </Grid>
-          <Grid item xs={6}>
-            <LabelOption
-              isSelected={selectedOption === "c"}
-              onClick={() => handleOptionClick("c")}
-            >{`(c)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_c}  `}</LabelOption>
-          </Grid>
-          <Grid item xs={6}>
-            <LabelOption
-              isSelected={selectedOption === "d"}
-              onClick={() => handleOptionClick("d")}
-            >{`(d)\u00A0\u00A0\u00A0 ${quizObject.data.body.data.problemList[currentIndex].options.option_d}  `}</LabelOption>
-          </Grid>
-        </Grid>
+        {currentProblem.content?.startsWith("<markdown>") ? (
+          <ReactMarkdown>
+            {currentProblem.content?.replace("<markdown>", "")}
+          </ReactMarkdown>
+        ) : (
+          <Label>{`${currentProblem.content || ""}`}</Label>
+        )}
+
+        {Array(currentProblem.blankNum)
+          .fill(null)
+          .map((_, i) => (
+            <TextField
+              key={i}
+              label={`빈칸 ${i + 1}`}
+              value={
+                checkedBlanks[currentIndex][
+                  `chekedBlank_${i + 1}` as keyof CheckedBlanks
+                ] || ""
+              }
+              onChange={(e) =>
+                handleBlankChange(currentIndex, i, e.target.value)
+              }
+              margin="none"
+              variant="standard"
+              sx={{
+                display: "block",
+                margin: "0 auto",
+                "& .MuiInputLabel-root": {
+                  color: "#FE9F2C",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#FE9F2C",
+                },
+              }}
+            />
+          ))}
         <IconButton
           aria-label="backward"
           size="small"
           sx={{
             color: "gray",
             position: "absolute",
-            left: "40px",
+            left: "30px",
             top: "50%",
             transform: "translateY(-50%)",
           }}
@@ -356,7 +324,7 @@ function Quiz() {
           sx={{
             color: "gray",
             position: "absolute",
-            right: "40px",
+            right: "30px",
             top: "50%",
             transform: "translateY(-50%)",
           }}
@@ -416,9 +384,8 @@ function Quiz() {
                   margin: "2%",
                 }}
                 onClick={handleConfirmSubmit}
-                disabled={isSubmitting} // 로딩 중에는 버튼 비활성화
               >
-                {isSubmitting ? <CircularProgress size={24} /> : "제출하기"}
+                {loading ? <CircularProgress size={24} /> : "제출하기"}
               </Button>
             </Inline>
           </Box>
@@ -428,4 +395,4 @@ function Quiz() {
   );
 }
 
-export default Quiz;
+export default QuizOx;

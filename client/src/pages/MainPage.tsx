@@ -4,6 +4,7 @@ import { CenteredContainer, FormContainer } from "../widgets/styles";
 import FileUpload from "../components/FileUpload";
 import styled from "styled-components";
 import { TextField, Autocomplete, Button } from "@mui/material";
+import Header from "../components/Header";
 
 export const FormContainer2 = styled.div`
   display: flex;
@@ -35,9 +36,7 @@ const LabelSmall = styled.div`
   font-size: 14px;
 `;
 
-const subjectStyle = {
-  width: "200px", // 마지막 요소를 제외한 하단 마진 추가
-};
+const subjectStyle = {};
 
 const MainPage: React.FC = () => {
   const jwtToken = localStorage.getItem("authToken") || "";
@@ -59,12 +58,14 @@ const MainPage: React.FC = () => {
 
   return jwtToken && isSubject ? (
     <CenteredContainer>
+      <Header />
       <FormContainer>
         <FileUpload token={jwtToken} selectedSubject={selectedSubject} />
       </FormContainer>
     </CenteredContainer>
   ) : (
     <CenteredContainer>
+      <Header />
       <FormContainer2>
         <LabelSmall>퀴즈/요약본을 만들고 싶은</LabelSmall>
         <Label>과목을 선택하세요.</Label>
@@ -81,7 +82,7 @@ const MainPage: React.FC = () => {
                 style: {
                   paddingTop: "3px", // 수직 정렬을 위해 상단 패딩 조정
                   borderRadius: "20px",
-                  width: "17vh",
+                  width: "30vh",
                 },
               }}
             />

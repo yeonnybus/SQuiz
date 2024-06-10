@@ -7,10 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-<link
-  href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&family=Song+Myung&display=swap"
-  rel="stylesheet"
-/>;
+
 root.render(
   //<React.StrictMode>
   <BrowserRouter>

@@ -4,11 +4,13 @@ import { CircularProgress, Button } from "@mui/material";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import { orderQuiz } from "../api/axios";
+import Header from "../components/Header";
 
 // 스타일드 컴포넌트 정의
 const CenteredContainer = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   height: 100vh;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
@@ -106,16 +108,6 @@ const MakeQuiz2: React.FC = () => {
   const [difficultyKey, setDifficultyKey] = useState<string>(
     location.state.difficultyKey
   );
-  // const [pdfId, setPdfId] = useState<number>(0);
-  // const [uploadFileName, setUploadFileName] = useState<string>("");
-  // const [endPageNumber, setEndPageNumber] = useState<number>(1);
-  // const [startPageNumber, setStartPageNumber] = useState<number>(1);
-  // const [selectedSubject, setSelectedSubject] = useState<string | null>(
-  //   "운영체제"
-  // );
-  // const [problemType, setProblemType] = useState<string>("객관식");
-  // const [problemCount, setProblemCount] = useState<string>("15");
-  // const [difficulty, setDifficulty] = useState<string>("중");
 
   const [apiSuccess, setApiSuccess] = useState<boolean>(false); // API 호출 성공 여부를 나타내는 상태 추가
 
@@ -151,10 +143,20 @@ const MakeQuiz2: React.FC = () => {
 
   const handleLetsGoToQuiz = () => {
     //const res = event.target.dataset.res;
-
-    navigate("/quiz", {
-      state: { quiz },
-    });
+    console.log(problemType);
+    if (problemType === "OX") {
+      navigate("/quizox", {
+        state: { quiz },
+      });
+    } else if (problemType === "BLANK") {
+      navigate("/quizblank", {
+        state: { quiz },
+      });
+    } else {
+      navigate("/quiz", {
+        state: { quiz },
+      });
+    }
   };
 
   useEffect(() => {
@@ -165,6 +167,7 @@ const MakeQuiz2: React.FC = () => {
 
   return (
     <CenteredContainer>
+      <Header />
       {apiSuccess ? ( // apiSuccess 상태에 따라 조건부 렌더링
         <FormContainerNew>
           {/* FormContainerNew 내용 */}
@@ -198,7 +201,7 @@ const MakeQuiz2: React.FC = () => {
           {/* FormContainer 내용 */}
           <img src="orange_logo.svg" alt="" width={"100px"} />
           <Label>Quiz</Label>
-          <Label>운영체제 1강</Label>
+          <Label>{uploadFileName}</Label>
           <LabelMini>{selectedSubject}</LabelMini>
           <LabelMini>
             {problemTypeKey} {problemCount} 문제

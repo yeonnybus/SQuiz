@@ -175,27 +175,15 @@ function MiniQuizExplain2({ quiz }: MiniQuizExplain2Props) {
               >
                 <Grid item xs={6}>
                   <LabelMini
-                    isAnswer={item.answer === "a"}
-                    isChecked={item.checkedAnswer === "a"}
-                  >{`${item.options.option_a}`}</LabelMini>
+                    isAnswer={item.answer === "o"}
+                    isChecked={item.checkedAnswer === "o"}
+                  >{`O`}</LabelMini>
                 </Grid>
                 <Grid item xs={6}>
                   <LabelMini
-                    isAnswer={item.answer === "b"}
-                    isChecked={item.checkedAnswer === "b"}
-                  >{`${item.options.option_b}`}</LabelMini>
-                </Grid>
-                <Grid item xs={6}>
-                  <LabelMini
-                    isAnswer={item.answer === "c"}
-                    isChecked={item.checkedAnswer === "c"}
-                  >{`${item.options.option_c}`}</LabelMini>
-                </Grid>
-                <Grid item xs={6}>
-                  <LabelMini
-                    isAnswer={item.answer === "d"}
-                    isChecked={item.checkedAnswer === "d"}
-                  >{`${item.options.option_d}`}</LabelMini>
+                    isAnswer={item.answer === "x"}
+                    isChecked={item.checkedAnswer === "x"}
+                  >{`X`}</LabelMini>
                 </Grid>
               </Grid>
               <Line />

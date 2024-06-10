@@ -231,7 +231,6 @@ interface QuizData {
 interface QuizCollectionOptionType {
   inputValue?: string;
   name: string;
-  fruitBasketId?: number;
 }
 interface LabelProps {
   isAnswer: boolean;
@@ -253,7 +252,7 @@ interface FruitBasketsResponse {
 
 const filter = createFilterOptions<QuizCollectionOptionType>();
 
-function QuizCommentary() {
+function QuizCommentaryOx() {
   // 프론트단 관리 state
   const [currentIndex, setCurrentIndex] = useState<number>(0); // 현재 인덱스
   const location = useLocation();
@@ -264,8 +263,10 @@ function QuizCommentary() {
   const [fruitBaskets, setFruitBaskets] = useState<FruitBasketsResponse>({
     fruitBaskets: [],
   });
-  // 서버에서 넘어올건데 임시 state
+
   const navigate = useNavigate();
+
+  // 서버에서 넘어올건데 임시 state
   const problemNum: number = resultObject.problemNum; // 문제 수
   const quizName: string = resultObject.quizName; // 퀴즈이름
   const isCorrect: number = resultObject.problemList[currentIndex].isCorrect; // 정오답(아이콘분류)
@@ -311,15 +312,16 @@ function QuizCommentary() {
       try {
         const response = await loadFruitBasket(jwtToken);
         if (response) {
-          const item = response.fruitBaskets;
-          console.log(item);
-          setFruitBaskets({ fruitBaskets: item }); // item을 상태로 설정
+          if (response != null) {
+            const item = response.fruitBaskets;
+            console.log(item);
+            setFruitBaskets({ fruitBaskets: item }); // item을 상태로 설정
 
-          const collections = item.map((basket: FruitBasket) => ({
-            name: basket.fruitBasketName,
-            fruitBasketId: basket.fruitBasketId,
-          }));
-          setQuizCollections(collections);
+            const collections = item.map((basket: FruitBasket) => ({
+              name: basket.fruitBasketName,
+            }));
+            setQuizCollections(collections);
+          }
         }
       } catch (error) {
         console.error("Error loading fruit basket:", error);
@@ -329,24 +331,16 @@ function QuizCommentary() {
     handleLoadFruitBasket();
   }, []);
 
-  const handleAddQuiz = async () => {
-    if (!value || !value.fruitBasketId) {
-      console.error("Fruit basket ID is not available.");
-      return;
-    }
+  // const makeFruitBasket = async () => {
+  //   try {
+  //     const response = await makeBasket(jwtToken);
 
-    try {
-      const response = await addProblem(
-        jwtToken,
-        value.fruitBasketId,
-        resultObject.problemList[currentIndex].problemNo,
-        resultObject.quizType
-      );
-      console.log("Quiz added to the fruit basket:", response);
-    } catch (error) {
-      console.error("Error adding quiz to the fruit basket:", error);
-    }
-  };
+  //     console.log(response);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  //   // 여기에 제출 로직 추가
+  // };
 
   // 새로운 값을 목록에 추가
   const handleAddNewValue = async (newValue: string) => {
@@ -481,7 +475,6 @@ function QuizCommentary() {
                     borderRadius: "16px",
                     ":hover": { background: "#ffc450", color: "black" },
                   }}
-                  onClick={handleAddQuiz}
                 >
                   추가하기
                 </Button>
@@ -501,35 +494,19 @@ function QuizCommentary() {
           >
             <Grid item xs={6}>
               <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "a"}
+                isAnswer={resultObject.problemList[currentIndex].answer === "o"}
                 isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "a"
+                  resultObject.problemList[currentIndex].checkedAnswer === "o"
                 }
-              >{`(a)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_a} `}</LabelOption>
+              >{`O`}</LabelOption>
             </Grid>
             <Grid item xs={6}>
               <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "b"}
+                isAnswer={resultObject.problemList[currentIndex].answer === "x"}
                 isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "b"
+                  resultObject.problemList[currentIndex].checkedAnswer === "x"
                 }
-              >{`(b)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_b}`}</LabelOption>
-            </Grid>
-            <Grid item xs={6}>
-              <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "c"}
-                isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "c"
-                }
-              >{`(c)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_c}`}</LabelOption>
-            </Grid>
-            <Grid item xs={6}>
-              <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "d"}
-                isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "d"
-                }
-              >{`(d)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_d}`}</LabelOption>
+              >{`X`}</LabelOption>
             </Grid>
           </Grid>
           <IconButton
@@ -571,4 +548,4 @@ function QuizCommentary() {
   );
 }
 
-export default QuizCommentary;
+export default QuizCommentaryOx;

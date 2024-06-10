@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   TextField,
   Autocomplete,
@@ -8,20 +7,16 @@ import {
   Button,
 } from "@mui/material";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
 
-// 스타일드 컴포넌트 정의
 const CenteredContainer = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   height: 100vh;
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
   font-family: "Pretendard Variable";
-  font-display: swap;
-  src: local("Pretendard Variable"),
-    url("./PretendardVariable.ttf") format("ttf");
+  flex-direction: column;
 `;
 
 const FormContainer = styled.div`
@@ -40,14 +35,14 @@ const Row = styled.div`
   display: flex;
   gap: 50px;
   justify-content: center;
-  align-items: center; /* 모든 자식 요소들을 수직 방향으로 가운데 정렬 */
+  align-items: center;
   margin-bottom: 10px;
 `;
 
 const RowQuiz = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center; /* 모든 자식 요소들을 수직 방향으로 가운데 정렬 */
+  align-items: center;
   margin-bottom: 10px;
   margin-right: 60px;
   gap: 0px;
@@ -55,67 +50,57 @@ const RowQuiz = styled.div`
 
 const Label = styled.div`
   display: flex;
-  align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  align-items: center;
+  min-width: 100px;
   font-weight: bold;
   margin-bottom: 10px;
 `;
 
 const LabelSmall = styled.div`
   display: flex;
-  align-items: center; /* 텍스트를 수직 방향으로 가운데 정렬 */
-  min-width: 100px; /* 필요하다면 최소 너비 지정 */
+  align-items: center;
+  min-width: 100px;
   font-weight: bold;
   margin-bottom: 10px;
   font-size: 14px;
 `;
 
-// Row 컨테이너에 대한 스타일 조정
 const StyledRow = styled.div`
-  background-color: #f0f0f0; // 배경색을 회색으로 설정
-  padding: 20px; // 내부 여백 추가
-  margin: 20px 0; // 상하 여백 추가
-  width: calc(100% - 40px); // FormContainer보다 조금 작은 가로 길이 설정
+  background-color: #f0f0f0;
+  padding: 20px;
+  margin: 20px 0;
+  width: calc(100% - 40px);
   border-radius: 16px;
 `;
 
-// ToggleButtonGroup 스타일 커스터마이징
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)`
-  width: 100%; // 가로 길이를 부모 요소의 100%로 설정
+  width: 100%;
   .MuiToggleButtonGroup-grouped {
-    // ToggleButtonGroup 내부 버튼 스타일 조정
-    flex: 1; // 버튼이 가능한 공간을 모두 차지하도록 설정
+    flex: 1;
   }
 `;
 
-// TextField 세로길이 조절을 위한 스타일
 const textFieldStyle = {
   input: {
-    height: "40px", // input 요소의 높이 조절
+    height: "40px",
   },
 };
 
 const innerElementStyle = {
-  marginBottom: "16px", // 마지막 요소를 제외한 하단 마진 추가
+  marginBottom: "16px",
 };
 const subjectStyle = {
-  width: "200px", // 마지막 요소를 제외한 하단 마진 추가
+  width: "200px",
 };
 
-// 메인 컴포넌트
 const MakeQuiz: React.FC = () => {
   const navigate = useNavigate();
-  interface LocationState {
-    tempQuizName?: string;
-  }
-
   const location = useLocation();
-  // location.state가 undefined일 수 있으므로, LocationState 타입의 기본값을 제공합니다.
+
   const [pdfId, setPdfId] = useState<number>(location.state.pdfId);
   const [uploadFileName, setUploadFileName] = useState<string>(
-    location.state.uploadedFileName
+    location.state.uploadedFileName + location.state.generateQuizNum
   );
-
   const [endPageNumber, setEndPageNumber] = useState<number>(
     location.state.totalPageCount
   );
@@ -135,7 +120,6 @@ const MakeQuiz: React.FC = () => {
   const [difficulty, setDifficulty] = useState<string>("");
 
   const [problemTypeKey, setProblemTypeKey] = useState<string | null>("");
-
   const [difficultyKey, setDifficultyKey] = useState<string | null>("");
 
   const [error, setError] = useState<string>("");
@@ -148,6 +132,7 @@ const MakeQuiz: React.FC = () => {
     setProblemType(newType);
     setProblemTypeKey(key);
   };
+
   const handleCountChange = (
     event: React.MouseEvent<HTMLElement>,
     newCount: string
@@ -167,7 +152,6 @@ const MakeQuiz: React.FC = () => {
   useEffect(() => {
     console.log(problemTypeKey);
     console.log(difficultyKey);
-    // 서버로부터 데이터를 가져오는 함수를 여기에 구현하세요.
   }, [problemType, difficulty]);
 
   const handleQuizOptionSubmit = () => {
@@ -203,6 +187,7 @@ const MakeQuiz: React.FC = () => {
 
   return (
     <CenteredContainer>
+      <Header />
       <FormContainer>
         <RowQuiz>
           <Label>QUIZ</Label>
@@ -210,7 +195,7 @@ const MakeQuiz: React.FC = () => {
             variant="standard"
             value={uploadFileName}
             onChange={(e) => setUploadFileName(e.target.value)}
-            InputProps={{ style: textFieldStyle.input }} // 세로 길이 조절 적용
+            InputProps={{ style: textFieldStyle.input }}
             sx={{ marginLeft: -5 }}
           />
         </RowQuiz>
@@ -227,7 +212,7 @@ const MakeQuiz: React.FC = () => {
                 const value = Number(e.target.value);
                 setStartPageNumber(!isNaN(value) ? value : 0);
               }}
-              InputProps={{ style: textFieldStyle.input }} // 세로 길이 조절 적용
+              InputProps={{ style: textFieldStyle.input }}
             />
             <TextField
               label="끝 페이지 번호"
@@ -235,11 +220,10 @@ const MakeQuiz: React.FC = () => {
               type="number"
               value={endPageNumber}
               onChange={handlePageNumberChange}
-              InputProps={{ style: textFieldStyle.input }} // 세로 길이 조절 적용
+              InputProps={{ style: textFieldStyle.input }}
             />
           </Row>
-          {/* 이하 내용은 이전과 동일 */}
-          {/* 문제 유형 선택 */}
+
           <Row style={innerElementStyle}>
             <Label>문제 유형</Label>
             <StyledToggleButtonGroup
@@ -252,24 +236,38 @@ const MakeQuiz: React.FC = () => {
               <ToggleButton
                 value="BLANK"
                 data-key="빈칸"
-                sx={{ borderRadius: "20px" }}
+                selected={problemType === "BLANK"}
+                sx={{
+                  borderRadius: "20px",
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
               >
                 빈칸
               </ToggleButton>
-              <ToggleButton value="MULTIPLE_CHOICE" data-key="객관식">
+              <ToggleButton
+                value="MULTIPLE_CHOICE"
+                data-key="객관식"
+                selected={problemType === "MULTIPLE_CHOICE"}
+                sx={{
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
+              >
                 객관식
               </ToggleButton>
               <ToggleButton
                 value="OX"
                 data-key="O/X"
-                sx={{ borderRadius: "20px" }}
+                selected={problemType === "OX"}
+                sx={{
+                  borderRadius: "20px",
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
               >
                 OX
               </ToggleButton>
             </StyledToggleButtonGroup>
           </Row>
 
-          {/* 문제 개수 선택 */}
           <Row style={innerElementStyle}>
             <Label>문제 개수</Label>
             <StyledToggleButtonGroup
@@ -279,18 +277,43 @@ const MakeQuiz: React.FC = () => {
               aria-label="문제 개수"
               sx={{ borderRadius: "20px", backgroundColor: "white" }}
             >
-              <ToggleButton value={5} sx={{ borderRadius: "20px" }}>
+              <ToggleButton
+                value={5}
+                sx={{
+                  borderRadius: "20px",
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
+              >
                 5
               </ToggleButton>
-              <ToggleButton value={10}>10</ToggleButton>
-              <ToggleButton value={15}>15</ToggleButton>
-              <ToggleButton value={20} sx={{ borderRadius: "20px" }}>
+              <ToggleButton
+                value={10}
+                sx={{
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
+              >
+                10
+              </ToggleButton>
+              <ToggleButton
+                value={15}
+                sx={{
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
+              >
+                15
+              </ToggleButton>
+              <ToggleButton
+                value={20}
+                sx={{
+                  borderRadius: "20px",
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
+              >
                 20
               </ToggleButton>
             </StyledToggleButtonGroup>
           </Row>
 
-          {/* 난이도 선택 */}
           <Row>
             <Label>난이도</Label>
             <StyledToggleButtonGroup
@@ -304,17 +327,32 @@ const MakeQuiz: React.FC = () => {
               <ToggleButton
                 value="UPPER"
                 data-key="상"
-                sx={{ borderRadius: "20px" }}
+                selected={difficulty === "UPPER"}
+                sx={{
+                  borderRadius: "20px",
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
               >
                 상
               </ToggleButton>
-              <ToggleButton value="MIDDLE" data-key="중">
+              <ToggleButton
+                value="MIDDLE"
+                data-key="중"
+                selected={difficulty === "MIDDLE"}
+                sx={{
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
+              >
                 중
               </ToggleButton>
               <ToggleButton
                 value="LOWER"
                 data-key="하"
-                sx={{ borderRadius: "20px" }}
+                selected={difficulty === "LOWER"}
+                sx={{
+                  borderRadius: "20px",
+                  "&.Mui-selected": { background: "#98E408", color: "white" },
+                }}
               >
                 하
               </ToggleButton>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import { useLocation } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
 import {
   TextField,
   Autocomplete,
@@ -197,13 +198,6 @@ interface Blanks {
   blank_4: string;
 }
 
-interface CheckedBlanks {
-  chekedBlank_1: string;
-  chekedBlank_2: string;
-  chekedBlank_3: string;
-  chekedBlank_4: string;
-}
-
 interface Problem {
   problemNo: number;
   quizType: string;
@@ -224,7 +218,7 @@ interface QuizData {
   quizType: string;
   quizName: string;
   problemNum: number;
-  subject: string;
+  subjectType: string;
   problemList: Problem[];
 }
 
@@ -251,9 +245,16 @@ interface FruitBasketsResponse {
   fruitBaskets: FruitBasket[];
 }
 
+export interface CheckedBlanks {
+  chekedBlank_1: string | null;
+  chekedBlank_2: string | null;
+  chekedBlank_3: string | null;
+  chekedBlank_4: string | null;
+}
+
 const filter = createFilterOptions<QuizCollectionOptionType>();
 
-function QuizCommentary() {
+function QuizCommentaryBlank() {
   // 프론트단 관리 state
   const [currentIndex, setCurrentIndex] = useState<number>(0); // 현재 인덱스
   const location = useLocation();
@@ -264,8 +265,10 @@ function QuizCommentary() {
   const [fruitBaskets, setFruitBaskets] = useState<FruitBasketsResponse>({
     fruitBaskets: [],
   });
-  // 서버에서 넘어올건데 임시 state
+
   const navigate = useNavigate();
+
+  // 서버에서 넘어올건데 임시 state
   const problemNum: number = resultObject.problemNum; // 문제 수
   const quizName: string = resultObject.quizName; // 퀴즈이름
   const isCorrect: number = resultObject.problemList[currentIndex].isCorrect; // 정오답(아이콘분류)
@@ -276,6 +279,7 @@ function QuizCommentary() {
   >([]);
 
   const [value, setValue] = useState<QuizCollectionOptionType | null>(null); // autocomplete에서 지정된 값
+  const [newBasket, setNewBasket] = useState<FruitBasket>();
 
   const [modOpen, setModOpen] = useState(false); // 모달 열렸는지
   const handleOpen = () => setModOpen(true);
@@ -315,11 +319,15 @@ function QuizCommentary() {
           console.log(item);
           setFruitBaskets({ fruitBaskets: item }); // item을 상태로 설정
 
-          const collections = item.map((basket: FruitBasket) => ({
-            name: basket.fruitBasketName,
-            fruitBasketId: basket.fruitBasketId,
-          }));
-          setQuizCollections(collections);
+          if (Array.isArray(item)) {
+            const collections = item.map((basket: FruitBasket) => ({
+              name: basket.fruitBasketName,
+              fruitBasketId: basket.fruitBasketId,
+            }));
+            setQuizCollections(collections);
+          } else {
+            setQuizCollections([]); // item이 배열이 아닌 경우 빈 배열 설정
+          }
         }
       } catch (error) {
         console.error("Error loading fruit basket:", error);
@@ -327,10 +335,10 @@ function QuizCommentary() {
     };
 
     handleLoadFruitBasket();
-  }, []);
+  }, [jwtToken]);
 
   const handleAddQuiz = async () => {
-    if (!value || !value.fruitBasketId) {
+    if (!newBasket || !newBasket.fruitBasketId) {
       console.error("Fruit basket ID is not available.");
       return;
     }
@@ -338,7 +346,7 @@ function QuizCommentary() {
     try {
       const response = await addProblem(
         jwtToken,
-        value.fruitBasketId,
+        newBasket.fruitBasketId,
         resultObject.problemList[currentIndex].problemNo,
         resultObject.quizType
       );
@@ -348,13 +356,18 @@ function QuizCommentary() {
     }
   };
 
-  // 새로운 값을 목록에 추가
   const handleAddNewValue = async (newValue: string) => {
     const newQuizCollection = { name: newValue };
     try {
-      await makeBasket(jwtToken, newQuizCollection.name, resultObject.subject); // 서버에 새로운 값을 POST
+      const basket = await makeBasket(
+        jwtToken,
+        newQuizCollection.name,
+        resultObject.subjectType
+      ); // 서버에 새로운 값을 POST
       setQuizCollections((prev) => [...prev, newQuizCollection]);
       setValue(newQuizCollection);
+      console.log(basket);
+      setNewBasket(basket.body.data.newFruitBasket);
     } catch (error) {
       console.error("Error adding new fruit basket:", error);
     }
@@ -409,6 +422,20 @@ function QuizCommentary() {
               {resultObject.problemList[currentIndex].question}
             </LabelQuestion>
           </Inline2>
+          {resultObject.problemList[currentIndex].content?.startsWith(
+            "<markdown>"
+          ) ? (
+            <ReactMarkdown>
+              {resultObject.problemList[currentIndex].content?.replace(
+                "<markdown>",
+                ""
+              )}
+            </ReactMarkdown>
+          ) : (
+            <LabelQuestion>{`${
+              resultObject.problemList[currentIndex].content || ""
+            }`}</LabelQuestion>
+          )}
           <React.Fragment>
             <StarOutlineOutlinedIcon
               sx={{
@@ -488,50 +515,35 @@ function QuizCommentary() {
               </Box>
             </Modal>
           </React.Fragment>
-          <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            sx={{
-              padding: "10px",
-              paddingTop: "0px",
-              paddingLeft: "15vw",
-              paddingRight: "15vw",
-            }}
-          >
-            <Grid item xs={6}>
-              <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "a"}
-                isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "a"
-                }
-              >{`(a)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_a} `}</LabelOption>
-            </Grid>
-            <Grid item xs={6}>
-              <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "b"}
-                isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "b"
-                }
-              >{`(b)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_b}`}</LabelOption>
-            </Grid>
-            <Grid item xs={6}>
-              <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "c"}
-                isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "c"
-                }
-              >{`(c)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_c}`}</LabelOption>
-            </Grid>
-            <Grid item xs={6}>
-              <LabelOption
-                isAnswer={resultObject.problemList[currentIndex].answer === "d"}
-                isChecked={
-                  resultObject.problemList[currentIndex].checkedAnswer === "d"
-                }
-              >{`(d)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 ${resultObject.problemList[currentIndex].options.option_d}`}</LabelOption>
-            </Grid>
-          </Grid>
+          {Array(4)
+            .fill(null)
+            .map((_, i) => {
+              const value =
+                resultObject.problemList[currentIndex].blanks[
+                  `blank_${i + 1}` as keyof Blanks
+                ];
+
+              return value === null ? null : (
+                <TextField
+                  key={i}
+                  label={`빈칸 ${i + 1}`}
+                  value={value}
+                  margin="none"
+                  variant="standard"
+                  sx={{
+                    display: "block", // Ensure the element is block-level
+                    margin: "0 auto", // Center the element horizontally
+                    "& .MuiInputLabel-root": {
+                      color: "#FE9F2C",
+                    },
+                    "& .MuiInputLabel-root.Mui-focused": {
+                      color: "#FE9F2C",
+                    },
+                  }}
+                />
+              );
+            })}
+
           <IconButton
             aria-label="forward"
             size="small"
@@ -571,4 +583,4 @@ function QuizCommentary() {
   );
 }
 
-export default QuizCommentary;
+export default QuizCommentaryBlank;

@@ -101,7 +101,9 @@ const Register2: React.FC = () => {
       await registerMember(memberEmail, memberName, memberId, memberPw, role);
       alert("회원가입 성공.");
       // 회원가입 성공 후 필요한 로직 추가 (예: 로그인 페이지로 리다이렉트)
-      navigate("/login");
+      navigate("/registerfin", {
+        state: { memberName },
+      });
     } catch (error) {
       alert("회원가입 실패.");
     }

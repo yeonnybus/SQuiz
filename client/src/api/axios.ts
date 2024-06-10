@@ -1,8 +1,8 @@
 import axios from "axios";
 
 // API 요청을 위한 기본 URL 설정
-const API_BASE_URL = "http://192.168.0.163:8080/api/v1";
-const IP = "http://192.168.0.163:8080";
+const API_BASE_URL = "http://52.78.150.74:8080/api/v1";
+const IP = "http://52.78.150.74:8080";
 
 export interface CheckedBlanks {
   chekedBlank_1: string | null;
@@ -242,6 +242,192 @@ export const quizSubmit = async (token: string, submission: QuizSubmission) => {
     const response = await axios.post(
       `${API_BASE_URL}/quiz/check-quiz`,
       submission,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+interface FruitBasket {
+  fruitBasketId: number;
+  fruitBasketName: string;
+  subject: string;
+  problemNum: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface FruitBasketsResponse {
+  fruitBaskets: FruitBasket[];
+}
+
+export const loadFruitBasket = async (token: String) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/fruit-basket/load`, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    // 에러 처리
+    if (axios.isAxiosError(error)) {
+      //console.log("ID 중복 검사 중 에러 발생:", error.response?.status);
+      console.error("과일바구니 불러오기 오류");
+    }
+  }
+};
+
+//채점 후 문제 별 정보 요청 api
+export const answerDetailRequest = async (token: string, quizId: number) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/quiz/quiz-detail`,
+      { quizId },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const makeBasket = async (
+  token: string,
+  fruitBasketName: string,
+  subject: string
+) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/fruit-basket/make`,
+      { subject, fruitBasketName },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const createSummary = async (token: string, pdfId: number) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/summary/generate?pdfId=${pdfId}`,
+
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const viewSummary = async (token: string, quizId: number) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/summary/load?quizId=${quizId}`,
+
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const loadLastQuizList = async (token: string) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/quiz/load-quizList`,
+
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const checkQuizResult = async (token: string, quizId: number) => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/quiz/checked-quiz-result?quizId=${quizId}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const addProblem = async (
+  token: string,
+  fruitBasketId: number,
+  problemId: number,
+  quizType: string
+) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/fruit-basket/add-problem`,
+      { fruitBasketId, problemId, quizType },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error);
+    throw error;
+  }
+};
+
+export const loadQuizInBasket = async (
+  token: string,
+  fruitBasketId: number
+) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/fruit-basket/load-problems`,
+      { fruitBasketId },
       {
         headers: {
           Authorization: token,

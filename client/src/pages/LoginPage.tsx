@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, TextField, Box } from "@mui/material";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { login } from "../api/axios";
+import { jwtDecode } from "jwt-decode"; // jwt-decode 라이브러리 임포트
+
+interface DecodedToken {
+  exp: number;
+  // 추가적으로 필요한 클레임들을 정의합니다.
+  [key: string]: any;
+}
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -34,6 +41,27 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (decodedToken.exp > currentTime) {
+          // 토큰이 유효한 경우
+          navigate("/main");
+        } else {
+          // 토큰이 만료된 경우
+          localStorage.removeItem("authToken");
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        localStorage.removeItem("authToken");
+      }
+    }
+  }, [navigate]);
+
   // 로그인 함수
   const handleLogin = async () => {
     try {
@@ -42,7 +70,7 @@ const LoginPage: React.FC = () => {
       // JWT 토큰을 로컬 스토리지에 저장
       localStorage.setItem("authToken", token);
       // 로그인 성공 후 로직 (예: 메인 페이지로 리다이렉트)
-      navigate("main"); // 인증 성공 후 /main 페이지로 이동
+      navigate("/main"); // 인증 성공 후 /main 페이지로 이동
     } catch (error) {
       setLoginError("Login failed. Please try again.");
       alert("Login failed.");

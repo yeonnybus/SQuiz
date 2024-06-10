@@ -1,48 +1,46 @@
 import React, { useEffect, useState } from "react";
-import Fruit from "../components/Fruit";
-import styled from "styled-components";
-import { TextField, Autocomplete, IconButton } from "@mui/material";
 import QuizList from "../components/QuizList";
-//import { FilterToggle, SortToggle, ItemDisplay } from "./components"; // 컴포넌트 경로에 맞게 조정하세요.
+import styled from "styled-components";
+import { TextField, Autocomplete } from "@mui/material";
+import Header from "../components/Header";
+import { loadLastQuizList } from "../api/axios";
 
 const CenteredContainer = styled.div`
-  justify-content: center;
+  display: flex;
+  height: 100vh;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
-
   background: linear-gradient(to bottom right, #f8df9d, #f7f0ba, #e2f3b4);
   font-family: "Pretendard Variable";
   font-display: swap;
   src: local("Pretendard Variable"),
     url("./PretendardVariable.ttf") format("ttf");
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const FormContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-
-  width: 100vh;
-
   padding-left: 50px;
-  padding-top: 20px;
-  margin-bottom: 40px;
+  padding-top: 50px;
+  margin-bottom: 50px;
 `;
 
 const Label = styled.div`
   font-size: 30px;
   font-weight: bold;
-
   color: black;
 `;
+
 const LabelMini = styled.div`
-  font-size: 20px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-  margin-right: 450px;
+  font-size: 24px;
+  margin-bottom: 50px;
+  margin-right: 10%;
+  width: 50%;
   color: black;
-  min-width: 400px;
+  white-space: nowrap; /* 줄바꿈 방지 */
 `;
 
 const LabelAcmp = styled.div`
@@ -56,97 +54,119 @@ const Filter = styled.div`
 `;
 
 const subjectStyle = {
-  width: "150px", // 마지막 요소를 제외한 하단 마진 추가
+  width: "150px",
 };
 
 const InlineContainer = styled.div`
   display: flex;
-  width: 80vw;
   align-items: center;
+  width: 85vw;
 `;
 
 const Horizon = styled.div`
   border-bottom: 2px solid #fffbe3;
-  width: 93vw;
+  width: 83vw;
 `;
 
+const HeaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 1%;
+`;
+
+export interface Quiz {
+  quizId: number;
+  quizName: string;
+  subjectType: string;
+  problemNum: number;
+  correctNum: number;
+  weakPart: string[];
+  createdAt: string;
+  uploadFileName: string;
+}
+export interface QuizListResponse {
+  quizList: Quiz[];
+}
+
 const LastQuizList: React.FC = () => {
-  interface Item {
-    fruitBasketId: number;
-    fruitBasketName: string;
-    subject: string;
-    problemNum: number;
-    createdAt: string; // ISO 날짜 형식을 가정합니다.
-    updatedAt: string;
-  }
+  const jwtToken = localStorage.getItem("authToken") || "";
 
-  const items: Item[] = [
-    {
-      fruitBasketId: 1,
-      fruitBasketName: "운체 중간 오답 바구니1",
-      subject: "OPERATING_SYSTEM",
-      problemNum: 20,
-      createdAt: "2022-12-15T09:00:00",
-      updatedAt: "2022-12-15T09:00:00",
-    },
-    {
-      fruitBasketId: 1,
-      fruitBasketName: "운체 중간 오답 바구니2",
-      subject: "OPERATING_SYSTEM",
-      problemNum: 10,
-      createdAt: "2022-12-15T09:00:00",
-      updatedAt: "2022-12-15T09:00:00",
-    },
-    {
-      fruitBasketId: 1,
-      fruitBasketName: "운체 중간 오답 바구니3",
-      subject: "OPERATING_SYSTEM",
-      problemNum: 15,
-      createdAt: "2022-12-15T09:00:00",
-      updatedAt: "2022-12-15T09:00:00",
-    },
-    {
-      fruitBasketId: 1,
-      fruitBasketName: "운체 중간 오답 바구니4",
-      subject: "OPERATING_SYSTEM",
-      problemNum: 10,
-      createdAt: "2022-12-15T09:00:00",
-      updatedAt: "2022-12-15T09:00:00",
-    },
-    {
-      fruitBasketId: 1,
-      fruitBasketName: "운체 중간 오답 바구니5",
-      subject: "OPERATING_SYSTEM",
-      problemNum: 5,
-      createdAt: "2022-12-15T09:00:00",
-      updatedAt: "2022-12-15T09:00:00",
-    },
-
-    // ... 추가 데이터 아이템들
-  ];
-
-  const [sort, setSort] = useState<{ label: string; value: string }[]>([
+  const [sortOptions] = useState<{ label: string; value: string }[]>([
     { label: "최신순", value: "최신순" },
-    { label: "시간순", value: "시간순" },
+    { label: "오래된순", value: "오래된순" },
   ]);
-  const [selectedSort, setSelectedSort] = useState<string | null>(null);
+  const [selectedSort, setSelectedSort] = useState<string>("최신순");
 
-  const [subjects, setSubjects] = useState<{ label: string; value: string }[]>([
-    { label: "운영체제", value: "운영체제" },
-    { label: "컴퓨터통신", value: "컴퓨터통신" },
-    { label: "객체지향프로그래밍", value: "객체지향프로그래밍" },
-    { label: "C프로그래밍", value: "C프로그래밍" },
+  const [subjects] = useState<{ label: string; value: string }[]>([
+    { label: "운영체제", value: "OPERATING_SYSTEM" },
+    { label: "컴퓨터통신", value: "COMPUTER_COMMUNICATION" },
+    { label: "객체지향프로그래밍", value: "OBJECT_ORIENTED_PROGRAMMING" },
+    { label: "C프로그래밍", value: "C_LANGUAGE" },
   ]);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [quizList, setQuizList] = useState<Quiz[]>([]);
+  const [filteredQuizList, setFilteredQuizList] = useState<Quiz[]>([]);
 
   useEffect(() => {
-    // 서버로부터 데이터를 가져오는 함수를 여기에 구현하세요.
-  }, []);
+    const handleLoadLastQuizList = async () => {
+      try {
+        const response = await loadLastQuizList(jwtToken);
+        if (response) {
+          const item = response.body.data.quizList;
+          setQuizList(item);
+        }
+      } catch (error) {
+        console.error("Error loading last quiz list:", error);
+      }
+    };
 
-  // 필터링 및 정렬 로직을 여기에 구현하세요.
+    handleLoadLastQuizList();
+  }, [jwtToken]);
+
+  useEffect(() => {
+    let filtered = quizList;
+    if (selectedSubject) {
+      filtered = quizList.filter(
+        (quiz) => quiz.subjectType === selectedSubject
+      );
+    }
+
+    if (selectedSort) {
+      filtered = filtered.slice().sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        if (selectedSort === "최신순") {
+          return dateB - dateA;
+        } else if (selectedSort === "오래된순") {
+          return dateA - dateB;
+        }
+        return 0;
+      });
+    }
+
+    setFilteredQuizList(filtered);
+  }, [quizList, selectedSubject, selectedSort]);
+
+  const handleSortChange = (
+    event: any,
+    newValue: { label: string; value: string } | null
+  ) => {
+    setSelectedSort(newValue?.value || "최신순");
+  };
+
+  const handleSubjectChange = (
+    event: any,
+    newValue: { label: string; value: string } | null
+  ) => {
+    setSelectedSubject(newValue?.value || null);
+  };
 
   return (
     <CenteredContainer>
+      <HeaderWrapper>
+        <Header />
+      </HeaderWrapper>
       <FormContainer>
         <Label>지난 퀴즈 목록</Label>
         <InlineContainer>
@@ -155,7 +175,7 @@ const LastQuizList: React.FC = () => {
             <LabelAcmp>정렬 기준</LabelAcmp>
             <Autocomplete
               style={subjectStyle}
-              options={sort}
+              options={sortOptions}
               getOptionLabel={(option) => option.label}
               renderInput={(params) => (
                 <TextField
@@ -163,8 +183,7 @@ const LastQuizList: React.FC = () => {
                   InputProps={{
                     ...params.InputProps,
                     style: {
-                      paddingTop: "3px", // 수직 정렬을 위해 상단 패딩 조정
-                      // 필요하다면 여기에 verticalAlign: 'middle' 같은 스타일도 추가할 수 있습니다.
+                      paddingTop: "3px",
                       borderRadius: "20px",
                     },
                   }}
@@ -176,12 +195,11 @@ const LastQuizList: React.FC = () => {
                 marginBottom: "30px",
               }}
               value={
-                sort.find((subject) => subject.value === selectedSort) || null
+                sortOptions.find((option) => option.value === selectedSort) ||
+                null
               }
-              onChange={(
-                event: any,
-                newValue: { label: string; value: string } | null
-              ) => setSelectedSort(newValue?.value || null)}
+              onChange={handleSortChange}
+              defaultValue={sortOptions[0]}
             />
           </Filter>
           <Filter>
@@ -196,10 +214,8 @@ const LastQuizList: React.FC = () => {
                   InputProps={{
                     ...params.InputProps,
                     style: {
-                      paddingTop: "3px", // 수직 정렬을 위해 상단 패딩 조정
-                      // 필요하다면 여기에 verticalAlign: 'middle' 같은 스타일도 추가할 수 있습니다.
+                      paddingTop: "3px",
                       borderRadius: "20px",
-                      width: "15vw",
                     },
                   }}
                 />
@@ -212,16 +228,13 @@ const LastQuizList: React.FC = () => {
                 subjects.find((subject) => subject.value === selectedSubject) ||
                 null
               }
-              onChange={(
-                event: any,
-                newValue: { label: string; value: string } | null
-              ) => setSelectedSubject(newValue?.value || null)}
+              onChange={handleSubjectChange}
             />
           </Filter>
         </InlineContainer>
         <Horizon />
       </FormContainer>
-      <QuizList items={items} />
+      <QuizList quizList={filteredQuizList} token={jwtToken} />
     </CenteredContainer>
   );
 };

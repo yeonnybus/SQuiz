@@ -6,6 +6,7 @@ import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
 import ResultSummary from "../components/ResultSummary";
 import MiniQuizExplain from "../components/MiniQuizExplain";
+import Header from "../components/Header";
 
 const CenteredContainer = styled.div`
   display: flex;
@@ -87,6 +88,7 @@ const Left = styled.div`
 function QuizDetail() {
   return (
     <CenteredContainer>
+      <Header />
       <FormContainer>
         <IconButton
           aria-label="forward"
